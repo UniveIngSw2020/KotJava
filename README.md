@@ -1,4 +1,4 @@
-# gruppo KotJava
+# Gruppo KotJava
 
 formato da:
 
