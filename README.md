@@ -2,4 +2,4 @@
 
 formato da:
 
-@872986Lorenzo
+[Lorenzo Panico](https://github.com/872986Lorenzo)
