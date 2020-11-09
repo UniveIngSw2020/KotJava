@@ -1,5 +1,6 @@
 package com.example.myapplication;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 //Qualcosa
 
@@ -7,6 +8,9 @@ package com.example.myapplication;
 =======
 ciaoooo
 >>>>>>> a029e9973b4f46ffa1c6cfdc0f1ea49b3b3e1aea
+=======
+
+>>>>>>> 2f503d8b5d02de0c8525451f31b26f02cccef8fd
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
