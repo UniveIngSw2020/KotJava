@@ -1,5 +1,8 @@
 package com.example.myapplication;
 
+
+
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
