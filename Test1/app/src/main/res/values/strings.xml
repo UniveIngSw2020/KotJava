@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Test1</string>
     <string name="action_settings">Settings</string>
+
+    <string name="guida">Guida introduttiva</string>
+    <string name="permission_resources">Per utilizzare l\'app permetti l\'accesso alle risorse.</string>
+    <string name="accept_label">Accetta</string>
 </resources>
