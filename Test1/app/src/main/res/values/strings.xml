@@ -1,8 +1,19 @@
 <resources>
     <string name="app_name">Test1</string>
     <string name="action_settings">Settings</string>
+<<<<<<< Updated upstream
 
     <string name="guida">Guida introduttiva</string>
     <string name="permission_resources">Per utilizzare l\'app permetti l\'accesso alle risorse.</string>
     <string name="accept_label">Accetta</string>
+=======
+    <string name="title_activity_introduction">IntroductionActivity</string>
+
+    <!-- Stringhe dell'introduzione -->
+    <string name="guida">Guida all\'utilizzo dell\'app</string>
+    <string name="permessi_risorse">Per il coretto funzionamento dell\'applicazione si richiede l'accesso a Bluetooth e GPS</string>
+    <string name="accetta_risorse">Accetta</string>
+
+
+>>>>>>> Stashed changes
 </resources>
