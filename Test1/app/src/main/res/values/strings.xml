@@ -1,19 +1,13 @@
 <resources>
     <string name="app_name">Test1</string>
     <string name="action_settings">Settings</string>
-<<<<<<< Updated upstream
+    <string name="title_activity_introducion">IntroductionActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 
-    <string name="guida">Guida introduttiva</string>
-    <string name="permission_resources">Per utilizzare l\'app permetti l\'accesso alle risorse.</string>
-    <string name="accept_label">Accetta</string>
-=======
-    <string name="title_activity_introduction">IntroductionActivity</string>
-
-    <!-- Stringhe dell'introduzione -->
-    <string name="guida">Guida all\'utilizzo dell\'app</string>
-    <string name="permessi_risorse">Per il coretto funzionamento dell\'applicazione si richiede l'accesso a Bluetooth e GPS</string>
-    <string name="accetta_risorse">Accetta</string>
-
-
->>>>>>> Stashed changes
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
