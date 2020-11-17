@@ -4,5 +4,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
     <string name="request_check">check request</string>
+    <string name="guida">guida</string>
+    <string name="richiesta_risorse">create_risorse</string>
+    <string name="accetta_risorse">accetta_risorse</string>
 
 </resources>
