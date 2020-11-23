@@ -63,14 +63,13 @@
             android:background="#2196F3">
 
             <Button
-                android:id="@+id/buttonacc"
-                android:layout_width="127dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="112dp"
-                android:layout_marginTop="38dp"
-                android:layout_marginEnd="111dp"
-                android:layout_marginBottom="39dp"
-                android:text= "@string/ACCETTA_RISORSEe"
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#00BCD4"
+                android:text="@string/ACCETTA_RISORSEe"
+                android:textAlignment="center"
+                android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
