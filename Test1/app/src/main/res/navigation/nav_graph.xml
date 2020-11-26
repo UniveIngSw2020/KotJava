@@ -3,26 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/FirstAccessActivity">
 
-    <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.test1.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.test1.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+    <activity
+        android:id="@+id/FirstAccessActivity"
+        android:name="com.example.test1.FirstAccessActivity"
+        tools:layout="@layout/activity_firstaccess">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
+            android:id="@+id/action_FirstAccessActivity_to_MapsActivity"
+            app:destination="@id/MapsActivity" />
+    </activity>
+    <activity
+        android:id="@+id/MapsActivity"
+        android:name="com.example.test1.MapsActivity"
+        tools:layout="@layout/activity_maps"/>
 </navigation>
