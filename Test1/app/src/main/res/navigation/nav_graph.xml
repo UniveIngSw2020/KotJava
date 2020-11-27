@@ -6,6 +6,22 @@
     app:startDestination="@id/FirstAccessActivity">
 
     <activity
+        android:id="@+id/loadingActivity"
+        android:name="com.example.test1.LoadingActivity"
+        android:label="activity_loading"
+        tools:layout="@layout/activity_loading" >
+
+        <action
+            android:id="@+id/action_LoadingActivity_to_MapsActivity"
+            app:destination="@id/MapsActivity" />
+
+        <action
+            android:id="@+id/action_LoadingActivity_to_FirstAccessActivity"
+            app:destination="@id/FirstAccessActivity" />
+
+    </activity>
+
+    <activity
         android:id="@+id/FirstAccessActivity"
         android:name="com.example.test1.FirstAccessActivity"
         tools:layout="@layout/activity_firstaccess">
@@ -14,6 +30,7 @@
             android:id="@+id/action_FirstAccessActivity_to_MapsActivity"
             app:destination="@id/MapsActivity" />
     </activity>
+
     <activity
         android:id="@+id/MapsActivity"
         android:name="com.example.test1.MapsActivity"
