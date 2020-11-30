@@ -35,20 +35,17 @@ public class FirstAccessActivity extends AppCompatActivity  {
         Button btaccess = findViewById(R.id.button);
 
             /*guardo se ho il permesso per il gps, se ce l ho salto direttamente alla maps activity*/
-            if (checkPermission(getApplicationContext())){
+            if (ContextCompat.checkSelfPermission(FirstAccessActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 startActivity(activitymaps);
             }
-            else{
-                /** Dangerous permission**/
-                btaccess.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        checkRequestpermission();
-                    }
-                });
-            }
 
-
+            /** Dangerous permission**/
+            btaccess.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkRequestpermission();
+                }
+            });
     }
 
 
@@ -58,10 +55,9 @@ public class FirstAccessActivity extends AppCompatActivity  {
         /*da togliere il primo if, rindondante ----> faccio gia il controllo nella ONcreate*/
 
 
-           if(!checkPermission(FirstAccessActivity.this)) {
+            if (ContextCompat.checkSelfPermission(FirstAccessActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // when permission are not granted
-                if (ActivityCompat.shouldShowRequestPermissionRationale(FirstAccessActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(FirstAccessActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(FirstAccessActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(FirstAccessActivity.this);
                     builder.setTitle("Grant those permission");
@@ -72,8 +68,7 @@ public class FirstAccessActivity extends AppCompatActivity  {
                         public void onClick(DialogInterface dialog, int i) {
                             ActivityCompat.requestPermissions(FirstAccessActivity.this,
                                     new String[]{
-                                            Manifest.permission.ACCESS_FINE_LOCATION,
-                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                            Manifest.permission.ACCESS_FINE_LOCATION
                                     },
                                     REQUEST_CODE);
 
@@ -87,8 +82,7 @@ public class FirstAccessActivity extends AppCompatActivity  {
 
                     ActivityCompat.requestPermissions(FirstAccessActivity.this,
                             new String[]{
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                    Manifest.permission.ACCESS_FINE_LOCATION
                             },
                             REQUEST_CODE);
                 }
@@ -104,17 +98,14 @@ public class FirstAccessActivity extends AppCompatActivity  {
 
 
 
-public static boolean checkPermission(Context context){
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                + ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-}
+
 
 
     /**Dangerous permission**/
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
         if(requestCode == REQUEST_CODE){
-            if( grantResults.length > 0 && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)){
+            if( grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)){
                 //permission are granted
                 Toast.makeText(getApplicationContext(),"Permission Granted",Toast.LENGTH_SHORT).show();
 

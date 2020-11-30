@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/help"
+        android:title="@string/helpitem">
+        <menu>
+            <item
+                android:id="@+id/guida"
+                android:title="@string/guidaitem" />
+            <item
+                android:id="@+id/faq"
+                android:title="@string/faqitem" />
+            <item
+                android:id="@+id/contatti"
+                android:title="@string/contattiitem" />
+            <item
+                android:id="@+id/credits"
+                android:title="@string/creditsitem" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/aggiornamento"
+        android:title="@string/aggiornamentoitem" />
+    <item
+        android:id="@+id/condividi"
+        android:title="@string/condividiitem" />
+    <item
+        android:id="@+id/valuta"
+        android:title="@string/valutaitem" />
+    <item
+        android:id="@+id/storico"
+        android:title="@string/storicoitem" />
+    <item
+        android:id="@+id/autoscan"
+        android:title="@string/autoscanitem" />
+    <item
+        android:id="@+id/nascosti"
+        android:title="@string/nascostiitem" />
+</menu>
