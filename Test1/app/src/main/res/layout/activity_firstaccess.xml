@@ -37,7 +37,7 @@
         <TextView
             android:id="@+id/textViewGuida"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="500dp"
             android:background="#FFFFFF"
             android:elegantTextHeight="true"
             android:text="@string/guida"
