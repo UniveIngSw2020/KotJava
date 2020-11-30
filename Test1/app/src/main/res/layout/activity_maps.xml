@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    
     <fragment
         android:id="@+id/place_autocomplete"
         android:name="com.google.andorid.gms.location.places.ui.PlaceAutocompleteFragment"
