@@ -103,7 +103,7 @@ public class FirstAccessActivity extends AppCompatActivity  {
 
 
 
-
+/* metodo per controllare i permessi*/
 public static boolean checkPermission(Context context){
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 + ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;

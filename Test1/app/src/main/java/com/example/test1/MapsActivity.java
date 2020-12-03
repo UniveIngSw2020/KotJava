@@ -13,48 +13,64 @@ import android.os.Bundle;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-
+private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+       
+
+
 
         searchView = findViewById(R.id.srclocation);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String location = searchView.getQuery().toString();
                 List<Address> addressList = null;
-
-                if(location != null  || !location.equals("")){
+                System.out.println(location);
+                if(location != null  && !location.equals("")){
+                    System.out.println("dentro if");
                     Geocoder geocoder = new Geocoder(getApplicationContext());
                     try{
+
                         addressList = geocoder.getFromLocationName(location, 1);
+                        System.out.println(addressList);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    /*
                     Address address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                    System.out.println(address);
                     map.addMarker(new MarkerOptions().position(latLng).title(location));
                     map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+
+                     */
                 }
                 return false;
             }
@@ -64,9 +80,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
+
+
+
         mapFragment.getMapAsync(this);
     }
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -86,7 +104,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             map.setMyLocationEnabled(true);
             map.setOnMyLocationButtonClickListener(this);
             map.setOnMyLocationClickListener(this);
-
 
         }
 
