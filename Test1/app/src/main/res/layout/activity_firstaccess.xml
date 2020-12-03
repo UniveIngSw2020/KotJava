@@ -37,7 +37,7 @@
         <TextView
             android:id="@+id/textViewGuida"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="450dp"
             android:background="#FFFFFF"
             android:elegantTextHeight="true"
             android:text="@string/guida"
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#00BCD4"
-                android:text="@string/accetta_risorse"
+                android:text="@string/ACCETTA_RISORSEe"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="parent"
