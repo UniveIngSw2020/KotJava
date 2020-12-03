@@ -8,5 +8,17 @@
     <string name="ACCETTA_RISORSEe">ACCETTA</string>
     <string name="request_check">check request</string>
 
+    <!-- Strings for MapsActivity menu -->
+    <string name="helpitem">Help</string>
+    <string name="guidaitem">Guida</string>
+    <string name="faqitem">FAQ</string>
+    <string name="contattiitem">Contatti</string>
+    <string name="creditsitem">Credits</string>
+    <string name="aggiornamentoitem">Aggiornamento</string>
+    <string name="condividiitem">Condividi app</string>
+    <string name="valutaitem">Valuta app</string>
+    <string name="storicoitem">Storico scan</string>
+    <string name="autoscanitem">Attivazione auto scan</string>
+    <string name="nascostiitem">Dispositivi nascosti</string>
 
 </resources>
