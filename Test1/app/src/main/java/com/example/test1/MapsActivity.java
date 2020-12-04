@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,16 +36,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        //Toolbar superiore con l'overflow menu
+        Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(myToolbar1);
+
+/*Così come'è non funziona
+        //Toolbarinferiore con il menu a icone/bottoni
+        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
+        setActionBar( myToolbar2 );
+*/
 
         searchView = findViewById(R.id.srclocation);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
 
        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -62,7 +72,6 @@ private FusedLocationProviderClient fusedLocationClient;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                     /*
                     Address address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
@@ -82,9 +91,10 @@ private FusedLocationProviderClient fusedLocationClient;
         });
 
 
-
         mapFragment.getMapAsync(this);
     }
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -96,23 +106,21 @@ private FusedLocationProviderClient fusedLocationClient;
      */
     @Override
     public void onMapReady(GoogleMap map) {
-
-
         if (FirstAccessActivity.checkPermission(getApplicationContext())) {
             System.out.println("entrato");
 
             map.setMyLocationEnabled(true);
             map.setOnMyLocationButtonClickListener(this);
             map.setOnMyLocationClickListener(this);
-
         }
-
     }
+
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG)
                 .show();
     }
+
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT)
@@ -129,7 +137,6 @@ private FusedLocationProviderClient fusedLocationClient;
         return true;
     }
 
-
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -139,28 +146,24 @@ private FusedLocationProviderClient fusedLocationClient;
                 //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
                 return true;
             case R.id.guida:
-                /*Rimandare alla pagina con la guida/mostrare popup della guida
-                Intent intent = new Intent(this, "guida".class);
-                startActivity(intent);
-                */
+                //Rimandare alla pagina con la guida/mostrare popup della guida
+                //Intent intent = new Intent(this, "guida".class);
+                //startActivity(intent);
                 return true;
             case R.id.faq:
-                /*Rimandare alla pagina con le F.A.Q.
-                Intent intent = new Intent(this, "FAQ".class);
-                startActivity(intent);
-                */
+                //Rimandare alla pagina con le F.A.Q.
+                //Intent intent = new Intent(this, "FAQ".class);
+                //startActivity(intent);
                 return true;
             case R.id.contatti:
-                /*Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                Intent intent = new Intent(this, "contatti".class);
-                startActivity(intent);
-                */
+                //Rimandare alla pagina dei contatti/mostrare popup dei contatti
+                //Intent intent = new Intent(this, "contatti".class);
+                //startActivity(intent);
                 return true;
             case R.id.credits:
-                /*Rimandare alla pagina dei credits/mostrare popup dei credits
-                Intent intent = new Intent(this, "credits".class);
-                startActivity(intent);
-                */
+                //Rimandare alla pagina dei credits/mostrare popup dei credits
+                //Intent intent = new Intent(this, "credits".class);
+                //startActivity(intent);
                 return true;
             case R.id.aggiornamento:
                 /*Rimandare alla pagina di aggiornamento

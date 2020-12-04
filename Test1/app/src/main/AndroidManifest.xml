@@ -25,14 +25,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".FirstAccessActivity">
+        <activity android:name=".FirstAccessActivity" />
+<!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+-->
+
         <activity
             android:name=".MapsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_maps" />
 
         <meta-data

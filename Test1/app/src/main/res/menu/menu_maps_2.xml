@@ -5,21 +5,21 @@
     <item
         android:id="@+id/favourites"
         android:icon="@android:drawable/btn_star"
-        android:title="Item"
+        android:title="@string/favouritesitem"
         app:showAsAction="always" />
     <item
         android:id="@+id/stats"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="Item"
+        android:title="@string/statsitem"
         app:showAsAction="always" />
     <item
         android:id="@+id/location"
         android:icon="@android:drawable/ic_menu_myplaces"
-        android:title="Item"
+        android:title="@string/locationitem"
         app:showAsAction="always" />
     <item
         android:id="@+id/history"
         android:icon="@android:drawable/ic_menu_recent_history"
-        android:title="Item"
+        android:title="@string/historyitem"
         app:showAsAction="always" />
 </menu>
