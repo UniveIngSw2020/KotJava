@@ -6,7 +6,7 @@ formato da:
 
 [Diolen Hysenaj](https://github.com/diolenf)
 
-Matteo De Col 
+[Matteo De Col](https://github.com/MatteoDeCol)
 
 Davide Favaro
 
