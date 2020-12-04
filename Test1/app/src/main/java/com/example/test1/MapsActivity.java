@@ -13,9 +13,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+//Menu inferiore Metodo 2
+//import android.widget.Toolbar.OnMenuItemClickListener;
+//Menu inferiore Metodo 3
+import android.view.MenuItem.OnMenuItemClickListener;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,12 +41,19 @@ import java.io.IOException;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-private FusedLocationProviderClient fusedLocationClient;
+    private ImageButton bfav;
+    private ImageButton bstats;
+    private ImageButton bloc;
+    private ImageButton bhist;
+
+    private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -46,12 +61,57 @@ private FusedLocationProviderClient fusedLocationClient;
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
+        getActionBar().setDisplayShowTitleEnabled(false);
 
-/*Così come'è non funziona
-        //Toolbarinferiore con il menu a icone/bottoni
-        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
-        setActionBar( myToolbar2 );
+        //Menu inferiore: Metodo 1
+         //(+)Più semplice degli altri metodi
+         //(+)Si ha tutto in un solo luogo
+         //(-)Quel luogo è la oncreate
+         //(-)I bottoni non compaiono
+/*        ImageButton bfav = findViewById(R.id.imageButtonFavourites);
+        bfav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+        ImageButton bstats = findViewById(R.id.imageButtonStats);
+        ImageButton bloc = findViewById(R.id.imageButtonLocation);
+        ImageButton bhist = findViewById(R.id.imageButtonHistory);
 */
+
+
+
+
+        //Menu inferiore: Metodo 2
+         //(+ 0 -?)Permette di avere le azioni al click divise dalle altre
+         //(+)Permette di avere tutte le operazioni in un posto
+         //(-)Quel posto è la oncreate
+         //(-)Non mostra le icone
+        /*
+        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
+        myToolbar2.inflateMenu(R.menu.menu_maps_2);
+        myToolbar2.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override//!!!Con sta roba c'è il secondo menu ma non è con le icone!!!
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.favourites:
+                        //cose
+                        return true;
+                    case R.id.stats:
+                        //cose
+                        return true;
+                    case R.id.location:
+                        //cose
+                        return true;
+                    case R.id.history:
+                        //cose
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });*/
+
 
         searchView = findViewById(R.id.srclocation);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -132,8 +192,25 @@ private FusedLocationProviderClient fusedLocationClient;
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_maps, menu);
+        getMenuInflater().inflate(R.menu.menu_maps, menu);
+
+        //Menu inferiore: Metodo 3
+         //(+)Permette di avere la creazione del secondo menu insieme a quella del primo
+         //(+)Permette di aggiungere le opzioni del menu2 a quelle del menu1 per la gestione
+         //(+)Permette di non dover settare i listener nella oncreate
+         //(-)Non mostra le icone come dovrebbe
+        /**/
+        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
+        Menu menu2 = myToolbar2.getMenu();
+        getMenuInflater().inflate(R.menu.menu_maps_2, menu2);
+        for(int i= 0; i < menu2.size(); i++){
+            menu2.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener(){
+                @Override
+                public boolean onMenuItemClick(MenuItem item){
+                    return onOptionsItemSelected(item);
+                }
+            });
+        }
         return true;
     }
 
@@ -146,24 +223,32 @@ private FusedLocationProviderClient fusedLocationClient;
                 //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
                 return true;
             case R.id.guida:
-                //Rimandare alla pagina con la guida/mostrare popup della guida
-                //Intent intent = new Intent(this, "guida".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina con la guida/mostrare popup della guida
+                Intent intent = new Intent(this, "guida".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.faq:
-                //Rimandare alla pagina con le F.A.Q.
-                //Intent intent = new Intent(this, "FAQ".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina con le F.A.Q.
+                Intent intent = new Intent(this, "FAQ".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.contatti:
-                //Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                //Intent intent = new Intent(this, "contatti".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina dei contatti/mostrare popup dei contatti
+                Intent intent = new Intent(this, "contatti".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.credits:
-                //Rimandare alla pagina dei credits/mostrare popup dei credits
-                //Intent intent = new Intent(this, "credits".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina dei credits/mostrare popup dei credits
+                Intent intent = new Intent(this, "credits".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.aggiornamento:
                 /*Rimandare alla pagina di aggiornamento
@@ -192,6 +277,22 @@ private FusedLocationProviderClient fusedLocationClient;
                 startActivity(intent);
                 */
                 return true;
+
+//Opzioni aggiuntive per il metodo 3
+            case R.id.favourites:
+                //cose
+                return true;
+            case R.id.stats:
+                //cose
+                return true;
+            case R.id.location:
+                //cose
+                return true;
+            case R.id.history:
+                //cose
+                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }

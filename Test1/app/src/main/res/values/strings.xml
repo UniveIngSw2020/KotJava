@@ -27,4 +27,11 @@
     <string name="locationitem">Informazioni luogo</string>
     <string name="historyitem">Luoghi visitati</string>
 
+    <string name="favdescription">Luoghi preferiti</string>
+    <string name="statdescription">Informazioni sull\'affluenza</string>
+    <string name="locdescription">Informazioni sulla località</string>
+    <string name="histdescription">Luoghi precedentemente visitati</string>
+
+
+
 </resources>

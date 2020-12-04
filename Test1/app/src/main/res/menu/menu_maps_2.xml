@@ -4,21 +4,25 @@
 
     <item
         android:id="@+id/favourites"
+        android:visible="true"
         android:icon="@android:drawable/btn_star"
         android:title="@string/favouritesitem"
         app:showAsAction="always" />
     <item
         android:id="@+id/stats"
+        android:visible="true"
         android:icon="@android:drawable/ic_menu_info_details"
         android:title="@string/statsitem"
         app:showAsAction="always" />
     <item
         android:id="@+id/location"
+        android:visible="true"
         android:icon="@android:drawable/ic_menu_myplaces"
         android:title="@string/locationitem"
         app:showAsAction="always" />
     <item
         android:id="@+id/history"
+        android:visible="true"
         android:icon="@android:drawable/ic_menu_recent_history"
         android:title="@string/historyitem"
         app:showAsAction="always" />
