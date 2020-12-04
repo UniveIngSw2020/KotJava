@@ -61,6 +61,11 @@ private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
     SupportMapFragment mapFragment;
+
+    //Location location; // Location
+    double latitude; // Latitude
+    double longitude; // Longitude
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +149,12 @@ private FusedLocationProviderClient fusedLocationClient;
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG)
                 .show();
         //fa la send and il get per ora
-        SendLoc(String.format(String.valueOf(location)));
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        //SendLoc(String.format(String.valueOf(location)));
+        SendLoc(latitude + ":" + longitude);
 
     }
 
