@@ -13,6 +13,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -155,7 +156,7 @@ private FusedLocationProviderClient fusedLocationClient;
 
         //SendLoc(String.format(String.valueOf(location)));
         SendLoc(latitude + ":" + longitude);
-
+        Log.e("loc","ok=");
     }
 
     @Override
@@ -248,6 +249,8 @@ private FusedLocationProviderClient fusedLocationClient;
 
     public  void  SendLoc(String loc){ //need location
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound=0&timeStamp=1";
 
@@ -256,6 +259,8 @@ private FusedLocationProviderClient fusedLocationClient;
         BufferedReader reader=null;
 
         // Send data
+        Log.e("loc","ok3=");
+        Log.e("loc","ok="+loc);
         try
         {
 
@@ -275,6 +280,7 @@ private FusedLocationProviderClient fusedLocationClient;
             StringBuilder sb = new StringBuilder();
             String line = null;
 
+            Log.e("loc","ok2="); //vedi cosa invia
             // Read Server Response
             while((line = reader.readLine()) != null)
             {
