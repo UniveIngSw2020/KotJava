@@ -5,11 +5,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,14 +32,29 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
+
+
+
+//aggiunta metodo per fare send e get (get viene fatta come lettura dopo risposta del send per ora poi vediamo)
+//send messa sull click per la posizione per ora
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
-
+    SupportMapFragment mapFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +72,7 @@ private FusedLocationProviderClient fusedLocationClient;
 */
 
         searchView = findViewById(R.id.srclocation);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -119,6 +137,9 @@ private FusedLocationProviderClient fusedLocationClient;
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG)
                 .show();
+        //fa la send and il get per ora
+        SendLoc(String.format(String.valueOf(location)));
+
     }
 
     @Override
@@ -196,4 +217,122 @@ private FusedLocationProviderClient fusedLocationClient;
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    //get info of smartminchia da inviare
+    String getId() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    String getMac() {
+
+        BluetoothAdapter m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return m_BluetoothAdapter.getAddress();
+    }
+    //send and from server php version:
+
+    public  void  SendLoc(String loc){ //need location
+
+
+        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound=0&timeStamp=1";
+
+
+        String text = "";
+        BufferedReader reader=null;
+
+        // Send data
+        try
+        {
+
+            // Defined URL  where to send data
+            URL url = new URL("http://192.168.1.4/posti.php");
+
+            // Send POST data request
+
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write( data );
+            wr.flush();
+
+            // Get the server response
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            // Read Server Response
+            while((line = reader.readLine()) != null)
+            {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            //server response da usare per i marker nella get
+            text = sb.toString();
+        }
+        catch(Exception ex)
+        {
+
+            ex.printStackTrace();
+
+        }
+        finally
+        {
+            try
+            {
+                reader.close();
+            }
+
+            catch(Exception ex) {ex.printStackTrace();}
+            // fa la get
+            get(text);
+        }
+
+    }
+
+    void get(String k){
+        // get from server and add markers
+
+        try {
+            JSONObject jsonObject = new JSONObject(k);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+            for (int i=0;i<jsonArray.length();i++){
+                final JSONObject obj = jsonArray.getJSONObject(i);
+
+                // Log.e("json",obj.optString("id"));
+
+                final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
+
+                final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
+
+                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lon))
+                                .title(obj.optString("id")));
+
+                        // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
+
+                    }
+                });
+
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+    }
+
 }
