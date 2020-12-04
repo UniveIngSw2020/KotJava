@@ -46,9 +46,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+/*v0:
 //aggiunta metodo per fare send e get (get viene fatta come lettura dopo risposta del send per ora poi vediamo)
 //send messa sull click per la posizione per ora
+v1:
+nuovo metodo solo per fare il get senza send creato
+
+
+/*
+ */
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 private FusedLocationProviderClient fusedLocationClient;
@@ -253,7 +259,6 @@ private FusedLocationProviderClient fusedLocationClient;
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write( data );
             wr.flush();
-
             // Get the server response
 
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -269,6 +274,7 @@ private FusedLocationProviderClient fusedLocationClient;
 
             //server response da usare per i marker nella get
             text = sb.toString();
+
         }
         catch(Exception ex)
         {
@@ -284,13 +290,12 @@ private FusedLocationProviderClient fusedLocationClient;
             }
 
             catch(Exception ex) {ex.printStackTrace();}
-            // fa la get
-            get(text);
+            getParsing(text);
         }
 
     }
 
-    void get(String k){
+    void getParsing(String k){
         // get from server and add markers
 
         try {
@@ -335,4 +340,53 @@ private FusedLocationProviderClient fusedLocationClient;
 
     }
 
+    //get separato da send
+    void get(String k){
+
+        String text = "";
+        BufferedReader reader=null;
+
+        try {
+            // Defined URL  where to send data
+            URL url = new URL("http://192.168.1.4/posti.php");
+
+            URLConnection conn = url.openConnection();
+
+            // get from server and add markers
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            // Read Server Response
+            while ((line = reader.readLine()) != null) {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            //server response da usare per i marker nella get
+            text = sb.toString();
+        }
+        catch(Exception ex)
+        {
+
+            ex.printStackTrace();
+
+        }
+        finally
+        {
+            try
+            {
+                reader.close();
+            }
+
+            catch(Exception ex) {ex.printStackTrace();}
+            getParsing(text);
+        }
+
+
+
+
+    }
 }
+
+
