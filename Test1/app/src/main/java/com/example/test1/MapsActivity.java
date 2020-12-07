@@ -5,31 +5,25 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+//Menu inferiore Metodo 2
+//import android.widget.Toolbar.OnMenuItemClickListener;
+//Menu inferiore Metodo 3
+import android.view.MenuItem.OnMenuItemClickListener;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,48 +37,23 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
-
-/*v0:
-//aggiunta metodo per fare send e get (get viene fatta come lettura dopo risposta del send per ora poi vediamo)
-//send messa sull click per la posizione per ora
-v1:
-nuovo metodo solo per fare il get senza send creato
-v2:
-messo thread e controllo per permessi prima di fare invio location (location da a (google in california?)
-
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />  per https://stackoverflow.com/questions/29753117/waitinginmainsignalcatcherloop-error-in-android-application
-
- */
-
-
-/*
- */
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-private FusedLocationProviderClient fusedLocationClient;
+    private ImageButton bfav;
+    private ImageButton bstats;
+    private ImageButton bloc;
+    private ImageButton bhist;
+
+    private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
-    SupportMapFragment mapFragment;
-
-    //Location location; // Location
-    double latitude; // Latitude
-    double longitude; // Longitude
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -92,15 +61,60 @@ private FusedLocationProviderClient fusedLocationClient;
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
+        getActionBar().setDisplayShowTitleEnabled(false);
 
-/*Così come'è non funziona
-        //Toolbarinferiore con il menu a icone/bottoni
-        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
-        setActionBar( myToolbar2 );
+        //Menu inferiore: Metodo 1
+         //(+)Più semplice degli altri metodi
+         //(+)Si ha tutto in un solo luogo
+         //(-)Quel luogo è la oncreate
+         //(-)I bottoni non compaiono
+/*        ImageButton bfav = findViewById(R.id.imageButtonFavourites);
+        bfav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+        ImageButton bstats = findViewById(R.id.imageButtonStats);
+        ImageButton bloc = findViewById(R.id.imageButtonLocation);
+        ImageButton bhist = findViewById(R.id.imageButtonHistory);
 */
 
+
+
+
+        //Menu inferiore: Metodo 2
+         //(+ 0 -?)Permette di avere le azioni al click divise dalle altre
+         //(+)Permette di avere tutte le operazioni in un posto
+         //(-)Quel posto è la oncreate
+         //(-)Non mostra le icone
+        /*
+        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
+        myToolbar2.inflateMenu(R.menu.menu_maps_2);
+        myToolbar2.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override//!!!Con sta roba c'è il secondo menu ma non è con le icone!!!
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.favourites:
+                        //cose
+                        return true;
+                    case R.id.stats:
+                        //cose
+                        return true;
+                    case R.id.location:
+                        //cose
+                        return true;
+                    case R.id.history:
+                        //cose
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });*/
+
+
         searchView = findViewById(R.id.srclocation);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -138,7 +152,6 @@ private FusedLocationProviderClient fusedLocationClient;
 
 
         mapFragment.getMapAsync(this);
-        displayDiscovry(); //scan BLUETOOTH
     }
 
 
@@ -166,14 +179,6 @@ private FusedLocationProviderClient fusedLocationClient;
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG)
                 .show();
-        //fa la send and il get per ora
-
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-        //SendLoc(String.format(String.valueOf(location)));
-        controllPermissionAndSend(latitude + ":" + longitude);
-        Log.e("loc","ok=");
     }
 
     @Override
@@ -187,12 +192,27 @@ private FusedLocationProviderClient fusedLocationClient;
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_maps, menu);
+        getMenuInflater().inflate(R.menu.menu_maps, menu);
+
+        //Menu inferiore: Metodo 3
+         //(+)Permette di avere la creazione del secondo menu insieme a quella del primo
+         //(+)Permette di aggiungere le opzioni del menu2 a quelle del menu1 per la gestione
+         //(+)Permette di non dover settare i listener nella oncreate
+         //(-)Non mostra le icone come dovrebbe
+        /**/
+        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
+        Menu menu2 = myToolbar2.getMenu();
+        getMenuInflater().inflate(R.menu.menu_maps_2, menu2);
+        for(int i= 0; i < menu2.size(); i++){
+            menu2.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener(){
+                @Override
+                public boolean onMenuItemClick(MenuItem item){
+                    return onOptionsItemSelected(item);
+                }
+            });
+        }
         return true;
     }
-
-
 
     //Gestione del click sulle varie voci del menu
     @Override
@@ -203,24 +223,32 @@ private FusedLocationProviderClient fusedLocationClient;
                 //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
                 return true;
             case R.id.guida:
-                //Rimandare alla pagina con la guida/mostrare popup della guida
-                //Intent intent = new Intent(this, "guida".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina con la guida/mostrare popup della guida
+                Intent intent = new Intent(this, "guida".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.faq:
-                //Rimandare alla pagina con le F.A.Q.
-                //Intent intent = new Intent(this, "FAQ".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina con le F.A.Q.
+                Intent intent = new Intent(this, "FAQ".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.contatti:
-                //Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                //Intent intent = new Intent(this, "contatti".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina dei contatti/mostrare popup dei contatti
+                Intent intent = new Intent(this, "contatti".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.credits:
-                //Rimandare alla pagina dei credits/mostrare popup dei credits
-                //Intent intent = new Intent(this, "credits".class);
-                //startActivity(intent);
+                /*
+                Rimandare alla pagina dei credits/mostrare popup dei credits
+                Intent intent = new Intent(this, "credits".class);
+                startActivity(intent);
+                 */
                 return true;
             case R.id.aggiornamento:
                 /*Rimandare alla pagina di aggiornamento
@@ -249,268 +277,24 @@ private FusedLocationProviderClient fusedLocationClient;
                 startActivity(intent);
                 */
                 return true;
+
+//Opzioni aggiuntive per il metodo 3
+            case R.id.favourites:
+                //cose
+                return true;
+            case R.id.stats:
+                //cose
+                return true;
+            case R.id.location:
+                //cose
+                return true;
+            case R.id.history:
+                //cose
+                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    //get info of smartminchia da inviare
-    String getId() {
-        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-    }
-
-    String getMac() {
-
-        BluetoothAdapter m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        return m_BluetoothAdapter.getAddress();
-    }
-    //send and from server php version:
-
-/////////////////////////////////////////////////
-
-    void controllPermissionAndSend(String loc) {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        ArrayList<String> arrayList = new ArrayList<>();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-            Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
-        }else {
-            Log.e("permessi","ok");
-            SendLoc(loc);
-        }
-        if (!arrayList.isEmpty()) {
-            String[] permi = new String[arrayList.size()];
-            permi = arrayList.toArray(permi);
-            ActivityCompat.requestPermissions(this, permi, 0);
-        }
-    }
-
-
-
-
-    //
-
-    public  void  SendLoc(String loc){ //need location
-
-
-
-        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound=0&timeStamp=1";
-
-
-        String text = "";
-        BufferedReader reader=null;
-
-        // Send data
-        Log.e("location","this is your location"+loc);
-        try
-        {
-
-            // Defined URL  where to send data
-            URL url = new URL("http://192.168.0.104/posti.php");
-
-            // Send POST data request
-
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-            wr.write( data );
-            wr.flush();
-
-            // Get the server response
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            Log.e("loc","ok2 Sent"); //vedi cosa invia
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
-            try
-            {
-                reader.close();
-            }
-
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
-        }
-
-    }
-
-    void getParsing(String k){
-        // get from server and add markers
-
-        try {
-            JSONObject jsonObject = new JSONObject(k);
-
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-            for (int i=0;i<jsonArray.length();i++){
-                final JSONObject obj = jsonArray.getJSONObject(i);
-
-                // Log.e("json",obj.optString("id"));
-                final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
-                final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
-
-                mapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(lat, lon))
-                                .title(obj.optString("id")));
-                        // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-                    }
-                });
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //get separato da send
-    void getLastData(String k){
-
-        String text = "";
-        BufferedReader reader=null;
-
-        try {
-            // Defined URL  where to send data
-            URL url = new URL("http://192.168.1.4/posti.php");
-
-            URLConnection conn = url.openConnection();
-
-            // get from server and add markers
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            // Read Server Response
-            while ((line = reader.readLine()) != null) {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
-            try
-            {
-                reader.close();
-            }
-
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
-        }
-
-
-
-
-    }
-
-    public void  displayDiscovry(){
-
-        final ArrayList<String> list = new ArrayList<>();
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MapsActivity.this,android.R.layout.simple_list_item_1,list);
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
-        LinearLayout linearLayout = new LinearLayout(MapsActivity.this);
-
-        ListView listView = new ListView(MapsActivity.this);
-        linearLayout.addView(listView);
-
-        listView.setAdapter(arrayAdapter);
-
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Toast t = new Toast(this);
-            t.setText("Sorry your phone do not support Bluetooth");
-            t.show();
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent,1);}
-            //   bluetoothDev=new BluetoothDev();
-
-            //added
-            // Create a BroadcastReceiver for ACTION_FOUND
-            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-                public void onReceive(Context context, Intent intent) {
-                    String action = intent.getAction();
-                    // When discovery finds a device
-                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                        // Get the BluetoothDevice object from the Intent
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        // Add the name and address to an array adapter to show in a ListView
-
-                        Log.e("list",device.getAddress());
-                        list.add(device.getName());
-                        arrayAdapter.notifyDataSetChanged();
-
-                    }
-                }
-            };
-// Register the BroadcastReceiver
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-            //end added
-
-            bluetoothAdapter.startDiscovery();
-
-            alertDialog.setTitle("Bluetooth Scan");
-            alertDialog.setView(linearLayout);
-            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    unregisterReceiver(mReceiver);
-                    bluetoothAdapter.cancelDiscovery();
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
-
-        }
-    }
-
 }
-
-
