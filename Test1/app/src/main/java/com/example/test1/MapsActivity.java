@@ -5,7 +5,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,6 +24,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -52,6 +62,12 @@ import java.util.List;
 //send messa sull click per la posizione per ora
 v1:
 nuovo metodo solo per fare il get senza send creato
+v2:
+messo thread e controllo per permessi prima di fare invio location (location da a (google in california?)
+
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />  per https://stackoverflow.com/questions/29753117/waitinginmainsignalcatcherloop-error-in-android-application
+
+ */
 
 
 /*
@@ -122,6 +138,7 @@ private FusedLocationProviderClient fusedLocationClient;
 
 
         mapFragment.getMapAsync(this);
+        displayDiscovry(); //scan BLUETOOTH
     }
 
 
@@ -155,7 +172,7 @@ private FusedLocationProviderClient fusedLocationClient;
         longitude = location.getLongitude();
 
         //SendLoc(String.format(String.valueOf(location)));
-        SendLoc(latitude + ":" + longitude);
+        controllPermissionAndSend(latitude + ":" + longitude);
         Log.e("loc","ok=");
     }
 
@@ -174,6 +191,8 @@ private FusedLocationProviderClient fusedLocationClient;
         inflater.inflate(R.menu.menu_maps, menu);
         return true;
     }
+
+
 
     //Gestione del click sulle varie voci del menu
     @Override
@@ -247,10 +266,43 @@ private FusedLocationProviderClient fusedLocationClient;
     }
     //send and from server php version:
 
-    public  void  SendLoc(String loc){ //need location
+/////////////////////////////////////////////////
+
+    void controllPermissionAndSend(String loc) {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
+        }else {
+            Log.e("permessi","ok");
+            SendLoc(loc);
+        }
+        if (!arrayList.isEmpty()) {
+            String[] permi = new String[arrayList.size()];
+            permi = arrayList.toArray(permi);
+            ActivityCompat.requestPermissions(this, permi, 0);
+        }
+    }
+
+
+
+
+    //
+
+    public  void  SendLoc(String loc){ //need location
+
+
 
         String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound=0&timeStamp=1";
 
@@ -259,28 +311,30 @@ private FusedLocationProviderClient fusedLocationClient;
         BufferedReader reader=null;
 
         // Send data
-        Log.e("loc","ok3=");
-        Log.e("loc","ok="+loc);
+        Log.e("location","this is your location"+loc);
         try
         {
 
             // Defined URL  where to send data
-            URL url = new URL("http://192.168.1.4/posti.php");
+            URL url = new URL("http://192.168.0.104/posti.php");
 
             // Send POST data request
 
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
+
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
             wr.write( data );
             wr.flush();
+
             // Get the server response
 
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line = null;
 
-            Log.e("loc","ok2="); //vedi cosa invia
+            Log.e("loc","ok2 Sent"); //vedi cosa invia
             // Read Server Response
             while((line = reader.readLine()) != null)
             {
@@ -323,41 +377,28 @@ private FusedLocationProviderClient fusedLocationClient;
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
                 // Log.e("json",obj.optString("id"));
-
                 final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
-
                 final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
 
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
                         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-
                         googleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lon))
                                 .title(obj.optString("id")));
-
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-
                     }
                 });
-
-
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-
-
-
     }
 
     //get separato da send
-    void get(String k){
+    void getLastData(String k){
 
         String text = "";
         BufferedReader reader=null;
@@ -403,6 +444,73 @@ private FusedLocationProviderClient fusedLocationClient;
 
 
     }
+
+    public void  displayDiscovry(){
+
+        final ArrayList<String> list = new ArrayList<>();
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MapsActivity.this,android.R.layout.simple_list_item_1,list);
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
+        LinearLayout linearLayout = new LinearLayout(MapsActivity.this);
+
+        ListView listView = new ListView(MapsActivity.this);
+        linearLayout.addView(listView);
+
+        listView.setAdapter(arrayAdapter);
+
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            Toast t = new Toast(this);
+            t.setText("Sorry your phone do not support Bluetooth");
+            t.show();
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent,1);}
+            //   bluetoothDev=new BluetoothDev();
+
+            //added
+            // Create a BroadcastReceiver for ACTION_FOUND
+            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    // When discovery finds a device
+                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                        // Get the BluetoothDevice object from the Intent
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        // Add the name and address to an array adapter to show in a ListView
+
+                        Log.e("list",device.getAddress());
+                        list.add(device.getName());
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
+                }
+            };
+// Register the BroadcastReceiver
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+            //end added
+
+            bluetoothAdapter.startDiscovery();
+
+            alertDialog.setTitle("Bluetooth Scan");
+            alertDialog.setView(linearLayout);
+            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    unregisterReceiver(mReceiver);
+                    bluetoothAdapter.cancelDiscovery();
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.show();
+
+        }
+    }
+
 }
 
 
