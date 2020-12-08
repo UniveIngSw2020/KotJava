@@ -10,8 +10,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Bisogna fare il check se è il primo lancio o meno e nel caso far partire l'altra
-         //activity
         Intent intent = new Intent(this, FirstAccessActivity.class);
         startActivity(intent);
         finish();

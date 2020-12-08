@@ -1,15 +1,12 @@
 <resources>
     <string name="app_name">Test1</string>
+    <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
+    <string name="guida">testo guida</string>
+    <string name="richiesta_risorse">Accettare utilizzo dati....</string>
+    <string name="ACCETTA_RISORSEe">ACCETTA</string>
     <string name="request_check">check request</string>
-    <string name="title_activity_introduction">IntroductionActivity</string>
-
-    <!-- Strings used for fragments for navigation -->
-    <string name="guida">Guida introduttiva all\'applicazione</string>
-    <string name="richiesta_risorse">Per l\'utilizzo dell\'applicazione è necessario fornire l\'accesso a Bluetooth e GPS</string>
-    <string name="accetta_risorse">Accetta</string>
-
 
     <!-- Strings for MapsActivity menu -->
     <string name="helpitem">Help</string>
@@ -23,5 +20,18 @@
     <string name="storicoitem">Storico scan</string>
     <string name="autoscanitem">Attivazione auto scan</string>
     <string name="nascostiitem">Dispositivi nascosti</string>
+
+    <!-- Strings for second MapsActivity menu -->
+    <string name="favouritesitem">Preferiti</string>
+    <string name="statsitem">Informazioni affluenza</string>
+    <string name="locationitem">Informazioni luogo</string>
+    <string name="historyitem">Luoghi visitati</string>
+
+    <string name="favdescription">Luoghi preferiti</string>
+    <string name="statdescription">Informazioni sull\'affluenza</string>
+    <string name="locdescription">Informazioni sulla località</string>
+    <string name="histdescription">Luoghi precedentemente visitati</string>
+
+
 
 </resources>
