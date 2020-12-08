@@ -26,65 +26,76 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-       
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
 
 
+
+
+                    /*search bar */
         searchView = findViewById(R.id.srclocation);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
 
 
-       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String location = searchView.getQuery().toString();
-                List<Address> addressList = null;
-                System.out.println(location);
-                if(location != null  && !location.equals("")){
-                    System.out.println("dentro if");
-                    Geocoder geocoder = new Geocoder(getApplicationContext());
-                    try{
+                List<Address> addressList = new ArrayList<>();
+                int i = 0;
+                if (FirstAccessActivity.checkPermission(getApplicationContext())) {
+                    if (location != null || !location.equals("")) {
+                        Geocoder geocoder = new Geocoder(getApplicationContext());
+                     /*   if(Geocoder.isPresent()){
 
-                        addressList = geocoder.getFromLocationName(location, 1);
-                        System.out.println(addressList);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        }
+
+                      */
+                        try {
+                            System.out.println("entra");
+                            while(addressList.isEmpty() && i < 10) {
+                                addressList = geocoder.getFromLocationName(location, 5);
+                                i++;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if(!addressList.isEmpty()) {
+                            Address address = addressList.get(0);
+                            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                            map.addMarker(new MarkerOptions().position(latLng).title(location));
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                        }
                     }
 
-                    /*
-                    Address address = addressList.get(0);
-                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                    System.out.println(address);
-                    map.addMarker(new MarkerOptions().position(latLng).title(location));
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-
-                     */
                 }
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String newText)
+            {
                 return false;
             }
         });
-
-
-
         mapFragment.getMapAsync(this);
     }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
