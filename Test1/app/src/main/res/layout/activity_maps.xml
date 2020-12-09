@@ -40,7 +40,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_maps_2"/>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/bottomFrag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
