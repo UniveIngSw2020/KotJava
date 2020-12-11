@@ -24,7 +24,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -83,6 +85,8 @@ private FusedLocationProviderClient fusedLocationClient;
     double latitude; // Latitude
     double longitude; // Longitude
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,34 +103,61 @@ private FusedLocationProviderClient fusedLocationClient;
         setActionBar( myToolbar2 );
 */
 
-        searchView = findViewById(R.id.srclocation);
+        final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
+
+        //Button scan = findViewById(R.id.bscan); //per lo scan per ora no
+
+        //searchView = findViewById(R.id.srclocation);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                String location = searchView.getQuery().toString();
-                List<Address> addressList = null;
-                System.out.println(location);
-                if(location != null  && !location.equals("")){
-                    System.out.println("dentro if");
-                    Geocoder geocoder = new Geocoder(getApplicationContext());
-                    try{
+            public void onMapReady(GoogleMap googleMap) {
 
+                MapsActivity.this.map = googleMap;
+
+                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);  ;
+
+
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.6723, 12.2422), 11));
+
+
+            }
+
+        });
+
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.onActionViewExpanded();
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String location) {
+
+                List<Address> addressList = null;
+
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
                         addressList = geocoder.getFromLocationName(location, 1);
-                        System.out.println(addressList);
+
+
+
+                        Address address = addressList.get(0);
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+
+                        map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    /*
-                    Address address = addressList.get(0);
-                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                    System.out.println(address);
-                    map.addMarker(new MarkerOptions().position(latLng).title(location));
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-
-                     */
                 }
+
                 return false;
             }
 
@@ -134,7 +165,13 @@ private FusedLocationProviderClient fusedLocationClient;
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
+
+
         });
+
+
+
+
 
 
         mapFragment.getMapAsync(this);
