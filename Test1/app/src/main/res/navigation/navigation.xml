@@ -2,23 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstAccessActivity">
-
-    <activity
-        android:id="@+id/SplashActivity"
-        android:name="com.example.test1.SplashActivity"
-        android:label="activity_splash">
-
-        <action
-            android:id="@+id/action_SplashActivity_to_MapsActivity"
-            app:destination="@id/MapsActivity" />
-
-        <action
-            android:id="@+id/action_SplashActivity_to_FirstAccessActivity"
-            app:destination="@id/FirstAccessActivity" />
-
-    </activity>
+    android:id="@+id/nav_graph">
 
     <activity
         android:id="@+id/FirstAccessActivity"
@@ -33,5 +17,44 @@
     <activity
         android:id="@+id/MapsActivity"
         android:name="com.example.test1.MapsActivity"
-        tools:layout="@layout/activity_maps"/>
+        tools:layout="@layout/activity_maps">
+
+        <action
+            android:id="@+id/action_MapsActivity_to_Destination1Activity"
+            app:destination="@id/destination1Activity" />
+
+        <action
+            android:id="@+id/action_MapsActivity_to_Destination2Activity"
+            app:destination="@id/destination2Activity" />
+
+        <action
+            android:id="@+id/action_MapsActivity_to_Destination3Activity"
+            app:destination="@id/destinatio3Activity" />
+
+        <action
+            android:id="@+id/action_MapsActivity_to_Destination4Activity"
+            app:destination="@id/desination4Activity" />
+
+    </activity>
+
+    <activity
+        android:id="@+id/destination1Activity"
+        android:name="com.example.test1.Destination1Activity"
+        android:label="activity_destination1"
+        tools:layout="@layout/activity_destination1" />
+    <activity
+        android:id="@+id/destination2Activity"
+        android:name="com.example.test1.Destination2Activity"
+        android:label="activity_destination2"
+        tools:layout="@layout/activity_destination2" />
+    <activity
+        android:id="@+id/destinatio3Activity"
+        android:name="com.example.test1.Destinatio3Activity"
+        android:label="activity_destinatio3"
+        tools:layout="@layout/activity_destinatio3" />
+    <activity
+        android:id="@+id/desination4Activity"
+        android:name="com.example.test1.Desination4Activity"
+        android:label="activity_desination4"
+        tools:layout="@layout/activity_desination4" />
 </navigation>

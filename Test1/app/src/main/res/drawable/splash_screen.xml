@@ -3,6 +3,14 @@
 
     <item
         android:drawable="@color/colorPrimary"/>
+
+    <shape>
+        <gradient
+            android:angle="315"
+            android:endColor="#1a82ff"
+            android:startColor="#2100d3"
+            android:type="linear"/>
+    </shape>
 <!-- Per qualche motivo non gli va bene sta cosa
     <item>
         <bitmap

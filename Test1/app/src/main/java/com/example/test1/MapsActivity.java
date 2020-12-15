@@ -1,10 +1,11 @@
 package com.example.test1;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.NavController;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -40,8 +41,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.IOException;
 import java.util.List;
 
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+//Ho messo come estensione Appcompact invece che FragmentActivity perchè mi permette di fare cose e estende a sua volta fragment
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
@@ -100,11 +101,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         //Bottomview per la navigazione
-//        BottomNavigationView navView = findViewById(R.id.bottomView);
-//        AppBarConfiguration appBarConf = new AppBarConfiguration.Builder( /* R.id.pagina1, R.id.pagin2, R.id.pagina3*/ ).build();
-//        NavController navCont = Navigation.findNavController(this, R.id.bottomFrag );
-//        NavigationUI.setupActionBarWithNavController(this, navCont, appBarConf);
-//        NavigationUI.setupWithNavController( navView, navCont );
+//(!)Forse è getSupportFragmentManager il problema perchè non è inizializzato o qualcosa del genere
+        BottomNavigationView navView = findViewById(R.id.bottomView);
+        AppBarConfiguration appBarConf = new AppBarConfiguration.Builder( R.id.destination1, R.id.destination2, R.id.destination3, R.id.destination4 ).build();
+        NavHostFragment nhf = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        //NavController navCont = nhf.getNavController();
+        //NavController navCont = nhf.findNavController(this, R.id.nav_host_fragment );
+        NavController navCont = NavHostFragment.findNavController(nhf);
+        NavigationUI.setupActionBarWithNavController(this, navCont, appBarConf);
+        NavigationUI.setupWithNavController( navView, navCont );
     }
 
 

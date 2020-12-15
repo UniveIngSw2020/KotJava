@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,15 +40,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_maps_2"/>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/bottomFrag"
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="@+id/bottomView"
         app:layout_constraintBottom_toBottomOf="@+id/bottomView"
         app:layout_constraintEnd_toEndOf="@+id/bottomView"
-        app:layout_constraintStart_toStartOf="@+id/bottomView"/>
+        app:layout_constraintStart_toStartOf="@+id/bottomView"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/navigation"/>
 
 
     <SearchView
