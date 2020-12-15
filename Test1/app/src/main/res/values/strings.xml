@@ -4,8 +4,16 @@
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
     <string name="guida">testo guida</string>
-    <string name="richiesta_risorse">Accettare utilizzo dati....</string>
-    <string name="ACCETTA_RISORSEe">ACCETTA</string>
+    <string name="richiesta_risorse">
+        L\'applicazione, per il suo corretto funzionamento,
+        necessita dell\'accesso alle seguenti risorse:\n
+        - Bluettoth;\n
+        - GPS;\n
+        - Memoria interna del dispositivo;\n
+        Premendo sul bottone sottostante si accetta di fornire
+        l\'accesso a tali risorse.
+    </string>
+    <string name="ACCETTA_RISORSEe">Accetta</string>
     <string name="request_check">check request</string>
 
     <!-- Strings for MapsActivity menu -->
