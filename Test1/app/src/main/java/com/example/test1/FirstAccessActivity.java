@@ -30,7 +30,9 @@ public class FirstAccessActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
 
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
+
         setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firstaccess);
         Button btaccess = findViewById(R.id.button);

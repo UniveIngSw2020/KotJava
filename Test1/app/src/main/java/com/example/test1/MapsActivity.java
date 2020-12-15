@@ -1,6 +1,7 @@
 package com.example.test1;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -76,7 +77,7 @@ messo thread e controllo per permessi prima di fare invio location (location da 
 /*
  */
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
@@ -95,10 +96,10 @@ private FusedLocationProviderClient fusedLocationClient;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar myToolbar1 = findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
 
-        //(!)NON VENGONO INSERITE LE ICONE DEI BOTTONI(!)
+//(!)NON VENGONO INSERITE LE ICONE DEI BOTTONI(!)
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -141,7 +142,7 @@ private FusedLocationProviderClient fusedLocationClient;
 
                 MapsActivity.this.map = googleMap;
 
-                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);  ;
+                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
 
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.6723, 12.2422), 11));
@@ -190,12 +191,7 @@ private FusedLocationProviderClient fusedLocationClient;
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-
-
         });
-
-
-
 
 
 
