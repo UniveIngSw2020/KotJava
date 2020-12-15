@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -97,11 +98,35 @@ private FusedLocationProviderClient fusedLocationClient;
         Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
 
-/*Così come'è non funziona
-        //Toolbarinferiore con il menu a icone/bottoni
-        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
-        setActionBar( myToolbar2 );
-*/
+        //(!)NON VENGONO INSERITE LE ICONE DEI BOTTONI(!)
+        ImageButton bfav = findViewById(R.id.imageButtonFavourites);
+        bfav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bstats = findViewById(R.id.imageButtonStats);
+        bstats.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bloc = findViewById(R.id.imageButtonLocation);
+        bloc.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bhist = findViewById(R.id.imageButtonHistory);
+        bhist.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
 
         final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
 
