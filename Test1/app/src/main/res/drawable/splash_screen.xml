@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
 
     <item
         android:drawable="@color/colorPrimary"/>
+
 <!-- Per qualche motivo non gli va bene sta cosa
     <item>
         <bitmap
@@ -10,4 +12,8 @@
             android:src="@mipmap/ic_launcher /> Dicono che ci vuole una png e non un xml da mostrare
     </item>
 -->
+    <item
+        android:gravity="center"
+        android:drawable="@drawable/ic_launcher_foreground"/>
+    
 </layer-list>

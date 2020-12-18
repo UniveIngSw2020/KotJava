@@ -62,52 +62,52 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:backgroundTint="#F44336"
+            android:backgroundTint="#00FFFFFF"
             android:contentDescription="@string/favdescription"
+            android:src="@android:drawable/btn_star"
             android:tint="#FFEB3B"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
             app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-            app:srcCompat="@android:drawable/btn_star" />
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
         <ImageButton
             android:id="@+id/imageButtonStats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:backgroundTint="#F44336"
+            android:backgroundTint="#00FFFFFF"
             android:contentDescription="@string/statdescription"
+            android:src="@android:drawable/ic_menu_info_details"
             android:tint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
             app:layout_constraintStart_toEndOf="@id/imageButtonFavourites"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-            app:srcCompat="@android:drawable/ic_menu_info_details" />
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
         <ImageButton
             android:id="@+id/imageButtonLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
-            android:backgroundTint="#F44336"
+            android:backgroundTint="#00FFFFFF"
             android:contentDescription="@string/locdescription"
+            android:src="@android:drawable/ic_menu_myplaces"
             android:tint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toStartOf="@id/imageButtonHistory"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-            app:srcCompat="@android:drawable/ic_menu_myplaces" />
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
         <ImageButton
             android:id="@+id/imageButtonHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="#F44336"
+            android:backgroundTint="#00FFFFFF"
             android:contentDescription="@string/histdescription"
+            android:src="@android:drawable/ic_menu_recent_history"
             android:tint="#8FD5F4"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-            app:srcCompat="@android:drawable/ic_menu_recent_history" />
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
