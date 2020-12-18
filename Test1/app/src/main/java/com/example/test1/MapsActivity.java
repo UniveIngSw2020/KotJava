@@ -99,7 +99,7 @@ private FusedLocationProviderClient fusedLocationClient;
         Toolbar myToolbar1 = findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
 
-//(!)NON VENGONO INSERITE LE ICONE DEI BOTTONI(!)
+
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
