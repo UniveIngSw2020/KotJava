@@ -16,23 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Desination4Activity" />
-        <activity android:name=".Destinatio3Activity" />
-        <activity android:name=".Destination2Activity" />
-        <activity android:name=".Destination1Activity" />
-
 <!--
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 -->
-
         <activity
             android:name=".FirstAccessActivity"
             android:theme="@style/SplashTheme">
@@ -44,8 +37,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_maps" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

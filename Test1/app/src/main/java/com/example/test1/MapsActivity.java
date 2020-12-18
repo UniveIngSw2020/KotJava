@@ -1,13 +1,8 @@
 package com.example.test1;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.Navigation;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -19,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
@@ -36,13 +32,16 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
 import java.util.List;
 
-//Ho messo come estensione Appcompact invece che FragmentActivity perchè mi permette di fare cose e estende a sua volta fragment
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+    private ImageButton bfav;
+    private ImageButton bstats;
+    private ImageButton bloc;
+    private ImageButton bhist;
+
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
@@ -50,16 +49,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
 
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
         getActionBar().setDisplayShowTitleEnabled(false);
 
+
+//(!)NON VENGONO INSERITE LE ICONE DEI BOTTONI(!)
+        ImageButton bfav = findViewById(R.id.imageButtonFavourites);
+        bfav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bstats = findViewById(R.id.imageButtonStats);
+        bstats.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bloc = findViewById(R.id.imageButtonLocation);
+        bloc.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bhist = findViewById(R.id.imageButtonHistory);
+        bhist.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
 
         searchView = findViewById(R.id.srclocation);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -98,18 +126,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        mapFragment.getMapAsync(this);
 
-        //Bottomview per la navigazione
-//(!)Forse è getSupportFragmentManager il problema perchè non è inizializzato o qualcosa del genere
-        BottomNavigationView navView = findViewById(R.id.bottomView);
-        AppBarConfiguration appBarConf = new AppBarConfiguration.Builder( R.id.destination1, R.id.destination2, R.id.destination3, R.id.destination4 ).build();
-        NavHostFragment nhf = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        //NavController navCont = nhf.getNavController();
-        //NavController navCont = nhf.findNavController(this, R.id.nav_host_fragment );
-        NavController navCont = NavHostFragment.findNavController(nhf);
-        NavigationUI.setupActionBarWithNavController(this, navCont, appBarConf);
-        NavigationUI.setupWithNavController( navView, navCont );
+        mapFragment.getMapAsync(this);
     }
 
 
