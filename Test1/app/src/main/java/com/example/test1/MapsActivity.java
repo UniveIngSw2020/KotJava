@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings;
@@ -76,7 +77,8 @@ private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     SearchView searchView;
     SupportMapFragment mapFragment;
-
+private LocationManager locationManager = null;
+private Location location;
     //Location location; // Location
     double latitude; // Latitude
     double longitude; // Longitude
@@ -112,10 +114,16 @@ private FusedLocationProviderClient fusedLocationClient;
 
                 MapsActivity.this.map = googleMap;
 
-                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);  ;
+                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                if(FirstAccessActivity.checkPermission(getApplicationContext())) {
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if(location != null)
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
+
+                }
 
 
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.6723, 12.2422), 11));
 
 
             }
@@ -185,13 +193,16 @@ private FusedLocationProviderClient fusedLocationClient;
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap map) {
+    public void onMapReady(GoogleMap googleMap) {
         if (FirstAccessActivity.checkPermission(getApplicationContext())) {
             System.out.println("entrato");
 
             map.setMyLocationEnabled(true);
             map.setOnMyLocationButtonClickListener(this);
             map.setOnMyLocationClickListener(this);
+
+
+
         }
     }
 
