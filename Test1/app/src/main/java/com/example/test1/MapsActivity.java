@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -175,7 +176,15 @@ private FusedLocationProviderClient fusedLocationClient;
         });
 
 
+        ImageButton favoriteButton = findViewById(R.id.imageButtonFavourites);
 
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent activityFavourite = new Intent(MapsActivity.this,Favourite_Activity.class);
+                startActivity(activityFavourite);
+            }
+        });
 
 
 
