@@ -74,7 +74,7 @@ messo thread e controllo per permessi prima di fare invio location (location da 
  */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-private FusedLocationProviderClient fusedLocationClient;
+    private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     private SearchView searchView;
     private SupportMapFragment mapFragment;
@@ -571,5 +571,3 @@ private FusedLocationProviderClient fusedLocationClient;
     }
 
 }
-
-
