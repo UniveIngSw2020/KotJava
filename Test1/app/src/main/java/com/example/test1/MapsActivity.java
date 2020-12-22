@@ -1,37 +1,28 @@
 package com.example.test1;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.MenuItem.OnMenuItemClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.google.android.gms.maps.CameraUpdate;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,6 +32,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageButton bstats;
     private ImageButton bloc;
     private ImageButton bhist;
+    private LocationManager locationManager;
+    Location location;
 
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
@@ -148,8 +141,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             map.setMyLocationEnabled(true);
             map.setOnMyLocationButtonClickListener(this);
             map.setOnMyLocationClickListener(this);
+
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null)
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 20));
+
         }
     }
+
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
