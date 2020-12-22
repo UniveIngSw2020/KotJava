@@ -25,9 +25,9 @@
     <string name="aggiornamentoitem">Aggiornamento</string>
     <string name="condividiitem">Condividi app</string>
     <string name="valutaitem">Valuta app</string>
-    <string name="storicoitem">Storico scan</string>
-    <string name="autoscanitem">Attivazione auto scan</string>
-    <string name="nascostiitem">Dispositivi nascosti</string>
+    <string name="scansioniitem">Scansioni</string>
+    <string name="storicoitem">Storico scansioni</string>
+    <string name="autoscanitem">Attivazione auto-scan</string>
 
     <!-- Strings for second MapsActivity menu -->
     <string name="favouritesitem">Preferiti</string>

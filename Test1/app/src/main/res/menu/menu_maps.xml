@@ -34,15 +34,18 @@
         android:title="@string/valutaitem"
         app:showAsAction="never" />
     <item
-        android:id="@+id/storico"
-        android:title="@string/storicoitem"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/autoscan"
-        android:title="@string/autoscanitem"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/nascosti"
-        android:title="@string/nascostiitem"
-        app:showAsAction="never" />
+        android:id="@+id/scansioni"
+        android:title="@string/scansioniitem"
+        app:showAsAction="never" >
+        <menu >
+            <item
+                android:id="@+id/autoscan"
+                android:title="@string/autoscanitem"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/storico"
+                android:title="@string/storicoitem"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 </menu>

@@ -303,7 +303,7 @@ private FusedLocationProviderClient fusedLocationClient;
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
                 return true;
-            case R.id.nascosti:
+            case R.id.scansioni:
                 /*Rimandare alla pagina dei dispositivi nascosti/mostrare popup dei dispositivi
                 Intent intent = new Intent(this, "nascosti".class);
                 startActivity(intent);
