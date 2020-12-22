@@ -98,7 +98,7 @@ private FusedLocationProviderClient fusedLocationClient;
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar1 = findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
-
+        getActionBar().setDisplayShowTitleEnabled(false);
 
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
