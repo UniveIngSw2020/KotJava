@@ -248,7 +248,7 @@ private FusedLocationProviderClient fusedLocationClient;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_maps, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
 
