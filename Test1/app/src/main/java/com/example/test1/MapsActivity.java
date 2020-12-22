@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -60,11 +61,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getActionBar().setDisplayShowTitleEnabled(false);
 
 
-//(!)NON VENGONO INSERITE LE ICONE DEI BOTTONI(!)
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                //Creo l'intent per lanciare l'activity e ci aggiungo un int per far lanciare l'activity con il fragment adatto
+                Intent intent = new Intent( MapsActivity.this, FavouritesHistoryActivity.class );
+                intent.putExtra("val", 1 );// 1 = fragment dei preferiti
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -85,7 +89,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                Intent intent = new Intent( MapsActivity.this, FavouritesHistoryActivity.class );
+                intent.putExtra("val", 2 );// 2 = fragment dei visitati
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -175,31 +182,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        //Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
         switch (item.getItemId()) {
             case R.id.help:
                 //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
                 return true;
-            case R.id.guida:
-                /*
-                Rimandare alla pagina con la guida/mostrare popup della guida
-                Intent intent = new Intent(this, "guida".class);
+            case R.id.guida:/*
+                //Rimandare alla pagina con la guida/mostrare popup della guida
+                intent.putExtra("val", 1 );// 1 = fragment della guida
                 startActivity(intent);
-                 */
+                finish();*/
                 return true;
-            case R.id.faq:
-                /*
-                Rimandare alla pagina con le F.A.Q.
-                Intent intent = new Intent(this, "FAQ".class);
+            case R.id.faq:/*
+                //Rimandare alla pagina con le F.A.Q.
+                intent.putExtra("val", 2 );// 2 = fragment delle FAQ
                 startActivity(intent);
-                 */
+                finish();*/
                 return true;
-            case R.id.contatti:
-                /*
-                Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                Intent intent = new Intent(this, "contatti".class);
+            case R.id.contatti:/*
+                //Rimandare alla pagina dei contatti/mostrare popup dei contatti
+                intent.putExtra("val", 3 );// 3 = fragment dei contatti
                 startActivity(intent);
-                 */
+                finish();*/
                 return true;
             case R.id.credits:
                 /*
@@ -229,7 +233,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
                 return true;
-            case R.id.nascosti:
+            case R.id.scansioni:
                 /*Rimandare alla pagina dei dispositivi nascosti/mostrare popup dei dispositivi
                 Intent intent = new Intent(this, "nascosti".class);
                 startActivity(intent);
