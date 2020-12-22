@@ -79,7 +79,7 @@ private FusedLocationProviderClient fusedLocationClient;
     private SearchView searchView;
     private SupportMapFragment mapFragment;
     private LocationManager locationManager;
-    private Location location; // Location
+    private Location location = null; // Location
     double latitude; // Latitude
     double longitude; // Longitude
 
@@ -140,7 +140,14 @@ private FusedLocationProviderClient fusedLocationClient;
 
                 googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.6723, 12.2422), 11));
+                if(FirstAccessActivity.checkPermission(getApplicationContext())) {
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if(location != null)
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
+
+                }
+
 
 
             }
