@@ -1,10 +1,5 @@
 package com.example.test1;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -18,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings;
@@ -27,25 +23,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
-import android.widget.ImageButton;
 
-import com.google.android.gms.maps.CameraUpdate;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,10 +76,10 @@ messo thread e controllo per permessi prima di fare invio location (location da 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
-    SearchView searchView;
-    SupportMapFragment mapFragment;
-
-    //Location location; // Location
+    private SearchView searchView;
+    private SupportMapFragment mapFragment;
+    private LocationManager locationManager;
+    private Location location; // Location
     double latitude; // Latitude
     double longitude; // Longitude
 
@@ -143,7 +139,6 @@ private FusedLocationProviderClient fusedLocationClient;
                 MapsActivity.this.map = googleMap;
 
                 googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-
 
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.6723, 12.2422), 11));
 
