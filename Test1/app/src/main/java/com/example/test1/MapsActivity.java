@@ -1,9 +1,5 @@
 package com.example.test1;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -23,11 +19,9 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -35,17 +29,18 @@ import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.google.android.gms.maps.CameraUpdate;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,15 +72,13 @@ messo thread e controllo per permessi prima di fare invio location (location da 
 /*
  */
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-private FusedLocationProviderClient fusedLocationClient;
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+    private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
-    SearchView searchView;
-    SupportMapFragment mapFragment;
-    private LocationManager locationmanager = null;
-    private Location location;
-
-    //Location location; // Location
+    private SearchView searchView;
+    private SupportMapFragment mapFragment;
+    private LocationManager locationManager;
+    private Location location = null; // Location
     double latitude; // Latitude
     double longitude; // Longitude
 
@@ -98,14 +91,38 @@ private FusedLocationProviderClient fusedLocationClient;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar1 = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar myToolbar1 = findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
+        getActionBar().setDisplayShowTitleEnabled(false);
 
-/*Così come'è non funziona
-        //Toolbarinferiore con il menu a icone/bottoni
-        Toolbar myToolbar2 = (Toolbar) findViewById(R.id.toolbar2);
-        setActionBar( myToolbar2 );
-*/
+        ImageButton bfav = findViewById(R.id.imageButtonFavourites);
+        bfav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bstats = findViewById(R.id.imageButtonStats);
+        bstats.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bloc = findViewById(R.id.imageButtonLocation);
+        bloc.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
+        ImageButton bhist = findViewById(R.id.imageButtonHistory);
+        bhist.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //cose
+            }
+        });
+
 
         final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
 
@@ -120,14 +137,18 @@ private FusedLocationProviderClient fusedLocationClient;
 
                 MapsActivity.this.map = googleMap;
 
-                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);  ;
+                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
                 if(FirstAccessActivity.checkPermission(getApplicationContext())) {
-                    locationmanager = (LocationManager) getSystemService(LOCATION_SERVICE);
-                    location = locationmanager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if(location != null)
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
 
                 }
+
+
+
             }
 
         });
@@ -171,21 +192,16 @@ private FusedLocationProviderClient fusedLocationClient;
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-
-
         });
 
+        bfav.setOnClickListener(new View.OnClickListener() {
 
-        ImageButton favoriteButton = findViewById(R.id.imageButtonFavourites);
-
-        favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent activityFavourite = new Intent(MapsActivity.this,Favourite_Activity.class);
-                startActivity(activityFavourite);
+                Intent intent = new Intent(MapsActivity.this,Fav_activity.class);
+                startActivity(intent);
             }
         });
-
 
 
         mapFragment.getMapAsync(this);
@@ -238,9 +254,9 @@ private FusedLocationProviderClient fusedLocationClient;
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_maps, menu);
-        return true;
+         getMenuInflater().inflate(R.menu.menu_maps, menu);
+        return super.onCreateOptionsMenu(menu);
+
     }
 
 
@@ -294,7 +310,7 @@ private FusedLocationProviderClient fusedLocationClient;
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
                 return true;
-            case R.id.nascosti:
+            case R.id.scansioni:
                 /*Rimandare alla pagina dei dispositivi nascosti/mostrare popup dei dispositivi
                 Intent intent = new Intent(this, "nascosti".class);
                 startActivity(intent);
@@ -563,5 +579,3 @@ private FusedLocationProviderClient fusedLocationClient;
     }
 
 }
-
-

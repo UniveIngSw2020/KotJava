@@ -1,25 +1,20 @@
 package com.example.test1;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
-import com.google.android.material.snackbar.Snackbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class FirstAccessActivity extends AppCompatActivity  {
     public  static final int REQUEST_CODE = 123;
@@ -30,9 +25,15 @@ public class FirstAccessActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
 
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
+
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firstaccess);
         Button btaccess = findViewById(R.id.button);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.fa_toolbar);
+        setActionBar(myToolbar);
+        getActionBar().setTitle("Kotjava");
 
             /*guardo se ho il permesso per il gps, se ce l ho salto direttamente alla maps activity*/
             if (checkPermission(getApplicationContext())){

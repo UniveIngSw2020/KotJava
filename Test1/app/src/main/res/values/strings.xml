@@ -4,8 +4,16 @@
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
     <string name="guida">testo guida</string>
-    <string name="richiesta_risorse">Accettare utilizzo dati....</string>
-    <string name="ACCETTA_RISORSEe">ACCETTA</string>
+    <string name="richiesta_risorse">
+        L\'applicazione, per il suo corretto funzionamento,
+        necessita dell\'accesso alle seguenti risorse:\n
+        - Bluettoth;\n
+        - GPS;\n
+        - Memoria interna del dispositivo;\n
+        Premendo sul bottone sottostante si accetta di fornire
+        l\'accesso a tali risorse.
+    </string>
+    <string name="ACCETTA_RISORSEe">Accetta</string>
     <string name="request_check">check request</string>
 
     <!-- Strings for MapsActivity menu -->
@@ -17,23 +25,20 @@
     <string name="aggiornamentoitem">Aggiornamento</string>
     <string name="condividiitem">Condividi app</string>
     <string name="valutaitem">Valuta app</string>
-    <string name="storicoitem">Storico scan</string>
-    <string name="autoscanitem">Attivazione auto scan</string>
-    <string name="nascostiitem">Dispositivi nascosti</string>
+    <string name="scansioniitem">Scansioni</string>
+    <string name="storicoitem">Storico scansioni</string>
+    <string name="autoscanitem">Attivazione auto-scan</string>
 
     <!-- Strings for second MapsActivity menu -->
     <string name="favouritesitem">Preferiti</string>
     <string name="statsitem">Informazioni affluenza</string>
     <string name="locationitem">Informazioni luogo</string>
     <string name="historyitem">Luoghi visitati</string>
-    <string name="title_activity_favourite_">Favourite_Activity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="favdescription">Luoghi preferiti</string>
+    <string name="statdescription">Informazioni sull\'affluenza</string>
+    <string name="locdescription">Informazioni sulla località</string>
+    <string name="histdescription">Luoghi precedentemente visitati</string>
+
 
 </resources>
