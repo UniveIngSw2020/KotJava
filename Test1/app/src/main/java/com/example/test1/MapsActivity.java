@@ -19,7 +19,6 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,10 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -92,9 +91,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Toolbar myToolbar1 = findViewById(R.id.toolbar);
+        setActionBar(myToolbar1);
+        getActionBar().setDisplayShowTitleEnabled(false);
 
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
@@ -195,10 +194,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        bfav.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this,Fav_activity.class);
+                startActivity(intent);
+            }
+        });
 
 
         mapFragment.getMapAsync(this);
-        //displayDiscovry(); //scan BLUETOOTH
+        displayDiscovry(); //scan BLUETOOTH
     }
 
 
@@ -247,10 +254,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_maps, menu);
-        return true;
+         getMenuInflater().inflate(R.menu.menu_maps, menu);
+        return super.onCreateOptionsMenu(menu);
+
     }
+
+
 
     //Gestione del click sulle varie voci del menu
     @Override
