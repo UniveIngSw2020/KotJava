@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -51,6 +52,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -95,6 +97,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
+        try{
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if( menuKeyField != null ){
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            //Log.d(TAG, e.getLocalizedMessage());
+        }
 
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
