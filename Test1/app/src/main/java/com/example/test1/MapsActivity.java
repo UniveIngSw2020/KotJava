@@ -19,18 +19,20 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -50,6 +52,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -91,9 +94,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar1 = findViewById(R.id.toolbar);
-        setActionBar(myToolbar1);
-        getActionBar().setDisplayShowTitleEnabled(false);
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
+        try{
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if( menuKeyField != null ){
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            //Log.d(TAG, e.getLocalizedMessage());
+        }
 
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
@@ -194,18 +209,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        bfav.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapsActivity.this,Fav_activity.class);
-                startActivity(intent);
-            }
-        });
 
 
         mapFragment.getMapAsync(this);
-        displayDiscovry(); //scan BLUETOOTH
+        //displayDiscovry(); //scan BLUETOOTH
     }
 
 
@@ -254,12 +261,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-         getMenuInflater().inflate(R.menu.menu_maps, menu);
-        return super.onCreateOptionsMenu(menu);
-
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_maps, menu);
+        return true;
     }
-
-
 
     //Gestione del click sulle varie voci del menu
     @Override
