@@ -2,6 +2,7 @@ package com.example.test1;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -81,8 +82,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location location = null; // Location
     double latitude; // Latitude
     double longitude; // Longitude
-
-
+    private Dialog myDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +112,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ImageButton bloc = findViewById(R.id.imageButtonLocation);
         bloc.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+
             }
         });
 
@@ -120,6 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 //cose
+                openHistoryDialog();
             }
         });
 
@@ -194,20 +195,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        bfav.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapsActivity.this,Fav_activity.class);
-                startActivity(intent);
-            }
-        });
 
 
         mapFragment.getMapAsync(this);
         displayDiscovry(); //scan BLUETOOTH
     }
+public void showpopup(){
 
+}
 
     /**
      * Manipulates the map once available.
@@ -577,5 +573,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+    // posti visitati di recente
+            // dialogo
+    public void openHistoryDialog(){
+    HistoryDialog dialog = new HistoryDialog();
+    dialog.show(getSupportFragmentManager(),"evvai");
+    }
+
+
+
 
 }
