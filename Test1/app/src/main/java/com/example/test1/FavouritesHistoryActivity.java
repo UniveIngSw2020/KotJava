@@ -1,8 +1,15 @@
 package com.example.test1;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+
+import com.google.android.gms.dynamic.SupportFragmentWrapper;
 
 public class FavouritesHistoryActivity extends AppCompatActivity {
 //Questa activity dovrebbe fare da base per i fragment di history e favourites
@@ -13,51 +20,37 @@ public class FavouritesHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites_history);
 
+        Toolbar toolbar = findViewById(R.id.fh_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Per mettere il back button
+
         if(savedInstanceState == null){
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().setReorderingAllowed(true);
             switch(val){
                 case 1:
                     //Nel caso l'activity venga aperta con "val = 1", cioè premendo sul bottone dei
                       //preferiti, viene inizializzato il fragment dei preferiti
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setReorderingAllowed(true)//Fatto copiando dagli esempi ufficiali -> da errore, seems legit
-                            .add(R.id.fav_hist_frag, FavouritesFragment.newInstance(), null)
-                            .commit();
+                    fragmentTransaction.add(R.id.fav_hist_frag, FavouritesFragment.newInstance(), null).commit();
                     break;
+//Ho ancora dei dubbi su come fare 2 e 3 quindi metto così
                 case 2:
-                    //Nel caso l'activity venga aperta con "val = 2", cioè premendo sul bottone dei
-                        //visitati, viene inizializzato il fragment dei visitati
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.fav_hist_frag, HistoryFragment.newInstance(), null)
-                            .commit();
-                    break;
-/* Ho ancora dei dubbi su stats e location quindi al momento li ometto, c'è due volte history perchè
-    sarebbe il quarto bottone, ma al momento non ci sono due frammenti quindi è mmesso secondo
-                case 2:
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.fav_hist_frag, StatsFragment.newInstance(), null)
-                            .commit();
+                    //fragmentTransaction.add(R.id.fav_hist_frag, StatsFragment.newInstance(), null).commit();
                     break;
                 case 3:
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.fav_hist_frag, LocationFragment.newInstance(), null)
-                            .commit();
+                    //fragmentTransaction.add(R.id.fav_hist_frag, LocationFragment.newInstance(), null).commit();
                     break;
                 case 4:
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.fav_hist_frag, HistoryFragment.newInstance(), null)
-                            .commit();
+                    fragmentTransaction.add(R.id.fav_hist_frag, HistoryFragment.newInstance(), null).commit();
                     break;
-*/
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(FavouritesHistoryActivity.this, MapsActivity.class);
+        startActivity(intent);
+        finish();
+        return true;
     }
 }

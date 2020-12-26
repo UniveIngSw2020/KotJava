@@ -44,6 +44,7 @@ public class FirstAccessActivity extends AppCompatActivity  {
             /*guardo se ho il permesso per il gps, se ce l ho salto direttamente alla maps activity*/
             if (checkPermission(getApplicationContext())){
                 startActivity(activitymaps);
+                //finish();
             }
             else{
                 /** Dangerous permission**/
