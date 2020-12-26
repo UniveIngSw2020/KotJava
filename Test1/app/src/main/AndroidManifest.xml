@@ -18,6 +18,14 @@
         android:theme="@style/AppTheme">
 
         <activity
+            android:name=".ButtonsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".MenuItemsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".FirstAccessActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -28,8 +36,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

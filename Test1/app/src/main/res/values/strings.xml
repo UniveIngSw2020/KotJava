@@ -41,5 +41,18 @@
     <string name="histdescription">Luoghi precedentemente visitati</string>
 
 
+    <!--PLACEHOLDERS-->
+    <!--ToDo sostituire i placeholders con i contenuti corretti dei fragments-->
+    <string name="placeholder_guide">Guida</string>
+    <string name="placeholder_faq">Frequently Asked Questions</string>
+    <string name="placeholder_contacts">Contatti</string>
+    <string name="placeholder_credits">Credits</string>
+
+    <string name="placeholder_favourites">Preferiti</string>
+    <string name="placeholder_history">Visitati</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
