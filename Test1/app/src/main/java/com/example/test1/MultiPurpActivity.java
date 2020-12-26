@@ -2,6 +2,7 @@ package com.example.test1;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,47 +23,39 @@ public class MultiPurpActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().setReorderingAllowed(true);
             switch (val) {
                 case 1:
                     //Nel caso l'activity venga aperta con "val = 1", cioè selezionando la voce guida dal sottomenu
                     //help, viene inizializzato il fragment della guida
-                    System.out.println("Accesso a MultiPurpActivity con fragment Guida con valore " + val );
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-//                            .add(R.id.menu_frag, GuideFragment.newInstance(), null)
-                            .replace(R.id.menu_frag, GuideFragment.newInstance())
-                            .commit();
+                    fragmentTransaction.replace(R.id.menu_frag, GuideFragment.newInstance()).commit();
+                                     //.add(R.id.menu_frag, GuideFragment.newInstance(), null)
                     break;
-                /*Questi fragment devono ancora essere creati e implementati
                 case 2:
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.menu_frag, FAQFragment.newInstance(), null)
-                            .commit();
+                    //val = 2 -> fragment delle FAQ
+                    fragmentTransaction.replace(R.id.menu_frag, FAQFragment.newInstance()).commit();
+                                     //.add(R.id.menu_frag, FAQFragment.newInstance(), null)
                     break;
                 case 3:
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.menu_frag, ContactsFragment.newInstance(), null)
-                            .commit();
+                    //val = 3 -> fragment dei contatti
+                    fragmentTransaction.replace(R.id.menu_frag, ContactsFragment.newInstance()).commit();
+                                     //.add(R.id.menu_frag, ContactsFragment.newInstance(), null)
                     break;
                 case 4:
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.menu_frag, CredistsFragment.newInstance(), null)
-                            .commit();
+                    //val = 4 -> fragment dei credits
+                    fragmentTransaction.replace(R.id.menu_frag, CreditsFragment.newInstance()).commit();
+                                     //.add(R.id.menu_frag, CredistsFragment.newInstance(), null)
                     break;
+/*Questi fragment devono ancora essere creati e implementati
                 case 5:
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.menu_frag, UpdateFragment.newInstance(), null)
-                            .commit();
+                    //val = 5 -> fragment di aggiornamento
+                    fragmentTransaction.replace(R.id.menu_frag, UpdateFragment.newInstance()).commit();
+                                     //.add(R.id.menu_frag, UpdateFragment.newInstance(), null)
                     break;
                 case 6:
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.menu_frag, ScanHistoryFragment.newInstance(), null)
-                            .commit();
+                    //val = 6 -> fragment dei dispositivi scansionati
+                    fragmentTransaction.replace(R.id.menu_frag, ScanHistoryFragment.newInstance()).commit();
+                                     //.add(R.id.menu_frag, ScanHistoryFragment.newInstance(), null)
                     break;
                 */
                 default:

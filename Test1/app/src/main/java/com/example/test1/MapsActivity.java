@@ -265,45 +265,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
         switch (item.getItemId()) {
             case R.id.help:
                 //Apre sottomenu di help
                 return true;
             case R.id.guida:
                 //Rimandare alla pagina con la guida/mostrare popup della guida
-                Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
                 intent.putExtra("val", 1 );// 1 = fragment della guida
                 startActivity(intent);
                 finish();
                 return true;
             case R.id.faq:
-/*                //Rimandare alla pagina con le F.A.Q.
-                Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
                 intent.putExtra("val", 2 );// 2 = fragment delle FAQ
                 startActivity(intent);
-                finish();*/
+                finish();
                 return true;
             case R.id.contatti:
-/*                //Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
+                //Rimandare alla pagina dei contatti/mostrare popup dei contatti
                 intent.putExtra("val", 3 );// 3 = fragment dei contatti
                 startActivity(intent);
-                finish();*/
+                finish();
                 return true;
             case R.id.credits:
-/*                //Rimandare alla pagina dei credits/mostrare popup dei credits
-                Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
+                //Rimandare alla pagina dei credits/mostrare popup dei credits
                 intent.putExtra("val", 4 );// 4 = fragment dei credits
                 startActivity(intent);
-                finish();*/
+                finish();
                 return true;
             case R.id.aggiornamento:
-/*                //Rimandare alla pagina di aggiornamento
-                Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
+                //Rimandare alla pagina di aggiornamento
                 intent.putExtra("val", 5 );// 5 = fragment di aggiornamento
                 startActivity(intent);
-                finish();*/
+                finish();
                 return true;
             case R.id.condividi:
                 //Copiare il link per la condivisione
