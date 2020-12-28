@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -42,6 +44,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +55,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -115,13 +120,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
+        final SharedPreferences sharedPreferences = getSharedPreferences("favloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final ArrayList<String> arrayList = new ArrayList<>();
+        final Gson gson =new Gson();
 
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 //cose
-                openHistoryDialog();
+                String json = sharedPreferences.getString("loc","");
+                Type type =  new TypeToken<List<String>>(){
+                }.getType();
+                final ArrayList<String> arrayListm = gson.fromJson(json,type);
+
+
+                final AlertDialog.Builder alert =new AlertDialog.Builder(MapsActivity.this);
+                ListView listView = new ListView(alert.getContext());
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng( Double.parseDouble(arrayListm.get(i).split(":")[0]) ,Double.parseDouble(arrayListm.get(i).split(":")[1]))));
+                    }
+                });
+                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,arrayListm));
+                alert.setTitle("Fav");
+                alert.setCancelable(true);
+                alert.setView(listView);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+                alert.show();
+
+
             }
+
         });
 
 
