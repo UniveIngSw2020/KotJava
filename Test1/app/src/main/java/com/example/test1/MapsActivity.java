@@ -94,7 +94,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final Gson gson =new Gson();
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar1 = findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
@@ -120,16 +122,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
-        final SharedPreferences sharedPreferences = getSharedPreferences("favloc",MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        final ArrayList<String> arrayList = new ArrayList<>();
-        final Gson gson =new Gson();
+
 
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 //cose
-                String json = sharedPreferences.getString("loc","");
+                String json = sharedPreferences.getString("recentloc","");
                 Type type =  new TypeToken<List<String>>(){
                 }.getType();
                 final ArrayList<String> arrayListm = gson.fromJson(json,type);
@@ -144,7 +143,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,arrayListm));
-                alert.setTitle("Fav");
+                alert.setTitle("Recent location visited");
                 alert.setCancelable(true);
                 alert.setView(listView);
                 alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -180,8 +179,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(FirstAccessActivity.checkPermission(getApplicationContext())) {
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if(location != null)
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
+                    if(location != null) {
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 20));
+                        putlocrecent(location);
+                    }
 
                 }
 
@@ -611,5 +612,35 @@ public void showpopup(){
         }
     }
 
+public void putlocrecent(Location loc){
+    final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+    final SharedPreferences.Editor editor = sharedPreferences.edit();
+    final ArrayList<String> arrayListrecent = new ArrayList<>();
+    final Gson gson =new Gson();
 
+    // get Array shared preferences
+    String json = sharedPreferences.getString("recentloc","");
+    Type type =  new TypeToken<List<String>>() {
+    }.getType();
+     ArrayList<String> arrayListm = gson.fromJson(json,type);
+    String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+    if(arrayListm == null) {
+            arrayListm = new ArrayList<>();
+            arrayListm.add(thisloc);
+            json = gson.toJson(arrayListm);
+            editor.putString("recentloc", json);
+            editor.apply();
+            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+    }
+    else{
+        if (!arrayListm.contains(thisloc)) {
+            arrayListm.add(thisloc);
+            json = gson.toJson(arrayListm);
+            editor.putString("recentloc", json);
+            editor.apply();
+            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+}
 }
