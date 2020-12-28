@@ -610,14 +610,6 @@ public void showpopup(){
 
         }
     }
-    // posti visitati di recente
-            // dialogo
-    public void openHistoryDialog(){
-    HistoryDialog dialog = new HistoryDialog();
-    dialog.show(getSupportFragmentManager(),"evvai");
-    }
-
-
 
 
 }
