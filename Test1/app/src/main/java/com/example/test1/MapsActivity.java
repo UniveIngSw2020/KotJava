@@ -679,14 +679,14 @@ public void putlocrecent(Location loc){
             Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
     }
     else{
-        //if (!arrayListm.contains(thisloc)) {
+        if (!arrayListm.contains(thisloc)) {
             arrayListm.add(thisloc);
             json = gson.toJson(arrayListm);
             editor.putString("recentloc", json);
             editor.apply();
             Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
-       // }
+        }
     }
 }
 
