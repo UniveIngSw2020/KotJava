@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -51,6 +52,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -96,33 +98,62 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
+        try{
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if( menuKeyField != null ){
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            //Log.d(TAG, e.getLocalizedMessage());
+        }
+
+
+
+//Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                //Creo l'intent per lanciare l'activity e ci aggiungo un int per far lanciare l'activity con il fragment adatto
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
+                intent.putExtra("val", 1 );// 1 = fragment dei preferiti
+                startActivity(intent);
+                finish();
             }
         });
 
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
+                intent.putExtra("val", 2 );// 2 = fragment delle statistiche
+                startActivity(intent);
+                finish();
             }
         });
 
         ImageButton bloc = findViewById(R.id.imageButtonLocation);
         bloc.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
+                intent.putExtra("val", 3 );// 3 = fragment della posizione attuale
+                startActivity(intent);
+                finish();
             }
         });
 
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
+                intent.putExtra("val", 4 );// 4 = fragment dei visitati
+                startActivity(intent);
+                finish();
             }
         });
+
 
 
         final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
@@ -255,57 +286,57 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        Intent intent = new Intent( MapsActivity.this, MenuItemsActivity.class );
         switch (item.getItemId()) {
             case R.id.help:
-                //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
+                //Apre sottomenu di help
                 return true;
             case R.id.guida:
                 //Rimandare alla pagina con la guida/mostrare popup della guida
-                //Intent intent = new Intent(this, "guida".class);
-                //startActivity(intent);
+                intent.putExtra("val", 1 );// 1 = fragment della guida
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.faq:
-                //Rimandare alla pagina con le F.A.Q.
-                //Intent intent = new Intent(this, "FAQ".class);
-                //startActivity(intent);
+                intent.putExtra("val", 2 );// 2 = fragment delle FAQ
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.contatti:
                 //Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                //Intent intent = new Intent(this, "contatti".class);
-                //startActivity(intent);
+                intent.putExtra("val", 3 );// 3 = fragment dei contatti
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.credits:
                 //Rimandare alla pagina dei credits/mostrare popup dei credits
-                //Intent intent = new Intent(this, "credits".class);
-                //startActivity(intent);
+                intent.putExtra("val", 4 );// 4 = fragment dei credits
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.aggiornamento:
-                /*Rimandare alla pagina di aggiornamento
-                Intent intent = new Intent(this, "aggiornamento".class);
+                //Rimandare alla pagina di aggiornamento
+                intent.putExtra("val", 5 );// 5 = fragment di aggiornamento
                 startActivity(intent);
-                */
+                finish();
                 return true;
             case R.id.condividi:
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
-                //Something
+                //Aprire la pagina del playStore(?)
+                return true;
+            case R.id.scansioni:
+                //Apre sottomenu scansioni
                 return true;
             case R.id.storico:
-                /*Rimandare alla pagina dello storico scansioni/mostrare popup dello storico
-                Intent intent = new Intent(this, "storico".class);
+ /*                //Rimandare alla pagina di aggiornamento
+                intent.putExtra("val", 6 );// 6 = fragment dello storico scansioni
                 startActivity(intent);
-                */
+                finish();*/
                 return true;
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
-                return true;
-            case R.id.scansioni:
-                /*Rimandare alla pagina dei dispositivi nascosti/mostrare popup dei dispositivi
-                Intent intent = new Intent(this, "nascosti".class);
-                startActivity(intent);
-                */
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
