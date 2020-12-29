@@ -97,6 +97,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         final Gson gson =new Gson();
+
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar1 = findViewById(R.id.toolbar);
         setActionBar(myToolbar1);
@@ -132,17 +133,58 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Type type =  new TypeToken<List<String>>(){
                 }.getType();
                 final ArrayList<String> arrayListm = gson.fromJson(json,type);
+                final List<String> namelocs = getNameOfLocation(arrayListm);
 
 
                 final AlertDialog.Builder alert =new AlertDialog.Builder(MapsActivity.this);
-                ListView listView = new ListView(alert.getContext());
+                final ListView listView = new ListView(alert.getContext());
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
                         map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng( Double.parseDouble(arrayListm.get(i).split(":")[0]) ,Double.parseDouble(arrayListm.get(i).split(":")[1]))));
                     }
+
+
+
                 });
-                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,arrayListm));
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+
+                        final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
+
+                        alertcancel.setTitle("Delete this position?");
+                        alertcancel.setCancelable(true);
+                        alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                               arrayListm.remove(position);
+                               namelocs.remove(position);
+                               editor.remove("recentloc");
+                                String json = gson.toJson(arrayListm);
+                                editor.putString("recentloc", json);
+                               editor.apply();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+                                Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        });
+                        alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertcancel.show();
+                        return true;
+                    }
+                });
+
+
+                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
                 alert.setTitle("Recent location visited");
                 alert.setCancelable(true);
                 alert.setView(listView);
@@ -181,7 +223,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if(location != null) {
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 20));
-                        putlocrecent(location);
+
                     }
 
                 }
@@ -191,6 +233,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
+
 
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,6 +318,9 @@ public void showpopup(){
         //SendLoc(String.format(String.valueOf(location)));
         controllPermissionAndSend(latitude + ":" + longitude);
         Log.e("loc","ok=");
+
+        //aggiungo a recenti la posizione
+        putlocrecent(location);
     }
 
     @Override
@@ -633,14 +679,32 @@ public void putlocrecent(Location loc){
             Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
     }
     else{
-        if (!arrayListm.contains(thisloc)) {
+        //if (!arrayListm.contains(thisloc)) {
             arrayListm.add(thisloc);
             json = gson.toJson(arrayListm);
             editor.putString("recentloc", json);
             editor.apply();
             Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
-        }
+       // }
     }
 }
+
+public List<String> getNameOfLocation(List<String> locations){
+        Geocoder g = new Geocoder(MapsActivity.this);
+        ArrayList<String> namelocs = new ArrayList<>();
+        for(String s : locations){
+
+            try {
+                List<Address> names =    g.getFromLocation(Double.parseDouble(s.split(":")[0]) ,Double.parseDouble(s.split(":")[1]), 1);
+                namelocs.add(names.get(0).getAddressLine(0));
+
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return namelocs;
+}
+
 }
