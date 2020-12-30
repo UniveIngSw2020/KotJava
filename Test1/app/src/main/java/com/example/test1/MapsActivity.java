@@ -58,6 +58,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /*v0:
 //aggiunta metodo per fare send e get (get viene fatta come lettura dopo risposta del send per ora poi vediamo)
 //send messa sull click per la posizione per ora
@@ -67,7 +68,13 @@ v2:
 messo thread e controllo per permessi prima di fare invio location (location da a (google in california?)
 
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />  per https://stackoverflow.com/questions/29753117/waitinginmainsignalcatcherloop-error-in-android-application
+
  */
+
+
+/*
+ */
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
@@ -79,25 +86,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     double longitude; // Longitude
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);//Pertogliere il titolo
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
+        try{
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if( menuKeyField != null ){
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            //Log.d(TAG, e.getLocalizedMessage());
+        }
 
 
-        //Bottoni della toolbar inferiore
+
+//Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 //Creo l'intent per lanciare l'activity e ci aggiungo un int per far lanciare l'activity con il fragment adatto
-                Intent intent = new Intent( MapsActivity.this, FavouritesHistoryActivity.class );
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
                 intent.putExtra("val", 1 );// 1 = fragment dei preferiti
                 startActivity(intent);
                 finish();
@@ -107,7 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, FavouritesHistoryActivity.class );
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
                 intent.putExtra("val", 2 );// 2 = fragment delle statistiche
                 startActivity(intent);
                 finish();
@@ -117,7 +137,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ImageButton bloc = findViewById(R.id.imageButtonLocation);
         bloc.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, FavouritesHistoryActivity.class );
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
                 intent.putExtra("val", 3 );// 3 = fragment della posizione attuale
                 startActivity(intent);
                 finish();
@@ -127,7 +147,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, FavouritesHistoryActivity.class );
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
                 intent.putExtra("val", 4 );// 4 = fragment dei visitati
                 startActivity(intent);
                 finish();
@@ -258,14 +278,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_maps, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_maps, menu);
         return true;
     }
 
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
+        Intent intent = new Intent( MapsActivity.this, MenuItemsActivity.class );
         switch (item.getItemId()) {
             case R.id.help:
                 //Apre sottomenu di help
@@ -310,7 +331,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             case R.id.storico:
  /*                //Rimandare alla pagina di aggiornamento
-                Intent intent = new Intent( MapsActivity.this, MultiPurpActivity.class );
                 intent.putExtra("val", 6 );// 6 = fragment dello storico scansioni
                 startActivity(intent);
                 finish();*/
@@ -364,6 +384,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+
+
+    //
 
     public  void  SendLoc(String loc){ //need location
 

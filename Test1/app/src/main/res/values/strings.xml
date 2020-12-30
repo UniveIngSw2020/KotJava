@@ -41,15 +41,58 @@
     <string name="histdescription">Luoghi precedentemente visitati</string>
 
 
-<!--PLACEHOLDERS-->
+    <!--PLACEHOLDERS-->
     <!--ToDo sostituire i placeholders con i contenuti corretti dei fragments-->
     <string name="placeholder_guide">Guida</string>
     <string name="placeholder_faq">Frequently Asked Questions</string>
     <string name="placeholder_contacts">Contatti</string>
-    <string name="placeholder_credits">GG WP Bravi tutti</string>
+    <string name="placeholder_credits">Credits</string>
 
     <string name="placeholder_favourites">Preferiti</string>
     <string name="placeholder_history">Visitati</string>
+
+    <!--Contatti-->
+
+    <string name="Incarico1">Incarico 1</string>
+    <string name="Incarico2">Incarico 2</string>
+    <string name="Incarico3">Incarico 3</string>
+    <string name="Incarico4">Incarico 4</string>
+
+    <string name="contatti1">
+        Nome Cognome 1\n
+        Email 1\n
+        Numero di telefono 1\n
+    </string>
+    <string name="contatti2">
+        Nome Cognome 2\n
+        Email 2\n
+        Numero di telefono 2\n
+    </string>
+    <string name="contatti3">
+        Nome Cognome 3\n
+        Email 3\n
+        Numero di telefono 3\n
+    </string>
+    <string name="contatti4">
+        Nome Cognome 4\n
+        Email 4\n
+        Numero di telefono 4\n
+    </string>
+
+    <!-- Credits -->
+    <string name="credits1">
+        L\'applicazione è stata realizzata ad opera di:
+    </string>
+    <string name="credits2">
+        Nome1\n
+        Nome2\n
+        Nome3\n
+        Nome4
+    </string>
+    <string name="credits3">
+        Nell\'ambito di un progetto portato avanti per il corso di Ingegneria del Software presso l\'università Ca\'Foscari di Venezia.
+    </string>
+
 
 
 </resources>

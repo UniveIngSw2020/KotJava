@@ -16,6 +16,7 @@ public class CreditsFragment extends Fragment {
         super(R.layout.fragment_credits);
     }
 
+
     public static CreditsFragment newInstance() {
         CreditsFragment fragment = new CreditsFragment();
         return fragment;
