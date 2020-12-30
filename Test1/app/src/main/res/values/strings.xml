@@ -79,5 +79,21 @@
         Numero di telefono 4\n
     </string>
 
+    <!-- Credits -->
+    <string name="credits1">
+        L\'applicazione è stata realizzata ad opera di:\n
+    </string>
+    <string name="credits2">
+        Nome1\n
+        Nome2\n
+        Nome3\n
+        Nome4\n
+    </string>
+    <string name="credits3">
+        Nell\'ambito di un progetto portato avanti per il corso di\n Ingegneria del Software
+        presso l'università Ca'Foscari di Venezia.
+    </string>
+
+
 
 </resources>
