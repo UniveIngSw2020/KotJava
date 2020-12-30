@@ -81,17 +81,16 @@
 
     <!-- Credits -->
     <string name="credits1">
-        L\'applicazione è stata realizzata ad opera di:\n
+        L\'applicazione è stata realizzata ad opera di:
     </string>
     <string name="credits2">
         Nome1\n
         Nome2\n
         Nome3\n
-        Nome4\n
+        Nome4
     </string>
     <string name="credits3">
-        Nell\'ambito di un progetto portato avanti per il corso di\n Ingegneria del Software
-        presso l'università Ca'Foscari di Venezia.
+        Nell\'ambito di un progetto portato avanti per il corso di Ingegneria del Software presso l\'università Ca\'Foscari di Venezia.
     </string>
 
 
