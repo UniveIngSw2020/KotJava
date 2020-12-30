@@ -27,19 +27,23 @@ public class ButtonsActivity extends AppCompatActivity {
                 case 1:
                     //Nel caso l'activity venga aperta con "val = 1", cioè premendo sul bottone dei
                     //preferiti, viene inizializzato il fragment dei preferiti
+                    getSupportActionBar().setTitle("Preferiti");
                     fragmentTransaction.replace(R.id.buttons_frag, FavouritesFragment.newInstance()).commit();
                                      //.add(R.id.buttons_frag, FavouritesFragment.newInstance(), null)
                     break;
 //Ho ancora dei dubbi su come fare 2 e 3 quindi metto così
                 case 2:
+                    getSupportActionBar().setTitle("Informazioni sull'affluenza");
                     //fragmentTransaction.replace(R.id.buttons_frag, StatsFragment.newInstance()).commit();
                                        //.add(R.id.buttons_frag, StatsFragment.newInstance(), null)
                     break;
                 case 3:
+                    getSupportActionBar().setTitle("Informazioni sulla posizione attuale");
                     //fragmentTransaction.replace(R.id.buttons_frag, LocationFragment.newInstance()).commit();
                                        //.add(R.id.buttons_frag, LocationFragment.newInstance(), null)
                     break;
                 case 4:
+                    getSupportActionBar().setTitle("Luoghi visitati");
                     fragmentTransaction.replace(R.id.buttons_frag, HistoryFragment.newInstance()).commit();
                                      //.add(R.id.buttons_frag, HistoryFragment.newInstance(), null)
                     break;
