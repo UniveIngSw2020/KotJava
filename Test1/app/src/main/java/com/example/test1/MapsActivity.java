@@ -405,7 +405,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
 
             // Defined URL  where to send data
-            URL url = new URL("http://192.168.0.104/posti.php");
+            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
 
             // Send POST data request
 
@@ -494,7 +494,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         try {
             // Defined URL  where to send data
-            URL url = new URL("http://192.168.1.4/posti.php");
+            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
 
             URLConnection conn = url.openConnection();
 
