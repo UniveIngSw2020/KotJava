@@ -36,16 +36,9 @@
     <item
         android:id="@+id/scansioni"
         android:title="@string/scansioniitem"
-        app:showAsAction="never" >
-        <menu >
-            <item
-                android:id="@+id/autoscan"
-                android:title="@string/autoscanitem"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/storico"
-                android:title="@string/storicoitem"
-                app:showAsAction="never" />
-        </menu>
-    </item>
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/autoscan"
+        android:title="@string/autoscanitem"
+        app:showAsAction="never" />
 </menu>

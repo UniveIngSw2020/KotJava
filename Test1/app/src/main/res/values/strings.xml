@@ -92,7 +92,8 @@
     <string name="credits3">
         Nell\'ambito di un progetto portato avanti per il corso di Ingegneria del Software presso l\'università Ca\'Foscari di Venezia.
     </string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

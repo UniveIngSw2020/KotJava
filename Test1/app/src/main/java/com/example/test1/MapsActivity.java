@@ -134,16 +134,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        ImageButton bloc = findViewById(R.id.imageButtonLocation);
-        bloc.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 3 );// 3 = fragment della posizione attuale
-                startActivity(intent);
-                finish();
-            }
-        });
-
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -328,12 +318,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             case R.id.scansioni:
                 //Apre sottomenu scansioni
-                return true;
-            case R.id.storico:
- /*                //Rimandare alla pagina di aggiornamento
-                intent.putExtra("val", 6 );// 6 = fragment dello storico scansioni
-                startActivity(intent);
-                finish();*/
                 return true;
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
