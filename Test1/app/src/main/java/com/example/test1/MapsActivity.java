@@ -95,7 +95,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
         final Gson gson =new Gson();
 
         //Toolbar superiore con l'overflow menu
@@ -105,10 +107,74 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                //cose
+            public void onClick(View v) {
+                String json = sharedPreferencesfav.getString("favloc", "");
+                Type type = new TypeToken<List<String>>() {
+                }.getType();
+                final ArrayList<String> arrayListm = gson.fromJson(json, type);
+                final List<String> namelocs = getNameOfLocation(arrayListm);
+
+
+                final AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                final ListView listView = new ListView(alert.getContext());
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrayListm.get(i).split(":")[0]), Double.parseDouble(arrayListm.get(i).split(":")[1]))));
+                        }
+                    });
+                    //se il record viene tenuto premuto si può eliminare
+                    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                            final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
+
+                            alertcancel.setTitle("Delete this position?");
+                            alertcancel.setCancelable(true);
+                            alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    arrayListm.remove(position);
+                                    namelocs.remove(position);
+                                    editorfav.remove("favloc");
+                                    String json = gson.toJson(arrayListm);
+                                    editorfav.putString("favloc", json);
+                                    editorfav.apply();
+                                    listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
+                                    Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            });
+
+                            alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            alertcancel.show();
+                            return true;
+                        }
+                    });
+
+                listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
+                alert.setTitle("Favourite places");
+                alert.setCancelable(true);
+                alert.setView(listView);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+                alert.show();
+
             }
         });
+
 
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
@@ -227,6 +293,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
 
                 }
+                // inserisco in memoria i preferiti
+                map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        String json = sharedPreferencesfav.getString("favloc", "");
+                        Type type = new TypeToken<List<String>>() {
+                        }.getType();
+                        ArrayList<String> arrayList = gson.fromJson(json, type);
+                        if(arrayList == null)
+                            arrayList = new ArrayList<>();
+
+                        arrayList.add(latLng.latitude +":"+latLng.longitude);
+                        json = gson.toJson(arrayList);
+                        editorfav.putString("favloc",json);
+                        editorfav.apply();
+
+                        Toast.makeText(MapsActivity.this, "Favourite location added", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
 
 
 
@@ -693,17 +779,21 @@ public void putlocrecent(Location loc){
 public List<String> getNameOfLocation(List<String> locations){
         Geocoder g = new Geocoder(MapsActivity.this);
         ArrayList<String> namelocs = new ArrayList<>();
-        for(String s : locations){
+        if (locations != null){
+            for (String s : locations) {
 
-            try {
-                List<Address> names =    g.getFromLocation(Double.parseDouble(s.split(":")[0]) ,Double.parseDouble(s.split(":")[1]), 1);
-                namelocs.add(names.get(0).getAddressLine(0));
+                try {
+                    List<Address> names = g.getFromLocation(Double.parseDouble(s.split(":")[0]), Double.parseDouble(s.split(":")[1]), 1);
+                    namelocs.add(names.get(0).getAddressLine(0));
 
                 } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    e.printStackTrace();
+                }
 
+            }
         }
+
+
         return namelocs;
 }
 
