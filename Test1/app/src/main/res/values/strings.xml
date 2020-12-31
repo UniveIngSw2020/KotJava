@@ -3,42 +3,105 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
-    <string name="guida">testo guida</string>
-    <string name="richiesta_risorse">
-        L\'applicazione, per il suo corretto funzionamento,
-        necessita dell\'accesso alle seguenti risorse:\n
-        - Bluettoth;\n
+    <string name="guide">Guide</string>
+    <string name="resource_request">
+        To work properly, the application needs access
+        to the following device resources:\n
+        - Bluetooth;\n
         - GPS;\n
-        - Memoria interna del dispositivo;\n
-        Premendo sul bottone sottostante si accetta di fornire
-        l\'accesso a tali risorse.
+        - Internal memory of the device;\n
+        By clicking on the following button you accept to give
+        access to said resources.
     </string>
-    <string name="ACCETTA_RISORSEe">Accetta</string>
-    <string name="request_check">check request</string>
+    <string name="accept_resreq">Accept</string>
+    <string name="request_check">Check request</string>
 
     <!-- Strings for MapsActivity menu -->
     <string name="helpitem">Help</string>
-    <string name="guidaitem">Guida</string>
+    <string name="guideitem">Guide</string>
     <string name="faqitem">FAQ</string>
-    <string name="contattiitem">Contatti</string>
+    <string name="contactsitem">Contact us</string>
     <string name="creditsitem">Credits</string>
-    <string name="aggiornamentoitem">Aggiornamento</string>
-    <string name="condividiitem">Condividi app</string>
-    <string name="valutaitem">Valuta app</string>
-    <string name="scansioniitem">Scansioni</string>
-    <string name="storicoitem">Storico scansioni</string>
-    <string name="autoscanitem">Attivazione auto-scan</string>
+    <string name="updateitem">Update</string>
+    <string name="shareitem">Share the app</string>
+    <string name="rateitem">Rate the app</string>
+    <string name="scanitem">Scan</string>
+    <string name="autoscanitem">Activate auto-scan</string>
 
     <!-- Strings for second MapsActivity menu -->
-    <string name="favouritesitem">Preferiti</string>
-    <string name="statsitem">Informazioni affluenza</string>
-    <string name="locationitem">Informazioni luogo</string>
-    <string name="historyitem">Luoghi visitati</string>
+    <string name="favouritesitem">Favourites</string>
+    <string name="statsitem">Crowd Data</string>
+    <string name="locationitem">Local Informations</string> <!--Potremmo mettere Sightsee-->
+    <string name="historyitem">Visited</string>
 
-    <string name="favdescription">Luoghi preferiti</string>
-    <string name="statdescription">Informazioni sull\'affluenza</string>
-    <string name="locdescription">Informazioni sulla località</string>
-    <string name="histdescription">Luoghi precedentemente visitati</string>
+    <string name="favdescription">Favourite Places</string>
+    <string name="statdescription">Crowd data</string>
+    <string name="locdescription">Local Informations</string>
+    <string name="histdescription">Already Visited Places</string>
+
+
+    <!--PLACEHOLDERS-->
+    <!--ToDo sostituire i placeholders con i contenuti corretti dei fragments-->
+    <string name="placeholder_guide">Guide</string>
+    <string name="placeholder_faq">Frequently Asked Questions</string>
+    <string name="placeholder_contacts">Contact us</string>
+    <string name="placeholder_credits">Credits</string>
+
+    <string name="placeholder_favourites">Favourites</string>
+    <string name="placeholder_history">Visited</string>
+
+    <!--Contact us-->
+    <string name="job1">Incarico 1</string>
+    <string name="job2">Incarico 2</string>
+    <string name="job3">Incarico 3</string>
+    <string name="job4">Incarico 4</string>
+    <string name="job5">Incarico 5</string>
+
+    <string name="contact1">
+        Daniele De Battista\n
+        Email 1\n
+        Numero di telefono 1\n
+    </string>
+    <string name="contact2">
+        Lorenzo Panico\n
+        Email 2\n
+        Numero di telefono 2\n
+    </string>
+    <string name="contact3">
+        Davide Favaro\n
+        Email 3\n
+        Numero di telefono 3\n
+    </string>
+    <string name="contact4">
+        Diolen Hysenaj\n
+        Email 4\n
+        Numero di telefono 4\n
+    </string>
+<string name="contact5">
+        Matteo De Col\n
+        Email 5\n
+        Numero di telefono 5\n
+    </string>
+
+
+
+    <!-- Credits -->
+    <string name="credits1">
+        The app has been created thanks to:\n
+    </string>
+    <string name="credits2">
+        Daniele De Battista\n\n
+        Lorenzo Panico\n\n
+        Davide Favaro\n\n
+        Diolen Hysenaj\n\n
+        Metteo De Col\n
+    </string>
+    <string name="credits3">
+        As a project for the Software Engineering course at university Ca\'Foscari of Venice.
+    </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

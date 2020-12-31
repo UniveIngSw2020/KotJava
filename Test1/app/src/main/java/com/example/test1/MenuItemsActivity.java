@@ -32,38 +32,38 @@ public class MenuItemsActivity extends AppCompatActivity {
                     //help, viene inizializzato il fragment della guida
                     getSupportActionBar().setTitle("Guida");
                     fragmentTransaction.replace(R.id.menu_frag, GuideFragment.newInstance()).commit();
-                                     //.add(R.id.menu_frag, GuideFragment.newInstance(), null)
+                    //.add(R.id.menu_frag, GuideFragment.newInstance(), null)
                     break;
                 case 2:
                     //val = 2 -> fragment delle FAQ
                     getSupportActionBar().setTitle("FAQ");
                     fragmentTransaction.replace(R.id.menu_frag, FAQFragment.newInstance()).commit();
-                                     //.add(R.id.menu_frag, FAQFragment.newInstance(), null)
+                    //.add(R.id.menu_frag, FAQFragment.newInstance(), null)
                     break;
                 case 3:
                     //val = 3 -> fragment dei contatti
                     getSupportActionBar().setTitle("Contatti");
                     fragmentTransaction.replace(R.id.menu_frag, ContactsFragment.newInstance()).commit();
-                                     //.add(R.id.menu_frag, ContactsFragment.newInstance(), null)
+                    //.add(R.id.menu_frag, ContactsFragment.newInstance(), null)
                     break;
                 case 4:
                     //val = 4 -> fragment dei credits
                     getSupportActionBar().setTitle("Credits");
                     fragmentTransaction.replace(R.id.menu_frag, CreditsFragment.newInstance()).commit();
-                                     //.add(R.id.menu_frag, CredistsFragment.newInstance(), null)
+                    //.add(R.id.menu_frag, CredistsFragment.newInstance(), null)
                     break;
 //Questi fragment devono ancora essere creati e implementati
                 case 5:
                     //val = 5 -> fragment di aggiornamento
                     getSupportActionBar().setTitle("Aggiornamento");
                     //fragmentTransaction.replace(R.id.menu_frag, UpdateFragment.newInstance()).commit();
-                                     //.add(R.id.menu_frag, UpdateFragment.newInstance(), null)
+                    //.add(R.id.menu_frag, UpdateFragment.newInstance(), null)
                     break;
                 case 6:
-                    //val = 6 -> fragment dei dispositivi scansionati
-                    getSupportActionBar().setTitle("Dispositivi scansionati");
+                    //val = 6 -> fragment dei scansione automatica
+                    getSupportActionBar().setTitle("Attivazione scansione automatica");
                     //fragmentTransaction.replace(R.id.menu_frag, ScanHistoryFragment.newInstance()).commit();
-                                     //.add(R.id.menu_frag, ScanHistoryFragment.newInstance(), null)
+                    //.add(R.id.menu_frag, ScanHistoryFragment.newInstance(), null)
                     break;
                 default:
                     break;
