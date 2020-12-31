@@ -9,13 +9,13 @@
         <menu>
             <item
                 android:id="@+id/guida"
-                android:title="@string/guidaitem" />
+                android:title="@string/guideitem" />
             <item
                 android:id="@+id/faq"
                 android:title="@string/faqitem" />
             <item
                 android:id="@+id/contatti"
-                android:title="@string/contattiitem" />
+                android:title="@string/contactsitem" />
             <item
                 android:id="@+id/credits"
                 android:title="@string/creditsitem" />
@@ -23,19 +23,19 @@
     </item>
     <item
         android:id="@+id/aggiornamento"
-        android:title="@string/aggiornamentoitem"
+        android:title="@string/updateitem"
         app:showAsAction="never" />
     <item
         android:id="@+id/condividi"
-        android:title="@string/condividiitem"
+        android:title="@string/shareitem"
         app:showAsAction="never" />
     <item
         android:id="@+id/valuta"
-        android:title="@string/valutaitem"
+        android:title="@string/rateitem"
         app:showAsAction="never" />
     <item
         android:id="@+id/scansioni"
-        android:title="@string/scansioniitem"
+        android:title="@string/scanitem"
         app:showAsAction="never" />
     <item
         android:id="@+id/autoscan"
