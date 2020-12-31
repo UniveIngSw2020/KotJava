@@ -56,7 +56,7 @@ public class MenuItemsActivity extends AppCompatActivity {
                 case 5:
                     //val = 5 -> fragment di aggiornamento
                     getSupportActionBar().setTitle("Aggiornamento");
-                    //fragmentTransaction.replace(R.id.menu_frag, UpdateFragment.newInstance()).commit();
+                    fragmentTransaction.replace(R.id.menu_frag, UpdateFragment.newInstance()).commit();
                     //.add(R.id.menu_frag, UpdateFragment.newInstance(), null)
                     break;
                 case 6:

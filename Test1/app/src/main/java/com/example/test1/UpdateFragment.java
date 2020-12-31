@@ -14,7 +14,7 @@ public class UpdateFragment extends Fragment {
         super(R.layout.fragment_update);
     }
 
-    public static UpdateFragment newInstance(String param1, String param2) {
+    public static UpdateFragment newInstance() {
         UpdateFragment fragment = new UpdateFragment();
         return fragment;
     }
