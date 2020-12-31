@@ -104,4 +104,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
+    <!-- Update -->
+    <string name="update_version">App Version 1.0</string>
+    <string name="update_available">The application is up to date</string>
+    <string name="update_available_alt">A new update is available</string>
+
+
 </resources>

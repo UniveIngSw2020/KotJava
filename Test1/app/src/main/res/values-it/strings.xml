@@ -101,4 +101,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+    <!-- Aggiornamento -->
+    <string name="update_version">App versione 1.0</string>
+    <string name="update_available">L\'applicazione è aggiornata</string>
+    <string name="update_available_alt">Aggiornamento disponibile</string>
+
 </resources>

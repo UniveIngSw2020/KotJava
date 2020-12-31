@@ -1,20 +1,26 @@
 package com.example.test1;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import com.google.android.material.snackbar.Snackbar;
 
 public class FirstAccessActivity extends AppCompatActivity  {
     public  static final int REQUEST_CODE = 123;
@@ -26,18 +32,19 @@ public class FirstAccessActivity extends AppCompatActivity  {
 
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
 
-        setTheme(R.style.AppTheme);
+        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firstaccess);
         Button btaccess = findViewById(R.id.button);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.fa_toolbar);
-        setActionBar(myToolbar);
-        getActionBar().setTitle("Kotjava");
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("Kotjava");
 
             /*guardo se ho il permesso per il gps, se ce l ho salto direttamente alla maps activity*/
             if (checkPermission(getApplicationContext())){
                 startActivity(activitymaps);
+                finish();
             }
             else{
                 /** Dangerous permission**/
