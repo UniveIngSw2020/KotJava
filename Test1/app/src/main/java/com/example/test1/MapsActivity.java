@@ -36,6 +36,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,8 +47,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -437,6 +438,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         inflater.inflate(R.menu.menu_maps, menu);
         return true;
     }
+    //Creazione condividi app
+    private void showMsg(String msg) {
+        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+        toast.show();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Condividi la nostra app");
+        sendIntent.setType("text/plain");
+        
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
+    }
 
     //Gestione del click sulle varie voci del menu
     @Override
@@ -476,6 +489,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
                 return true;
             case R.id.condividi:
+                showMsg("Condivisione app..");
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
@@ -556,9 +570,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             // Defined URL  where to send data
             URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-
             // Send POST data request
-
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
@@ -645,9 +657,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             // Defined URL  where to send data
             URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-
             URLConnection conn = url.openConnection();
-
             // get from server and add markers
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
@@ -727,7 +737,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }
             };
-// Register the BroadcastReceiver
+            // Register the BroadcastReceiver
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
             //end added
