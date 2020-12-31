@@ -55,37 +55,46 @@
     <string name="job2">Incarico 2</string>
     <string name="job3">Incarico 3</string>
     <string name="job4">Incarico 4</string>
+    <string name="job5">Incarico 5</string>
 
     <string name="contact1">
-        Nome Cognome 1\n
+        Daniele De Battista\n
         Email 1\n
         Numero di telefono 1\n
     </string>
     <string name="contact2">
-        Nome Cognome 2\n
+        Lorenzo Panico\n
         Email 2\n
         Numero di telefono 2\n
     </string>
     <string name="contact3">
-        Nome Cognome 3\n
+        Davide Favaro\n
         Email 3\n
         Numero di telefono 3\n
     </string>
     <string name="contact4">
-        Nome Cognome 4\n
+        Diolen Hysenaj\n
         Email 4\n
         Numero di telefono 4\n
     </string>
+<string name="contact5">
+        Matteo De Col\n
+        Email 5\n
+        Numero di telefono 5\n
+    </string>
+
+
 
     <!-- Credits -->
     <string name="credits1">
-        The app has been created thanks to:
+        The app has been created thanks to:\n
     </string>
     <string name="credits2">
-        Nome1\n
-        Nome2\n
-        Nome3\n
-        Nome4
+        Daniele De Battista\n\n
+        Lorenzo Panico\n\n
+        Davide Favaro\n\n
+        Diolen Hysenaj\n\n
+        Metteo De Col\n
     </string>
     <string name="credits3">
         As a project for the Software Engineering course at university Ca\'Foscari of Venice.
