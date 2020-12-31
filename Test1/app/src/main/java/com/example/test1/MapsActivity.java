@@ -2,6 +2,7 @@ package com.example.test1;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -19,20 +21,19 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -43,6 +44,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +55,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -84,76 +87,120 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location location = null; // Location
     double latitude; // Latitude
     double longitude; // Longitude
-
-
+    private Dialog myDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final Gson gson =new Gson();
 
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Toolbar myToolbar1 = findViewById(R.id.toolbar);
+        setActionBar(myToolbar1);
+        getActionBar().setDisplayShowTitleEnabled(false);
 
-        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
-        try{
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if( menuKeyField != null ){
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception e) {
-            //Log.d(TAG, e.getLocalizedMessage());
-        }
-
-
-
-//Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //Creo l'intent per lanciare l'activity e ci aggiungo un int per far lanciare l'activity con il fragment adatto
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 1 );// 1 = fragment dei preferiti
-                startActivity(intent);
-                finish();
+                //cose
             }
         });
 
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 2 );// 2 = fragment delle statistiche
-                startActivity(intent);
-                finish();
+                //cose
             }
         });
 
         ImageButton bloc = findViewById(R.id.imageButtonLocation);
         bloc.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 3 );// 3 = fragment della posizione attuale
-                startActivity(intent);
-                finish();
+
             }
         });
+
 
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 4 );// 4 = fragment dei visitati
-                startActivity(intent);
-                finish();
-            }
-        });
+                //cose
+                String json = sharedPreferences.getString("recentloc","");
+                Type type =  new TypeToken<List<String>>(){
+                }.getType();
+                final ArrayList<String> arrayListm = gson.fromJson(json,type);
+                final List<String> namelocs = getNameOfLocation(arrayListm);
 
+
+                final AlertDialog.Builder alert =new AlertDialog.Builder(MapsActivity.this);
+                final ListView listView = new ListView(alert.getContext());
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                        map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng( Double.parseDouble(arrayListm.get(i).split(":")[0]) ,Double.parseDouble(arrayListm.get(i).split(":")[1]))));
+                    }
+
+
+
+                });
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+
+                        final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
+
+                        alertcancel.setTitle("Delete this position?");
+                        alertcancel.setCancelable(true);
+                        alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                               arrayListm.remove(position);
+                               namelocs.remove(position);
+                               editor.remove("recentloc");
+                                String json = gson.toJson(arrayListm);
+                                editor.putString("recentloc", json);
+                               editor.apply();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+                                Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        });
+                        alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertcancel.show();
+                        return true;
+                    }
+                });
+
+
+                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+                alert.setTitle("Recent location visited");
+                alert.setCancelable(true);
+                alert.setView(listView);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+                alert.show();
+
+
+            }
+
+        });
 
 
         final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
@@ -174,8 +221,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(FirstAccessActivity.checkPermission(getApplicationContext())) {
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if(location != null)
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
+                    if(location != null) {
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 20));
+
+                    }
 
                 }
 
@@ -184,6 +233,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
+
 
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,10 +278,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-        mapFragment.getMapAsync(this);
-        //displayDiscovry(); //scan BLUETOOTH
-    }
 
+        mapFragment.getMapAsync(this);
+        displayDiscovry(); //scan BLUETOOTH
+    }
+public void showpopup(){
+
+}
 
     /**
      * Manipulates the map once available.
@@ -265,6 +318,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //SendLoc(String.format(String.valueOf(location)));
         controllPermissionAndSend(latitude + ":" + longitude);
         Log.e("loc","ok=");
+
+        //aggiungo a recenti la posizione
+        putlocrecent(location);
     }
 
     @Override
@@ -278,65 +334,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_maps, menu);
-        return true;
+         getMenuInflater().inflate(R.menu.menu_maps, menu);
+        return super.onCreateOptionsMenu(menu);
+
     }
+
+
 
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent( MapsActivity.this, MenuItemsActivity.class );
+        // Handle item selection
         switch (item.getItemId()) {
             case R.id.help:
-                //Apre sottomenu di help
+                //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
                 return true;
             case R.id.guida:
                 //Rimandare alla pagina con la guida/mostrare popup della guida
-                intent.putExtra("val", 1 );// 1 = fragment della guida
-                startActivity(intent);
-                finish();
+                //Intent intent = new Intent(this, "guida".class);
+                //startActivity(intent);
                 return true;
             case R.id.faq:
-                intent.putExtra("val", 2 );// 2 = fragment delle FAQ
-                startActivity(intent);
-                finish();
+                //Rimandare alla pagina con le F.A.Q.
+                //Intent intent = new Intent(this, "FAQ".class);
+                //startActivity(intent);
                 return true;
             case R.id.contatti:
                 //Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                intent.putExtra("val", 3 );// 3 = fragment dei contatti
-                startActivity(intent);
-                finish();
+                //Intent intent = new Intent(this, "contatti".class);
+                //startActivity(intent);
                 return true;
             case R.id.credits:
                 //Rimandare alla pagina dei credits/mostrare popup dei credits
-                intent.putExtra("val", 4 );// 4 = fragment dei credits
-                startActivity(intent);
-                finish();
+                //Intent intent = new Intent(this, "credits".class);
+                //startActivity(intent);
                 return true;
             case R.id.aggiornamento:
-                //Rimandare alla pagina di aggiornamento
-                intent.putExtra("val", 5 );// 5 = fragment di aggiornamento
+                /*Rimandare alla pagina di aggiornamento
+                Intent intent = new Intent(this, "aggiornamento".class);
                 startActivity(intent);
-                finish();
+                */
                 return true;
             case R.id.condividi:
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
-                //Aprire la pagina del playStore(?)
-                return true;
-            case R.id.scansioni:
-                //Apre sottomenu scansioni
+                //Something
                 return true;
             case R.id.storico:
- /*                //Rimandare alla pagina di aggiornamento
-                intent.putExtra("val", 6 );// 6 = fragment dello storico scansioni
+                /*Rimandare alla pagina dello storico scansioni/mostrare popup dello storico
+                Intent intent = new Intent(this, "storico".class);
                 startActivity(intent);
-                finish();*/
+                */
                 return true;
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
+                return true;
+            case R.id.scansioni:
+                /*Rimandare alla pagina dei dispositivi nascosti/mostrare popup dei dispositivi
+                Intent intent = new Intent(this, "nascosti".class);
+                startActivity(intent);
+                */
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -405,7 +463,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
 
             // Defined URL  where to send data
-            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+            URL url = new URL("http://192.168.0.104/posti.php");
 
             // Send POST data request
 
@@ -494,7 +552,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         try {
             // Defined URL  where to send data
-            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+            URL url = new URL("http://192.168.1.4/posti.php");
 
             URLConnection conn = url.openConnection();
 
@@ -599,5 +657,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+
+public void putlocrecent(Location loc){
+    final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+    final SharedPreferences.Editor editor = sharedPreferences.edit();
+    final ArrayList<String> arrayListrecent = new ArrayList<>();
+    final Gson gson =new Gson();
+
+    // get Array shared preferences
+    String json = sharedPreferences.getString("recentloc","");
+    Type type =  new TypeToken<List<String>>() {
+    }.getType();
+     ArrayList<String> arrayListm = gson.fromJson(json,type);
+    String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+    if(arrayListm == null) {
+            arrayListm = new ArrayList<>();
+            arrayListm.add(thisloc);
+            json = gson.toJson(arrayListm);
+            editor.putString("recentloc", json);
+            editor.apply();
+            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+    }
+    else{
+        if (!arrayListm.contains(thisloc)) {
+            arrayListm.add(thisloc);
+            json = gson.toJson(arrayListm);
+            editor.putString("recentloc", json);
+            editor.apply();
+            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+}
+
+public List<String> getNameOfLocation(List<String> locations){
+        Geocoder g = new Geocoder(MapsActivity.this);
+        ArrayList<String> namelocs = new ArrayList<>();
+        for(String s : locations){
+
+            try {
+                List<Address> names =    g.getFromLocation(Double.parseDouble(s.split(":")[0]) ,Double.parseDouble(s.split(":")[1]), 1);
+                namelocs.add(names.get(0).getAddressLine(0));
+
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return namelocs;
+}
 
 }
