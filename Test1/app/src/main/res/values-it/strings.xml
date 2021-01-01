@@ -103,8 +103,8 @@
 
 
     <!-- Aggiornamento -->
-    <string name="update_version">App versione 1.0</string>
-    <string name="update_available">L\'applicazione è aggiornata</string>
-    <string name="update_available_alt">Aggiornamento disponibile</string>
+    <string name="update_version">App versione %s</string>
+    <string name="update_not_available">L\'applicazione è aggiornata</string>
+    <string name="update_available">Aggiornamento disponibile</string>
 
 </resources>
