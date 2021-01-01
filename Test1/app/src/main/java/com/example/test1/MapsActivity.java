@@ -11,12 +11,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +29,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,6 +40,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import android.widget.SimpleCursorAdapter;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -91,6 +97,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     double latitude; // Latitude
     double longitude; // Longitude
     int bluefound;
+    SimpleCursorAdapter mAdapter;
 
 
 
@@ -337,32 +344,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         });
-
-        searchView.setOnClickListener(new View.OnClickListener() {
+    
+        final String[] from = new String[] {"cityName"};
+        final int[] to = new int[] {android.R.id.text1};
+    
+        mAdapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_list_item_1,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+    
+        searchView.setSuggestionsAdapter(mAdapter);
+        searchView.setIconifiedByDefault(false);
+    
+        // Getting selected (clicked) item suggestion
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public void onClick(View v) {
-                searchView.onActionViewExpanded();
-            }
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String location) {
-
+            public boolean onSuggestionClick(int position) {
+            
                 List<Address> addressList = null;
-
+                Cursor cursor = (Cursor) mAdapter.getItem(position);
+                String location = cursor.getString(cursor.getColumnIndex("cityName"));
+            
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
-                        addressList = geocoder.getFromLocationName(location, 1);
-
-
-
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-
-                        map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
+                    
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    
+                    
+                    
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -370,14 +386,96 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }
 
-                return false;
-            }
 
+//                searchView.setQuery(txt, true);
+            
+            
+                return true;
+            }
+        
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public boolean onSuggestionSelect(int position) {
+                // Your code here
+                return true;
             }
         });
+    
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.onActionViewExpanded();
+            }
+        });
+    
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String location) {
+            
+                List<Address> addressList = null;
+            
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
+                    
+                    
+                        Address address = addressList.get(0);
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            
+                return false;
+            }
+            int m = 0;
+        
+            @Override
+            public boolean onQueryTextChange(String location) {
+            
+                List<Address> addressList = null;
+            
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
+                    
+                        final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "cityName"});
+                    
+                    
+                    
+                        for (int i=0; i<addressList.size(); i++) {
+                        
+                            c.addRow(new Object[]{i, addressList.get(i).getAddressLine(0)});
+                            m++;
+                            //mAdapter.changeCursor(c);
+                        
+                            Log.e("list",addressList.get(i).getAddressLine(0));
+                        }
+                    
+                        mAdapter.changeCursor(c);
+                    
+                    
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return false;
+            }
+        
+        
+        });
+    
+    
 
 
 
