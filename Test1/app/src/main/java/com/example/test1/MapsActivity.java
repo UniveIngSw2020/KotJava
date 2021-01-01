@@ -2,7 +2,6 @@ package com.example.test1;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -12,28 +11,35 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -55,6 +61,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
@@ -87,24 +94,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location location = null; // Location
     double latitude; // Latitude
     double longitude; // Longitude
-    private Dialog myDialog;
+    int bluefound;
+    SimpleCursorAdapter mAdapter;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //button favourite and recent
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
         final Gson gson =new Gson();
 
-        //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar1 = findViewById(R.id.toolbar);
-        setActionBar(myToolbar1);
-        getActionBar().setDisplayShowTitleEnabled(false);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        //Toolbar superiore con l'overflow menu
+        Toolbar myToolbar = findViewById(R.id.maps_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
+        try{
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if( menuKeyField != null ){
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            //Log.d(TAG, e.getLocalizedMessage());
+        }
+
+
+
+//Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
@@ -117,47 +145,47 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 final AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
                 final ListView listView = new ListView(alert.getContext());
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrayListm.get(i).split(":")[0]), Double.parseDouble(arrayListm.get(i).split(":")[1]))));
-                        }
-                    });
-                    //se il record viene tenuto premuto si può eliminare
-                    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                        @Override
-                        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                            final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrayListm.get(i).split(":")[0]), Double.parseDouble(arrayListm.get(i).split(":")[1]))));
+                    }
+                });
+                //se il record viene tenuto premuto si può eliminare
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                        final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
 
-                            alertcancel.setTitle("Delete this position?");
-                            alertcancel.setCancelable(true);
-                            alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                        alertcancel.setTitle("Delete this position?");
+                        alertcancel.setCancelable(true);
+                        alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                    arrayListm.remove(position);
-                                    namelocs.remove(position);
-                                    editorfav.remove("favloc");
-                                    String json = gson.toJson(arrayListm);
-                                    editorfav.putString("favloc", json);
-                                    editorfav.apply();
-                                    listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
-                                    Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
-                                }
+                                arrayListm.remove(position);
+                                namelocs.remove(position);
+                                editorfav.remove("favloc");
+                                String json = gson.toJson(arrayListm);
+                                editorfav.putString("favloc", json);
+                                editorfav.apply();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
+                                Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
+                            }
 
 
-                            });
+                        });
 
-                            alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            alertcancel.show();
-                            return true;
-                        }
-                    });
+                        alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertcancel.show();
+                        return true;
+                    }
+                });
 
                 listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
                 alert.setTitle("Favourite places");
@@ -176,20 +204,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
+
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
+                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
+                intent.putExtra("val", 2 );// 2 = fragment delle statistiche
+                startActivity(intent);
+                finish();
             }
         });
-
-        ImageButton bloc = findViewById(R.id.imageButtonLocation);
-        bloc.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-
-            }
-        });
-
 
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
@@ -226,12 +250,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                               arrayListm.remove(position);
-                               namelocs.remove(position);
-                               editor.remove("recentloc");
+                                arrayListm.remove(position);
+                                namelocs.remove(position);
+                                editor.remove("recentloc");
                                 String json = gson.toJson(arrayListm);
                                 editor.putString("recentloc", json);
-                               editor.apply();
+                                editor.apply();
                                 listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
                                 Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
                             }
@@ -287,14 +311,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(FirstAccessActivity.checkPermission(getApplicationContext())) {
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if(location != null) {
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 20));
-
-                    }
+                    if(location != null)
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
 
                 }
+
                 // inserisco in memoria i preferiti
-                map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void onMapLongClick(LatLng latLng) {
                         String json = sharedPreferencesfav.getString("favloc", "");
@@ -314,38 +337,46 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-
-
             }
 
+
+
         });
-
-
-        searchView.setOnClickListener(new View.OnClickListener() {
+    
+        final String[] from = new String[] {"cityName"};
+        final int[] to = new int[] {android.R.id.text1};
+    
+        mAdapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_list_item_1,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+    
+        searchView.setSuggestionsAdapter(mAdapter);
+        searchView.setIconifiedByDefault(false);
+    
+        // Getting selected (clicked) item suggestion
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public void onClick(View v) {
-                searchView.onActionViewExpanded();
-            }
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String location) {
-
+            public boolean onSuggestionClick(int position) {
+            
                 List<Address> addressList = null;
-
+                Cursor cursor = (Cursor) mAdapter.getItem(position);
+                String location = cursor.getString(cursor.getColumnIndex("cityName"));
+            
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
-                        addressList = geocoder.getFromLocationName(location, 1);
-
-
-
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-
-                        map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
+                    
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    
+                    
+                    
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -353,24 +384,103 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }
 
-                return false;
-            }
 
+//                searchView.setQuery(txt, true);
+            
+            
+                return true;
+            }
+        
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public boolean onSuggestionSelect(int position) {
+                // Your code here
+                return true;
             }
         });
-
+    
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.onActionViewExpanded();
+            }
+        });
+    
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String location) {
+            
+                List<Address> addressList = null;
+            
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
+                    
+                    
+                        Address address = addressList.get(0);
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            
+                return false;
+            }
+            int m = 0;
+        
+            @Override
+            public boolean onQueryTextChange(String location) {
+            
+                List<Address> addressList = null;
+            
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
+                    
+                        final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "cityName"});
+                    
+                    
+                    
+                        for (int i=0; i<addressList.size(); i++) {
+                        
+                            c.addRow(new Object[]{i, addressList.get(i).getAddressLine(0)});
+                            m++;
+                            //mAdapter.changeCursor(c);
+                        
+                            Log.e("list",addressList.get(i).getAddressLine(0));
+                        }
+                    
+                        mAdapter.changeCursor(c);
+                    
+                    
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return false;
+            }
+        
+        
+        });
+    
+    
 
 
 
         mapFragment.getMapAsync(this);
-        displayDiscovry(); //scan BLUETOOTH
+        //displayDiscovry(); //scan BLUETOOTH
     }
-public void showpopup(){
 
-}
 
     /**
      * Manipulates the map once available.
@@ -405,7 +515,7 @@ public void showpopup(){
         controllPermissionAndSend(latitude + ":" + longitude);
         Log.e("loc","ok=");
 
-        //aggiungo a recenti la posizione
+        // aggiungo a recenti la posizione
         putlocrecent(location);
     }
 
@@ -420,67 +530,73 @@ public void showpopup(){
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-         getMenuInflater().inflate(R.menu.menu_maps, menu);
-        return super.onCreateOptionsMenu(menu);
-
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_maps, menu);
+        return true;
     }
-
-
+    //Creazione condividi app
+    private void showMsg(String msg) {
+        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+        toast.show();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Condividi la nostra app");
+        sendIntent.setType("text/plain");
+        
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
+    }
 
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        Intent intent = new Intent( MapsActivity.this, MenuItemsActivity.class );
         switch (item.getItemId()) {
             case R.id.help:
-                //Aprire sottomenu di help (Ho messo di seguito le voci, forse è uguale)
+                //Apre sottomenu di help
                 return true;
             case R.id.guida:
                 //Rimandare alla pagina con la guida/mostrare popup della guida
-                //Intent intent = new Intent(this, "guida".class);
-                //startActivity(intent);
+                intent.putExtra("val", 1 );// 1 = fragment della guida
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.faq:
-                //Rimandare alla pagina con le F.A.Q.
-                //Intent intent = new Intent(this, "FAQ".class);
-                //startActivity(intent);
+                intent.putExtra("val", 2 );// 2 = fragment delle FAQ
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.contatti:
                 //Rimandare alla pagina dei contatti/mostrare popup dei contatti
-                //Intent intent = new Intent(this, "contatti".class);
-                //startActivity(intent);
+                intent.putExtra("val", 3 );// 3 = fragment dei contatti
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.credits:
                 //Rimandare alla pagina dei credits/mostrare popup dei credits
-                //Intent intent = new Intent(this, "credits".class);
-                //startActivity(intent);
+                intent.putExtra("val", 4 );// 4 = fragment dei credits
+                startActivity(intent);
+                finish();
                 return true;
             case R.id.aggiornamento:
-                /*Rimandare alla pagina di aggiornamento
-                Intent intent = new Intent(this, "aggiornamento".class);
+                //Rimandare alla pagina di aggiornamento
+                intent.putExtra("val", 5 );// 5 = fragment di aggiornamento
                 startActivity(intent);
-                */
+                finish();
                 return true;
             case R.id.condividi:
+                showMsg("Condivisione app..");
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
-                //Something
+                //Aprire la pagina del playStore(?)
                 return true;
-            case R.id.storico:
-                /*Rimandare alla pagina dello storico scansioni/mostrare popup dello storico
-                Intent intent = new Intent(this, "storico".class);
-                startActivity(intent);
-                */
+            case R.id.scansioni:
+                //Apre sottomenu scansioni
                 return true;
             case R.id.autoscan:
                 //Attivare/disattivare autoscan
-                return true;
-            case R.id.scansioni:
-                /*Rimandare alla pagina dei dispositivi nascosti/mostrare popup dei dispositivi
-                Intent intent = new Intent(this, "nascosti".class);
-                startActivity(intent);
-                */
+                scanBlue();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -549,10 +665,8 @@ public void showpopup(){
         {
 
             // Defined URL  where to send data
-            URL url = new URL("http://192.168.0.104/posti.php");
-
+            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
             // Send POST data request
-
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
@@ -638,10 +752,8 @@ public void showpopup(){
 
         try {
             // Defined URL  where to send data
-            URL url = new URL("http://192.168.1.4/posti.php");
-
+            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
             URLConnection conn = url.openConnection();
-
             // get from server and add markers
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
@@ -721,7 +833,7 @@ public void showpopup(){
                     }
                 }
             };
-// Register the BroadcastReceiver
+            // Register the BroadcastReceiver
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
             //end added
@@ -743,40 +855,82 @@ public void showpopup(){
 
         }
     }
+    public void  scanBlue(){ //senza far vedere
 
-public void putlocrecent(Location loc){
-    final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
-    final SharedPreferences.Editor editor = sharedPreferences.edit();
-    final ArrayList<String> arrayListrecent = new ArrayList<>();
-    final Gson gson =new Gson();
+        final ArrayList<String> list = new ArrayList<>();
 
-    // get Array shared preferences
-    String json = sharedPreferences.getString("recentloc","");
-    Type type =  new TypeToken<List<String>>() {
-    }.getType();
-     ArrayList<String> arrayListm = gson.fromJson(json,type);
-    String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
-    if(arrayListm == null) {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MapsActivity.this,android.R.layout.simple_list_item_1,list);
+
+
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            Toast t = new Toast(this);
+            t.setText("Sorry your phone do not support Bluetooth");
+            t.show();
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent,1);}
+
+            // Create a BroadcastReceiver for ACTION_FOUND
+            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    // When discovery finds a device
+                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                        // Get the BluetoothDevice object from the Intent
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        // Add the name and address to an array adapter to show in a ListView
+                        Log.e("list",device.getAddress());
+                        list.add(device.getName());
+                        bluefound = list.size();
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
+                }
+            };
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+            bluetoothAdapter.startDiscovery();
+
+
+        }
+    }
+
+
+    public void putlocrecent(Location loc){
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final ArrayList<String> arrayListrecent = new ArrayList<>();
+        final Gson gson =new Gson();
+
+        // get Array shared preferences
+        String json = sharedPreferences.getString("recentloc","");
+        Type type =  new TypeToken<List<String>>() {
+        }.getType();
+        ArrayList<String> arrayListm = gson.fromJson(json,type);
+        String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+        if(arrayListm == null) {
             arrayListm = new ArrayList<>();
             arrayListm.add(thisloc);
             json = gson.toJson(arrayListm);
             editor.putString("recentloc", json);
             editor.apply();
             Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-    }
-    else{
-        if (!arrayListm.contains(thisloc)) {
-            arrayListm.add(thisloc);
-            json = gson.toJson(arrayListm);
-            editor.putString("recentloc", json);
-            editor.apply();
-            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            if (!arrayListm.contains(thisloc)) {
+                arrayListm.add(thisloc);
+                json = gson.toJson(arrayListm);
+                editor.putString("recentloc", json);
+                editor.apply();
+                Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
+            }
         }
     }
-}
-
-public List<String> getNameOfLocation(List<String> locations){
+    public List<String> getNameOfLocation(List<String> locations){
         Geocoder g = new Geocoder(MapsActivity.this);
         ArrayList<String> namelocs = new ArrayList<>();
         if (locations != null){
@@ -795,6 +949,6 @@ public List<String> getNameOfLocation(List<String> locations){
 
 
         return namelocs;
-}
+    }
 
 }

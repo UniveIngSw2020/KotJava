@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 public class FirstAccessActivity extends AppCompatActivity  {
@@ -26,18 +26,19 @@ public class FirstAccessActivity extends AppCompatActivity  {
 
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
 
-        setTheme(R.style.AppTheme);
+        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firstaccess);
         Button btaccess = findViewById(R.id.button);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.fa_toolbar);
-        setActionBar(myToolbar);
-        getActionBar().setTitle("Kotjava");
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("Kotjava");
 
             /*guardo se ho il permesso per il gps, se ce l ho salto direttamente alla maps activity*/
             if (checkPermission(getApplicationContext())){
                 startActivity(activitymaps);
+                finish();
             }
             else{
                 /** Dangerous permission**/
