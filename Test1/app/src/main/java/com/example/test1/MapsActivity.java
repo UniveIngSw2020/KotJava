@@ -22,6 +22,7 @@ import android.os.StrictMode;
 import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,12 +30,14 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -159,7 +162,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         alertcancel.setTitle("Delete this position?");
                         alertcancel.setCancelable(true);
-                        alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
+                        alertcancel.setPositiveButton("delete this position", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -175,8 +178,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                         });
+                        alertcancel.setNegativeButton("Delete all", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteAll("favloc");
+                                namelocs.clear();
+                                arrayListm.clear();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
 
-                        alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            }
+                        });
+                        alertcancel.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -247,7 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         alertcancel.setTitle("Delete this position?");
                         alertcancel.setCancelable(true);
-                        alertcancel.setNeutralButton("delete this position", new DialogInterface.OnClickListener() {
+                        alertcancel.setPositiveButton("delete this position", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 arrayListm.remove(position);
@@ -262,7 +274,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                         });
-                        alertcancel.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        alertcancel.setNegativeButton("Delete all", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteAll("recentloc");
+                               namelocs.clear();
+                               arrayListm.clear();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+
+                            }
+                        });
+                        alertcancel.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -595,8 +617,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Apre sottomenu scansioni
                 return true;
             case R.id.autoscan:
-                //Attivare/disattivare autoscan
-                scanBlue();
+                final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
+                final SharedPreferences.Editor editor = sharedautoscan.edit();
+                Switch sw = new Switch(MapsActivity.this);
+                boolean checked;
+                sw.setTextOn("on");
+                sw.setTextOff("off");
+                sw.setGravity(Gravity.CENTER);
+
+                final AlertDialog.Builder myDialog = new AlertDialog.Builder(MapsActivity.this);
+                myDialog.setTitle("Auto Scan");
+                myDialog.setMessage("TURN ON the autoscan to find other devices automatically ");
+                myDialog.setView(sw);
+                sw.setChecked(sharedautoscan.getBoolean("autoscan",false));
+                sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked){
+                           // scanblue
+                            editor.putBoolean("autoscan", true);
+                            editor.apply();
+                            Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            editor.putBoolean("autoscan", false);
+                            editor.apply();
+                            Toast.makeText(myDialog.getContext(), "Autoscan mode OFF", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                myDialog.show();
+
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -951,4 +1004,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return namelocs;
     }
 
+
+    public void deleteAll(String key){
+        final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
 }
