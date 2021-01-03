@@ -69,6 +69,7 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -93,7 +94,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SearchView searchView;
     private SupportMapFragment mapFragment;
     private LocationManager locationManager;
-    private Location location = null; // Location
+    private Location location ; // Location
     double latitude; // Latitude
     double longitude; // Longitude
     int bluefound;
@@ -442,9 +443,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
-                    
-                    
-                    
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                     
@@ -633,7 +631,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked){
                             //scanBlue();
-
                             editor.putBoolean("autoscan", true);
                             editor.apply();
                             Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
@@ -796,17 +793,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
     }
-
-
-
-
-
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         final ArrayList<String> list = new ArrayList<>();
         public void onReceive(Context context, Intent intent) {
             Log.e("quanti blue","ok");
-
-
             String action = intent.getAction();
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -814,18 +804,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 Log.e("list",device.getAddress());
+               
                 list.add(device.getName());
-                bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
-
                 Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
-
                 bluetoothAdapterr.cancelDiscovery();
             }
+           
+            
+           
         }
     };
-
+    
+    
+    
+   
+    
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
@@ -837,7 +832,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (autoScan) {
                 // attiva bluetooth se non è attivo
 
-                if ((bluetoothAdapterr == null) || !bluetoothAdapterr.isEnabled()) {
+                if (!bluetoothAdapterr.isEnabled()) {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent,1);
                 }
