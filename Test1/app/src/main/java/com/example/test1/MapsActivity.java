@@ -18,6 +18,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.BaseColumns;
 import android.provider.Settings;
@@ -100,7 +101,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     int bluefound;
     SimpleCursorAdapter mAdapter;
 
+    boolean autoScan;
 
+    Handler handler = new Handler();
+
+    final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
 
 
     @Override
@@ -133,7 +138,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //Log.d(TAG, e.getLocalizedMessage());
         }
 
-
+        handler.postDelayed(runnableCode ,5000);
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
 
 //Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
@@ -627,7 +634,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked){
-                           scanBlue();
+                            //scanBlue();
                             editor.putBoolean("autoscan", true);
                             editor.apply();
                             Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
@@ -698,8 +705,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public  void  SendLoc(String loc){ //need location
 
 
-
-        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound=0&timeStamp=1";
+        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
 
 
         String text = "";
@@ -712,7 +718,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             // Defined URL  where to send data
             URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+
             // Send POST data request
+
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
@@ -790,51 +798,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //get separato da send
-    void getLastData(String k){
 
-        String text = "";
-        BufferedReader reader=null;
-
-        try {
-            // Defined URL  where to send data
-            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-            URLConnection conn = url.openConnection();
-            // get from server and add markers
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            // Read Server Response
-            while ((line = reader.readLine()) != null) {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
-            try
-            {
-                reader.close();
-            }
-
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
-        }
-
-
-
-
-    }
 
     public void  displayDiscovry(){
 
@@ -900,49 +864,72 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
-    public void  scanBlue(){ //senza far vedere
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         final ArrayList<String> list = new ArrayList<>();
+        public void onReceive(Context context, Intent intent) {
+            Log.e("quanti blue","ok");
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MapsActivity.this,android.R.layout.simple_list_item_1,list);
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                Log.e("list",device.getAddress());
+                list.add(device.getName());
+                bluefound = list.size();
+                //arrayAdapter.notifyDataSetChanged();
 
+                Toast.makeText(MapsActivity.this, "ok scan fatto", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
 
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Toast t = new Toast(this);
-            t.setText("Sorry your phone do not support Bluetooth");
-            t.show();
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent,1);}
-
-            // Create a BroadcastReceiver for ACTION_FOUND
-            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-                public void onReceive(Context context, Intent intent) {
-                    String action = intent.getAction();
-                    // When discovery finds a device
-                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                        // Get the BluetoothDevice object from the Intent
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        // Add the name and address to an array adapter to show in a ListView
-                        Log.e("list",device.getAddress());
-                        list.add(device.getName());
-                        bluefound = list.size();
-                        arrayAdapter.notifyDataSetChanged();
-
-                    }
-                }
-            };
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-
-            bluetoothAdapter.startDiscovery();
-
-
+                bluetoothAdapterr.cancelDiscovery();
+            }
         }
-    }
+    };
 
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+
+            autoScan = true; //da rendere con autoscan dialog dal menu per ora cosi
+
+            if (autoScan == true) {
+
+                Thread closeActivity = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            bluetoothAdapterr.startDiscovery();
+
+                            Thread.sleep(3000);
+                            bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
+                            // Do some stuff
+                        } catch (Exception e) {
+                            e.getLocalizedMessage();
+                        }
+                    }
+                });
+
+                closeActivity.start();
+            }
+
+            SendLoc(String.format(String.valueOf(location)));
+            ////
+            // SERVE GET SENZA SEND QUI
+            /////
+            handler.postDelayed(this, 5000);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Don't forget to unregister the ACTION_FOUND receiver.
+        unregisterReceiver(mReceiver);
+    }
+//////////////////////////////
 
     public void putlocrecent(Location loc){
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
@@ -1003,4 +990,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         editor.remove(key);
         editor.apply();
     }
+
+
 }
