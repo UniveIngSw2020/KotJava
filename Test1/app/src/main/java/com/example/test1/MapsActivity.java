@@ -700,7 +700,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //
-
+@NonNull
     public  void  SendLoc(String loc){ //need location
 
 
@@ -806,6 +806,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void onReceive(Context context, Intent intent) {
             Log.e("quanti blue","ok");
 
+
             String action = intent.getAction();
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -834,7 +835,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             if (autoScan) {
+                // attiva bluetooth se non è attivo
 
+                if (!bluetoothAdapterr.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent,1);
+                }
                 Thread closeActivity = new Thread(new Runnable() {
                     @Override
                     public void run() {
