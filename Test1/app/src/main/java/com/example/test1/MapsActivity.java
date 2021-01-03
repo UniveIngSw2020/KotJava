@@ -73,20 +73,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/*v0:
-//aggiunta metodo per fare send e get (get viene fatta come lettura dopo risposta del send per ora poi vediamo)
-//send messa sull click per la posizione per ora
-v1:
-nuovo metodo solo per fare il get senza send creato
-v2:
-messo thread e controllo per permessi prima di fare invio location (location da a (google in california?)
-
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />  per https://stackoverflow.com/questions/29753117/waitinginmainsignalcatcherloop-error-in-android-application
-
- */
-
-
 /*
+
+public  void  SendLoc(String loc)
+prende una stringa di longitine + lat ed invia al server, la risposta dal server e` quello che vediamo per aggiornare
+
+private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+gestiste la scansione fatta da scandiscovery
+se ce un dispositivo va su OnReceive()
+
+private Runnable runnableCode = new Runnable() {
+questo gestisce cio che viene fatto ogni tot sencondi, viene chimato da dentro onCrreate poi si chiama ricorsivamente
+
+nella OnDestroy Distrugge il broadCast che tiene le connesioni con i bluetooth
  */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
@@ -635,6 +634,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked){
                             //scanBlue();
+
                             editor.putBoolean("autoscan", true);
                             editor.apply();
                             Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
@@ -800,7 +800,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-   
+
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         final ArrayList<String> list = new ArrayList<>();
@@ -830,8 +830,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void run() {
 
-
-
             autoScan = true; //da rendere con autoscan dialog dal menu per ora cosi
 
             Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
@@ -841,6 +839,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Thread closeActivity = new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        //thread che serve solo per fare la Thread.sleep(1000);
+
+                        //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
                         try {
                             bluetoothAdapterr.startDiscovery();
 
