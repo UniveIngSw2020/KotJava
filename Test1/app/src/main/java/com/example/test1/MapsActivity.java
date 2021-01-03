@@ -800,70 +800,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    public void  displayDiscovry(){
-
-        final ArrayList<String> list = new ArrayList<>();
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MapsActivity.this,android.R.layout.simple_list_item_1,list);
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
-        LinearLayout linearLayout = new LinearLayout(MapsActivity.this);
-
-        ListView listView = new ListView(MapsActivity.this);
-        linearLayout.addView(listView);
-
-        listView.setAdapter(arrayAdapter);
-
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Toast t = new Toast(this);
-            t.setText("Sorry your phone do not support Bluetooth");
-            t.show();
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent,1);}
-            //   bluetoothDev=new BluetoothDev();
-
-            //added
-            // Create a BroadcastReceiver for ACTION_FOUND
-            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-                public void onReceive(Context context, Intent intent) {
-                    String action = intent.getAction();
-                    // When discovery finds a device
-                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                        // Get the BluetoothDevice object from the Intent
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        // Add the name and address to an array adapter to show in a ListView
-
-                        Log.e("list",device.getAddress());
-                        list.add(device.getName());
-                        arrayAdapter.notifyDataSetChanged();
-
-                    }
-                }
-            };
-            // Register the BroadcastReceiver
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-            //end added
-
-            bluetoothAdapter.startDiscovery();
-
-            alertDialog.setTitle("Bluetooth Scan");
-            alertDialog.setView(linearLayout);
-            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    unregisterReceiver(mReceiver);
-                    bluetoothAdapter.cancelDiscovery();
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
-
-        }
-    }
+   
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         final ArrayList<String> list = new ArrayList<>();
