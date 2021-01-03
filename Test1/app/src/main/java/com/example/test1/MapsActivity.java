@@ -881,7 +881,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
 
-                Toast.makeText(MapsActivity.this, "ok scan fatto", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
 
                 bluetoothAdapterr.cancelDiscovery();
@@ -893,7 +893,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void run() {
 
+
+
             autoScan = true; //da rendere con autoscan dialog dal menu per ora cosi
+
+            Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
 
             if (autoScan == true) {
 
@@ -903,7 +907,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         try {
                             bluetoothAdapterr.startDiscovery();
 
-                            Thread.sleep(3000);
+                            Thread.sleep(1000);
                             bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
                             // Do some stuff
                         } catch (Exception e) {
