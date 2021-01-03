@@ -52,11 +52,10 @@
     <string name="placeholder_history">Visitati</string>
 
     <!--Contatti-->
-    <string name="job1">Incarico 1</string>
-    <string name="job2">Incarico 2</string>
-    <string name="job3">Incarico 3</string>
-    <string name="job4">Incarico 4</string>
-    <string name="job5">Incarico 5</string>
+    <string name="job1">Software developer</string>
+    <string name="job2">Graphic designer</string>
+    <string name="job3">Web/Server manager</string>
+    <string name="job4">Docs designer</string>
 
     <string name="contact1">
         Daniele De Battista\n
