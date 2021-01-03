@@ -455,22 +455,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return false;
             }
             int m = 0;
-        
             @Override
             public boolean onQueryTextChange(String location) {
             
                 List<Address> addressList = null;
-            
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
-                    
-                    
                         final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "cityName"});
-                    
-                    
-                    
                         for (int i=0; i<addressList.size(); i++) {
                         
                             c.addRow(new Object[]{i, addressList.get(i).getAddressLine(0)});
@@ -634,7 +627,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked){
-                           // scanblue
+                           scanBlue();
                             editor.putBoolean("autoscan", true);
                             editor.apply();
                             Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
@@ -898,7 +891,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
                     unregisterReceiver(mReceiver);
                     bluetoothAdapter.cancelDiscovery();
                     dialog.dismiss();
@@ -1004,7 +996,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return namelocs;
     }
 
-
+    //metodo per cancellare tutti i campi in contemporaena
     public void deleteAll(String key){
         final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
