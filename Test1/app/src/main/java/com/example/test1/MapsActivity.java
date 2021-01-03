@@ -498,7 +498,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         mapFragment.getMapAsync(this);
-        //displayDiscovry(); //scan BLUETOOTH
+        
     }
 
 
@@ -612,7 +612,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Aprire la pagina del playStore(?)
                 return true;
             case R.id.scansioni:
-                //Apre sottomenu scansioni
+                
                 return true;
             case R.id.autoscan:
                 final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
