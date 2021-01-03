@@ -837,7 +837,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (autoScan) {
                 // attiva bluetooth se non è attivo
 
-                if (!bluetoothAdapterr.isEnabled()) {
+                if ((bluetoothAdapterr == null) || !bluetoothAdapterr.isEnabled()) {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent,1);
                 }
