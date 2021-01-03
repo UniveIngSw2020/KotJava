@@ -34,7 +34,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -829,12 +828,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
+            SharedPreferences share = getSharedPreferences("autoscan",MODE_PRIVATE);
+            autoScan = share.getBoolean("autoscan", false);
+            System.out.println("entra in 1 thread");
 
-            autoScan = true; //da rendere con autoscan dialog dal menu per ora cosi
 
-            Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-
-            if (autoScan == true) {
+            if (autoScan) {
 
                 Thread closeActivity = new Thread(new Runnable() {
                     @Override
@@ -843,11 +842,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
                         try {
+                            System.out.println("entra in 2 thread");
                             bluetoothAdapterr.startDiscovery();
+                            Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
 
                             Thread.sleep(1000);
                             bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
-                            // Do some stuff
                         } catch (Exception e) {
                             e.getLocalizedMessage();
                         }
@@ -857,13 +857,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 closeActivity.start();
             }
 
-            SendLoc(String.format(String.valueOf(location)));
+            SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
             ////
             // SERVE GET SENZA SEND QUI
             /////
             handler.postDelayed(this, 5000);
         }
     };
+
 
     @Override
     protected void onDestroy() {
