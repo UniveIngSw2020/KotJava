@@ -462,7 +462,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public boolean onQueryTextChange(String location) {
             
                 List<Address> addressList = null;
-                if (location != null || !location.equals("")) {
+                if (location != null && !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
@@ -699,8 +699,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //
 @NonNull
     public  void  SendLoc(String loc){ //need location
-
-
         String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
 
 
@@ -763,7 +761,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     void getParsing(String k){
-        // get from server and add markers
+        // get from server and add markers , and update blueFound
 
         try {
             JSONObject jsonObject = new JSONObject(k);
@@ -776,6 +774,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Log.e("json",obj.optString("id"));
                 final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
                 final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
+              
 
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
@@ -784,6 +783,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         googleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lon))
                                 .title(obj.optString("id")));
+                              
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
                 });
@@ -805,7 +805,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Add the name and address to an array adapter to show in a ListView
                 Log.e("list",device.getAddress());
                
-                list.add(device.getName());
+                list.add(0,device.getName());
+                bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
                 Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
