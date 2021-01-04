@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+<!-- FisrtAccess -->
     <string name="app_name">Test1</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
@@ -17,7 +19,8 @@
     <string name="accept_resreq">Accetta</string>
     <string name="request_check">check request</string>
 
-    <!-- Strings for MapsActivity menu -->
+
+<!-- MapsActivity menu -->
     <string name="helpitem">Help</string>
     <string name="guideitem">Guida</string>
     <string name="faqitem">FAQ</string>
@@ -29,7 +32,8 @@
     <string name="scanitem">Scansioni</string>
     <string name="autoscanitem">Attivazione auto-scan</string>
 
-    <!-- Strings for second MapsActivity menu -->
+
+<!-- MapsActivity bottoni -->
     <string name="favouritesitem">Preferiti</string>
     <string name="statsitem">Informazioni affluenza</string>
     <string name="locationitem">Informazioni luogo</string>
@@ -41,15 +45,24 @@
     <string name="histdescription">Luoghi precedentemente visitati</string>
 
 
-    <!--PLACEHOLDERS-->
-    <!--ToDo sostituire i placeholders con i contenuti corretti dei fragments-->
-    <string name="placeholder_guide">Guida</string>
-    <string name="placeholder_faq">Frequently Asked Questions</string>
-    <string name="placeholder_contacts">Contatti</string>
-    <string name="placeholder_credits">Credits</string>
+<!-- FAQ -->
+    <!-- ToDo mettere le stringhe vere -->
+    <string-array
+        name="questions">
+        <item>Q1?</item>
+        <item>Q2?</item>
+        <item>Q3?</item>
+        <item>Q4?</item>
+    </string-array>
 
-    <string name="placeholder_favourites">Preferiti</string>
-    <string name="placeholder_history">Visitati</string>
+    <string-array
+        name="answers">
+        <item>A1!</item>
+        <item>A2!</item>
+        <item>A3!</item>
+        <item>A4!</item>
+    </string-array>
+
 
     <!--Contatti-->
     <string name="job1">Software developer</string>
@@ -83,7 +96,8 @@
         Numero di telefono 5\n
     </string>
 
-    <!-- Credits -->
+
+<!-- Credits -->
     <string name="credits1">
             L\'applicazione è stata realizzata ad opera di:
         </string>
@@ -97,13 +111,30 @@
     <string name="credits3">
             Nell\'ambito di un progetto portato avanti per il corso di Ingegneria del Software presso l\'università Ca\'Foscari di Venezia.
         </string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
-    <!-- Aggiornamento -->
+<!-- Aggiornamento -->
     <string name="update_version">App versione %s</string>
     <string name="update_not_available">L\'applicazione è aggiornata</string>
     <string name="update_available">Aggiornamento disponibile</string>
+
+
+<!--PLACEHOLDERS-->
+    <!-- menu -->
+    <string name="placeholder_guide">Guida</string>
+    <string name="placeholder_faq">Frequently Asked Questions</string>
+    <string name="placeholder_contacts">Contatti</string>
+    <string name="placeholder_credits">Credits</string>
+
+    <!-- Bottoni -->
+    <string name="placeholder_favourites">Preferiti</string>
+    <string name="placeholder_history">Visitati</string>
+
+    <!-- FAQ -->
+    <string name="placeholder_question">Domanda?</string>
+    <string name="placeholder_answer">Risposta!</string>
+
+    <!-- Fragments -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

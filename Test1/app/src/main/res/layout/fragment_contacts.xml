@@ -14,8 +14,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/line1"
+        app:layout_constraintBottom_toTopOf="@id/background2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,22 +27,20 @@
         android:layout_height="wrap_content"
         android:text="@string/job1"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/line1"
+        app:layout_constraintEnd_toEndOf="@id/background1"
+        app:layout_constraintStart_toStartOf="@id/background1"
+        app:layout_constraintTop_toTopOf="@id/background1" />
 
     <View
-        android:id="@+id/line0.5"
-        android:layout_width="match_parent"
+        android:id="@+id/line1"
+        android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:background="#7F7F7F"
         android:minHeight="2dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_contatto1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/background1"
+        app:layout_constraintStart_toStartOf="@+id/background1"
         app:layout_constraintTop_toBottomOf="@id/tv_incarico1" />
 
     <TextView
@@ -50,37 +49,24 @@
         android:layout_height="wrap_content"
         android:text="@string/contact1"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/line1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_incarico1" />
+        app:layout_constraintBottom_toBottomOf="@id/background1"
+        app:layout_constraintEnd_toEndOf="@id/background1"
+        app:layout_constraintStart_toStartOf="@id/background1"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
 
-
-    <View
-        android:id="@+id/line1"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="#000000"
-        android:minHeight="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/line2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/background2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/line2"
+        app:layout_constraintBottom_toTopOf="@id/background3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line1" />
+        app:layout_constraintTop_toBottomOf="@id/background1" />
 
     <TextView
         android:id="@+id/tv_incarico2"
@@ -88,22 +74,20 @@
         android:layout_height="wrap_content"
         android:text="@string/job1"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line1" />
+        app:layout_constraintBottom_toTopOf="@+id/line2"
+        app:layout_constraintEnd_toEndOf="@id/background2"
+        app:layout_constraintStart_toStartOf="@id/background2"
+        app:layout_constraintTop_toTopOf="@id/background2" />
 
     <View
-        android:id="@+id/line1.5"
-        android:layout_width="match_parent"
+        android:id="@+id/line2"
+        android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:background="#7F7F7F"
         android:minHeight="2dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_contatto2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/background2"
+        app:layout_constraintStart_toStartOf="@+id/background2"
         app:layout_constraintTop_toBottomOf="@id/tv_incarico2" />
 
     <TextView
@@ -112,36 +96,24 @@
         android:layout_height="wrap_content"
         android:text="@string/contact2"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/line2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_incarico2" />
+        app:layout_constraintBottom_toBottomOf="@id/background2"
+        app:layout_constraintEnd_toEndOf="@id/background2"
+        app:layout_constraintStart_toStartOf="@id/background2"
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
 
-    <View
-        android:id="@+id/line2"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="#000000"
-        android:minHeight="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/line3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line1" />
 
     <View
         android:id="@+id/background3"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/line3"
+        app:layout_constraintBottom_toTopOf="@id/background4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line2" />
+        app:layout_constraintTop_toBottomOf="@id/background2" />
 
     <TextView
         android:id="@+id/tv_incarico3"
@@ -149,22 +121,20 @@
         android:layout_height="wrap_content"
         android:text="@string/job2"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line2" />
+        app:layout_constraintBottom_toTopOf="@+id/line3"
+        app:layout_constraintEnd_toEndOf="@id/background3"
+        app:layout_constraintStart_toStartOf="@id/background3"
+        app:layout_constraintTop_toTopOf="@id/background3" />
 
     <View
-        android:id="@+id/line2.5"
-        android:layout_width="match_parent"
+        android:id="@+id/line3"
+        android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:background="#7F7F7F"
         android:minHeight="2dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_contatto3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/background3"
+        app:layout_constraintStart_toStartOf="@+id/background3"
         app:layout_constraintTop_toBottomOf="@id/tv_incarico3" />
 
     <TextView
@@ -173,36 +143,23 @@
         android:layout_height="wrap_content"
         android:text="@string/contact3"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/line3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_incarico3" />
-
-    <View
-        android:id="@+id/line3"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="#000000"
-        android:minHeight="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/line4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line2" />
+        app:layout_constraintBottom_toBottomOf="@id/background3"
+        app:layout_constraintEnd_toEndOf="@id/background3"
+        app:layout_constraintStart_toStartOf="@id/background3"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
 
     <View
         android:id="@+id/background4"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/line4"
+        app:layout_constraintBottom_toTopOf="@id/background5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line3" />
+        app:layout_constraintTop_toBottomOf="@id/background3" />
 
     <TextView
         android:id="@+id/tv_incarico4"
@@ -210,22 +167,20 @@
         android:layout_height="wrap_content"
         android:text="@string/job3"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line3" />
+        app:layout_constraintBottom_toTopOf="@+id/line4"
+        app:layout_constraintEnd_toEndOf="@id/background4"
+        app:layout_constraintStart_toStartOf="@id/background4"
+        app:layout_constraintTop_toTopOf="@id/background4" />
 
     <View
-        android:id="@+id/line3.5"
-        android:layout_width="match_parent"
+        android:id="@+id/line4"
+        android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="#FF7F7F7F"
+        android:background="#7F7F7F"
         android:minHeight="2dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_contatto4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/background4"
+        app:layout_constraintStart_toStartOf="@+id/background4"
         app:layout_constraintTop_toBottomOf="@id/tv_incarico4" />
 
     <TextView
@@ -234,36 +189,24 @@
         android:layout_height="wrap_content"
         android:text="@string/contact4"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/line4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_incarico4" />
+        app:layout_constraintBottom_toBottomOf="@id/background4"
+        app:layout_constraintEnd_toEndOf="@id/background4"
+        app:layout_constraintStart_toStartOf="@id/background4"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
 
-    <View
-        android:id="@+id/line4"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="#000000"
-        android:minHeight="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line3" />
 
     <View
         android:id="@+id/background5"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line4" />
+        app:layout_constraintTop_toBottomOf="@id/background4" />
 
     <TextView
         android:id="@+id/tv_incarico5"
@@ -271,22 +214,20 @@
         android:layout_height="wrap_content"
         android:text="@string/job4"
         android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line4" />
+        app:layout_constraintBottom_toTopOf="@+id/line5"
+        app:layout_constraintEnd_toEndOf="@id/background5"
+        app:layout_constraintStart_toStartOf="@id/background5"
+        app:layout_constraintTop_toTopOf="@id/background5" />
 
     <View
-        android:id="@+id/line4.5"
-        android:layout_width="match_parent"
+        android:id="@+id/line5"
+        android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="#FF7F7F7F"
+        android:background="#7F7F7F"
         android:minHeight="2dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_contatto5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/background5"
+        app:layout_constraintStart_toStartOf="@+id/background5"
         app:layout_constraintTop_toBottomOf="@id/tv_incarico5" />
 
     <TextView
@@ -295,9 +236,10 @@
         android:layout_height="wrap_content"
         android:text="@string/contact5"
         android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_incarico5" />
+        app:layout_constraintBottom_toBottomOf="@id/background5"
+        app:layout_constraintEnd_toEndOf="@id/background5"
+        app:layout_constraintStart_toStartOf="@id/background5"
+        app:layout_constraintTop_toBottomOf="@+id/line5" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

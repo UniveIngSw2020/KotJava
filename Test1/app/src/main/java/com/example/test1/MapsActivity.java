@@ -488,12 +488,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return false;
             }
         
-        
         });
-    
-    
-
-
 
         mapFragment.getMapAsync(this);
         
@@ -552,6 +547,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         inflater.inflate(R.menu.menu_maps, menu);
         return true;
     }
+
     //Creazione condividi app
     private void showMsg(String msg) {
         Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
@@ -567,7 +563,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Gestione del click sulle varie voci del menu
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent = new Intent( MapsActivity.this, MenuItemsActivity.class );
         switch (item.getItemId()) {
             case R.id.help:
@@ -696,9 +692,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    //
-@NonNull
-    public  void  SendLoc(String loc){ //need location
+    public void SendLoc(String loc){ //need location
         String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
 
 

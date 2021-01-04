@@ -1,4 +1,6 @@
 <resources>
+
+<!-- FisrtAccess -->
     <string name="app_name">Test1</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
@@ -16,7 +18,8 @@
     <string name="accept_resreq">Accept</string>
     <string name="request_check">Check request</string>
 
-    <!-- Strings for MapsActivity menu -->
+
+<!-- MapsActivity menu -->
     <string name="helpitem">Help</string>
     <string name="guideitem">Guide</string>
     <string name="faqitem">FAQ</string>
@@ -28,10 +31,11 @@
     <string name="scanitem">Scan</string>
     <string name="autoscanitem">Activate auto-scan</string>
 
-    <!-- Strings for second MapsActivity menu -->
+
+<!-- MapsActivity bottoni -->
     <string name="favouritesitem">Favourites</string>
     <string name="statsitem">Crowd Data</string>
-    <string name="locationitem">Local Informations</string> <!--Potremmo mettere Sightsee-->
+    <string name="locationitem">Local Informations</string>
     <string name="historyitem">Visited</string>
 
     <string name="favdescription">Favourite Places</string>
@@ -40,17 +44,27 @@
     <string name="histdescription">Already Visited Places</string>
 
 
-    <!--PLACEHOLDERS-->
-    <!--ToDo sostituire i placeholders con i contenuti corretti dei fragments-->
-    <string name="placeholder_guide">Guide</string>
-    <string name="placeholder_faq">Frequently Asked Questions</string>
-    <string name="placeholder_contacts">Contact us</string>
-    <string name="placeholder_credits">Credits</string>
 
-    <string name="placeholder_favourites">Favourites</string>
-    <string name="placeholder_history">Visited</string>
+<!-- FAQ -->
+    <!-- ToDo mettere le stringhe vere-->
+    <string-array
+        name="questions">
+        <item>Q1?</item>
+        <item>Q2?</item>
+        <item>Q3?</item>
+        <item>Q4?</item>
+    </string-array>
 
-    <!--Contact us-->
+    <string-array
+        name="answers">
+        <item>A1!</item>
+        <item>A2!</item>
+        <item>A3!</item>
+        <item>A4!</item>
+    </string-array>
+
+
+<!-- Contatti -->
     <string name="job1">Software developer</string>
     <string name="job2">Graphic designer</string>
     <string name="job3">Web/Server manager</string>
@@ -76,15 +90,14 @@
         Email 4\n
         Numero di telefono 4\n
     </string>
-<string name="contact5">
+    <string name="contact5">
         Matteo De Col\n
         Email 5\n
         Numero di telefono 5\n
     </string>
 
 
-
-    <!-- Credits -->
+<!-- Credits -->
     <string name="credits1">
         The app has been created thanks to:\n
     </string>
@@ -99,14 +112,29 @@
         As a project for the Software Engineering course at university Ca\'Foscari of Venice.
     </string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-
-    <!-- Update -->
+<!-- Aggiornamento -->
     <string name="update_version">App version %s</string>
     <string name="update_not_available">The application is up to date</string>
     <string name="update_available">A new update is available</string>
 
+
+<!-- PLACEHOLDERS -->
+    <!-- Menu -->
+    <string name="placeholder_guide">Guide</string>
+    <string name="placeholder_faq">Frequently Asked Questions</string>
+    <string name="placeholder_contacts">Contact us</string>
+    <string name="placeholder_credits">Credits</string>
+
+    <!-- Bottoni -->
+    <string name="placeholder_favourites">Favourites</string>
+    <string name="placeholder_history">Visited</string>
+
+    <!-- FAQ -->
+    <string name="placeholder_question">Question?</string>
+    <string name="placeholder_answer">Answer!</string>
+
+    <!-- Fragments -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

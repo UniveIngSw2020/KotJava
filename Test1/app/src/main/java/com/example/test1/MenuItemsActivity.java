@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 public class MenuItemsActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int val = getIntent().getIntExtra("val", 0);
