@@ -9,25 +9,35 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
+import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,6 +53,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,26 +65,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
-/*v0:
-//aggiunta metodo per fare send e get (get viene fatta come lettura dopo risposta del send per ora poi vediamo)
-//send messa sull click per la posizione per ora
-v1:
-nuovo metodo solo per fare il get senza send creato
-v2:
-messo thread e controllo per permessi prima di fare invio location (location da a (google in california?)
-
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />  per https://stackoverflow.com/questions/29753117/waitinginmainsignalcatcherloop-error-in-android-application
-
- */
-
-
 /*
+
+public  void  SendLoc(String loc)
+prende una stringa di longitine + lat ed invia al server, la risposta dal server e` quello che vediamo per aggiornare
+
+private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+gestiste la scansione fatta da scandiscovery
+se ce un dispositivo va su OnReceive()
+
+private Runnable runnableCode = new Runnable() {
+questo gestisce cio che viene fatto ogni tot sencondi, viene chimato da dentro onCrreate poi si chiama ricorsivamente
+
+nella OnDestroy Distrugge il broadCast che tiene le connesioni con i bluetooth
  */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
@@ -81,20 +94,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SearchView searchView;
     private SupportMapFragment mapFragment;
     private LocationManager locationManager;
-    private Location location = null; // Location
+    private Location location ; // Location
     double latitude; // Latitude
     double longitude; // Longitude
+    int bluefound;
+    SimpleCursorAdapter mAdapter;
 
+    boolean autoScan;
+
+    Handler handler = new Handler();
+
+    final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //button favourite and recent
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
+        final Gson gson =new Gson();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar = findViewById(R.id.toolbar);
+        Toolbar myToolbar = findViewById(R.id.maps_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -110,19 +137,91 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //Log.d(TAG, e.getLocalizedMessage());
         }
 
-
+        handler.postDelayed(runnableCode ,5000);
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
 
 //Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                //Creo l'intent per lanciare l'activity e ci aggiungo un int per far lanciare l'activity con il fragment adatto
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 1 );// 1 = fragment dei preferiti
-                startActivity(intent);
-                finish();
+            public void onClick(View v) {
+                String json = sharedPreferencesfav.getString("favloc", "");
+                Type type = new TypeToken<List<String>>() {
+                }.getType();
+                final ArrayList<String> arrayListm = gson.fromJson(json, type);
+                final List<String> namelocs = getNameOfLocation(arrayListm);
+
+
+                final AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                final ListView listView = new ListView(alert.getContext());
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrayListm.get(i).split(":")[0]), Double.parseDouble(arrayListm.get(i).split(":")[1]))));
+                    }
+                });
+                //se il record viene tenuto premuto si può eliminare
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                        final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
+
+                        alertcancel.setTitle("Delete this position?");
+                        alertcancel.setCancelable(true);
+                        alertcancel.setPositiveButton("delete this position", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                arrayListm.remove(position);
+                                namelocs.remove(position);
+                                editorfav.remove("favloc");
+                                String json = gson.toJson(arrayListm);
+                                editorfav.putString("favloc", json);
+                                editorfav.apply();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
+                                Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        });
+                        alertcancel.setNegativeButton("Delete all", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteAll("favloc");
+                                namelocs.clear();
+                                arrayListm.clear();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+
+                            }
+                        });
+                        alertcancel.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertcancel.show();
+                        return true;
+                    }
+                });
+
+                listView.setAdapter(new ArrayAdapter<>(alert.getContext(), android.R.layout.simple_list_item_1, namelocs));
+                alert.setTitle("Favourite places");
+                alert.setCancelable(true);
+                alert.setView(listView);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+                alert.show();
+
             }
         });
+
+
 
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
@@ -134,26 +233,92 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        ImageButton bloc = findViewById(R.id.imageButtonLocation);
-        bloc.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 3 );// 3 = fragment della posizione attuale
-                startActivity(intent);
-                finish();
-            }
-        });
-
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
-                intent.putExtra("val", 4 );// 4 = fragment dei visitati
-                startActivity(intent);
-                finish();
-            }
-        });
+                //cose
+                String json = sharedPreferences.getString("recentloc","");
+                Type type =  new TypeToken<List<String>>(){
+                }.getType();
+                final ArrayList<String> arrayListm = gson.fromJson(json,type);
+                final List<String> namelocs = getNameOfLocation(arrayListm);
 
+
+                final AlertDialog.Builder alert =new AlertDialog.Builder(MapsActivity.this);
+                final ListView listView = new ListView(alert.getContext());
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                        map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng( Double.parseDouble(arrayListm.get(i).split(":")[0]) ,Double.parseDouble(arrayListm.get(i).split(":")[1]))));
+                    }
+
+
+
+                });
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+
+                        final AlertDialog.Builder alertcancel =new AlertDialog.Builder(MapsActivity.this);
+
+                        alertcancel.setTitle("Delete this position?");
+                        alertcancel.setCancelable(true);
+                        alertcancel.setPositiveButton("delete this position", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                arrayListm.remove(position);
+                                namelocs.remove(position);
+                                editor.remove("recentloc");
+                                String json = gson.toJson(arrayListm);
+                                editor.putString("recentloc", json);
+                                editor.apply();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+                                Toast.makeText(MapsActivity.this, "Location deleted", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        });
+                        alertcancel.setNegativeButton("Delete all", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteAll("recentloc");
+                               namelocs.clear();
+                               arrayListm.clear();
+                                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+
+                            }
+                        });
+                        alertcancel.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertcancel.show();
+                        return true;
+                    }
+                });
+
+
+                listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
+                alert.setTitle("Recent location visited");
+                alert.setCancelable(true);
+                alert.setView(listView);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+                alert.show();
+
+
+            }
+
+        });
 
 
         final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
@@ -179,37 +344,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
 
+                // inserisco in memoria i preferiti
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        String json = sharedPreferencesfav.getString("favloc", "");
+                        Type type = new TypeToken<List<String>>() {
+                        }.getType();
+                        ArrayList<String> arrayList = gson.fromJson(json, type);
+                        if(arrayList == null)
+                            arrayList = new ArrayList<>();
 
+                        arrayList.add(latLng.latitude +":"+latLng.longitude);
+                        json = gson.toJson(arrayList);
+                        editorfav.putString("favloc",json);
+                        editorfav.apply();
+
+                        Toast.makeText(MapsActivity.this, "Favourite location added", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
 
             }
 
+
+
         });
-
-        searchView.setOnClickListener(new View.OnClickListener() {
+    
+        final String[] from = new String[] {"cityName"};
+        final int[] to = new int[] {android.R.id.text1};
+    
+        mAdapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_list_item_1,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+    
+        searchView.setSuggestionsAdapter(mAdapter);
+        searchView.setIconifiedByDefault(false);
+    
+        // Getting selected (clicked) item suggestion
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public void onClick(View v) {
-                searchView.onActionViewExpanded();
-            }
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String location) {
-
+            public boolean onSuggestionClick(int position) {
+            
                 List<Address> addressList = null;
-
+                Cursor cursor = (Cursor) mAdapter.getItem(position);
+                String location = cursor.getString(cursor.getColumnIndex("cityName"));
+            
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
-                        addressList = geocoder.getFromLocationName(location, 1);
-
-
-
+                        addressList = geocoder.getFromLocationName(location, 5);
+                    
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-
-                        map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
+                    
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    
+                    
+                    
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -217,19 +412,91 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }
 
-                return false;
-            }
 
+//                searchView.setQuery(txt, true);
+            
+            
+                return true;
+            }
+        
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public boolean onSuggestionSelect(int position) {
+                // Your code here
+                return true;
             }
         });
+    
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.onActionViewExpanded();
+            }
+        });
+    
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String location) {
+            
+                List<Address> addressList = null;
+            
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                        Address address = addressList.get(0);
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            
+                return false;
+            }
+            int m = 0;
+            @Override
+            public boolean onQueryTextChange(String location) {
+            
+                List<Address> addressList = null;
+                if (location != null && !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 5);
+                        final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "cityName"});
+                        for (int i=0; i<addressList.size(); i++) {
+                        
+                            c.addRow(new Object[]{i, addressList.get(i).getAddressLine(0)});
+                            m++;
+                            //mAdapter.changeCursor(c);
+                        
+                            Log.e("list",addressList.get(i).getAddressLine(0));
+                        }
+                    
+                        mAdapter.changeCursor(c);
+                    
+                    
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return false;
+            }
+        
+        
+        });
+    
+    
 
 
 
         mapFragment.getMapAsync(this);
-        //displayDiscovry(); //scan BLUETOOTH
+        
     }
 
 
@@ -265,6 +532,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //SendLoc(String.format(String.valueOf(location)));
         controllPermissionAndSend(latitude + ":" + longitude);
         Log.e("loc","ok=");
+
+        // aggiungo a recenti la posizione
+        putlocrecent(location);
     }
 
     @Override
@@ -281,6 +551,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_maps, menu);
         return true;
+    }
+    //Creazione condividi app
+    private void showMsg(String msg) {
+        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+        toast.show();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Condividi la nostra app");
+        sendIntent.setType("text/plain");
+        
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 
     //Gestione del click sulle varie voci del menu
@@ -321,22 +603,49 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
                 return true;
             case R.id.condividi:
+                showMsg("Condivisione app..");
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
                 //Aprire la pagina del playStore(?)
                 return true;
             case R.id.scansioni:
-                //Apre sottomenu scansioni
-                return true;
-            case R.id.storico:
- /*                //Rimandare alla pagina di aggiornamento
-                intent.putExtra("val", 6 );// 6 = fragment dello storico scansioni
-                startActivity(intent);
-                finish();*/
+                
                 return true;
             case R.id.autoscan:
-                //Attivare/disattivare autoscan
+                final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
+                final SharedPreferences.Editor editor = sharedautoscan.edit();
+                Switch sw = new Switch(MapsActivity.this);
+                boolean checked;
+                sw.setTextOn("on");
+                sw.setTextOff("off");
+                sw.setGravity(Gravity.CENTER);
+
+                final AlertDialog.Builder myDialog = new AlertDialog.Builder(MapsActivity.this);
+                myDialog.setTitle("Auto Scan");
+                myDialog.setMessage("TURN ON the autoscan to find other devices automatically ");
+                myDialog.setView(sw);
+                sw.setChecked(sharedautoscan.getBoolean("autoscan",false));
+                sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked){
+                            //scanBlue();
+                            editor.putBoolean("autoscan", true);
+                            editor.apply();
+                            Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            editor.putBoolean("autoscan", false);
+                            editor.apply();
+                            Toast.makeText(myDialog.getContext(), "Autoscan mode OFF", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                myDialog.show();
+
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -388,12 +697,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //
-
+@NonNull
     public  void  SendLoc(String loc){ //need location
-
-
-
-        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound=0&timeStamp=1";
+        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
 
 
         String text = "";
@@ -405,7 +711,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
 
             // Defined URL  where to send data
-            URL url = new URL("http://192.168.0.104/posti.php");
+            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
 
             // Send POST data request
 
@@ -455,7 +761,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     void getParsing(String k){
-        // get from server and add markers
+        // get from server and add markers , and update blueFound
 
         try {
             JSONObject jsonObject = new JSONObject(k);
@@ -468,6 +774,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Log.e("json",obj.optString("id"));
                 final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
                 final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
+              
 
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
@@ -476,6 +783,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         googleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lon))
                                 .title(obj.optString("id")));
+                              
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
                 });
@@ -485,119 +793,148 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
     }
-
-    //get separato da send
-    void getLastData(String k){
-
-        String text = "";
-        BufferedReader reader=null;
-
-        try {
-            // Defined URL  where to send data
-            URL url = new URL("http://192.168.1.4/posti.php");
-
-            URLConnection conn = url.openConnection();
-
-            // get from server and add markers
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            // Read Server Response
-            while ((line = reader.readLine()) != null) {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
-            try
-            {
-                reader.close();
-            }
-
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
-        }
-
-
-
-
-    }
-
-    public void  displayDiscovry(){
-
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         final ArrayList<String> list = new ArrayList<>();
+        public void onReceive(Context context, Intent intent) {
+            Log.e("quanti blue","ok");
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                Log.e("list",device.getAddress());
+               
+                list.add(0,device.getName());
+                bluefound = list.size();
+                //arrayAdapter.notifyDataSetChanged();
+                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
+                bluetoothAdapterr.cancelDiscovery();
+            }
+           
+            
+           
+        }
+    };
+    
+    
+    
+   
+    
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            SharedPreferences share = getSharedPreferences("autoscan",MODE_PRIVATE);
+            autoScan = share.getBoolean("autoscan", false);
+            System.out.println("entra in 1 thread");
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MapsActivity.this,android.R.layout.simple_list_item_1,list);
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
-        LinearLayout linearLayout = new LinearLayout(MapsActivity.this);
+            if (autoScan) {
+                // attiva bluetooth se non è attivo
 
-        ListView listView = new ListView(MapsActivity.this);
-        linearLayout.addView(listView);
+                if (!bluetoothAdapterr.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent,1);
+                }
+                Thread closeActivity = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //thread che serve solo per fare la Thread.sleep(1000);
 
-        listView.setAdapter(arrayAdapter);
+                        //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
+                        try {
+                            System.out.println("entra in 2 thread");
+                            bluetoothAdapterr.startDiscovery();
+                            Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
 
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Toast t = new Toast(this);
-            t.setText("Sorry your phone do not support Bluetooth");
-            t.show();
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent,1);}
-            //   bluetoothDev=new BluetoothDev();
-
-            //added
-            // Create a BroadcastReceiver for ACTION_FOUND
-            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-                public void onReceive(Context context, Intent intent) {
-                    String action = intent.getAction();
-                    // When discovery finds a device
-                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                        // Get the BluetoothDevice object from the Intent
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        // Add the name and address to an array adapter to show in a ListView
-
-                        Log.e("list",device.getAddress());
-                        list.add(device.getName());
-                        arrayAdapter.notifyDataSetChanged();
-
+                            Thread.sleep(1000);
+                            bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
+                        } catch (Exception e) {
+                            e.getLocalizedMessage();
+                        }
                     }
-                }
-            };
-// Register the BroadcastReceiver
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-            //end added
+                });
 
-            bluetoothAdapter.startDiscovery();
+                closeActivity.start();
+            }
 
-            alertDialog.setTitle("Bluetooth Scan");
-            alertDialog.setView(linearLayout);
-            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+            SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
+            ////
+            // SERVE GET SENZA SEND QUI
+            /////
+            handler.postDelayed(this, 5000);
+        }
+    };
 
-                    unregisterReceiver(mReceiver);
-                    bluetoothAdapter.cancelDiscovery();
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Don't forget to unregister the ACTION_FOUND receiver.
+        unregisterReceiver(mReceiver);
+    }
+//////////////////////////////
+
+    public void putlocrecent(Location loc){
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final ArrayList<String> arrayListrecent = new ArrayList<>();
+        final Gson gson =new Gson();
+
+        // get Array shared preferences
+        String json = sharedPreferences.getString("recentloc","");
+        Type type =  new TypeToken<List<String>>() {
+        }.getType();
+        ArrayList<String> arrayListm = gson.fromJson(json,type);
+        String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+        if(arrayListm == null) {
+            arrayListm = new ArrayList<>();
+            arrayListm.add(thisloc);
+            json = gson.toJson(arrayListm);
+            editor.putString("recentloc", json);
+            editor.apply();
+            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            if (!arrayListm.contains(thisloc)) {
+                arrayListm.add(thisloc);
+                json = gson.toJson(arrayListm);
+                editor.putString("recentloc", json);
+                editor.apply();
+                Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+
+            }
         }
     }
+    public List<String> getNameOfLocation(List<String> locations){
+        Geocoder g = new Geocoder(MapsActivity.this);
+        ArrayList<String> namelocs = new ArrayList<>();
+        if (locations != null){
+            for (String s : locations) {
+
+                try {
+                    List<Address> names = g.getFromLocation(Double.parseDouble(s.split(":")[0]), Double.parseDouble(s.split(":")[1]), 1);
+                    namelocs.add(names.get(0).getAddressLine(0));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+
+        return namelocs;
+    }
+
+    //metodo per cancellare tutti i campi in contemporaena
+    public void deleteAll(String key){
+        final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
+
 
 }

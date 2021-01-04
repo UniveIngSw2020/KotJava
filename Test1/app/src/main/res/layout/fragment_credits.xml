@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/tv_credits1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/credits1"
@@ -31,18 +31,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_credits2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/credits2"
-            android:textAlignment="center"
+            android:textAlignment="viewStart"
             android:textColor="#000000"
             android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView1" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_credits1" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_credits3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/credits3"
@@ -52,8 +53,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_credits2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

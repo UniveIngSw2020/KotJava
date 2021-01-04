@@ -1,37 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#00BCD4"
     tools:context=".ContactsFragment">
 
-    <TextView
-        android:id="@+id/tv_incarico1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Incarico1"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto1"
+    <View
+        android:id="@+id/background1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/line1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_incarico1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/job1"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/line0.5"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="#7F7F7F"
+        android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_incarico1" />
+
+    <TextView
         android:id="@+id/tv_contatto1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/contatti1"
+        android:text="@string/contact1"
         android:textColor="#000000"
-        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/line1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_incarico1" />
+
 
     <View
         android:id="@+id/line1"
@@ -41,32 +64,54 @@
         android:layout_marginEnd="5dp"
         android:background="#000000"
         android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/line2"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_incarico2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Incarico2"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto2"
+    <View
+        android:id="@+id/background2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line1" />
 
     <TextView
+        android:id="@+id/tv_incarico2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/job1"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
+
+    <View
+        android:id="@+id/line1.5"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="#7F7F7F"
+        android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_incarico2" />
+
+    <TextView
         android:id="@+id/tv_contatto2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/contatti2"
+        android:text="@string/contact2"
         android:textColor="#000000"
-        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,32 +125,54 @@
         android:layout_marginEnd="5dp"
         android:background="#000000"
         android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/line3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line1"
-        app:layout_constraintBottom_toTopOf="@+id/line3"/>
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
 
-    <TextView
-        android:id="@+id/tv_incarico3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Incarico3"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto3"
+    <View
+        android:id="@+id/background3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/line3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line2" />
 
     <TextView
+        android:id="@+id/tv_incarico3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/job2"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
+
+    <View
+        android:id="@+id/line2.5"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="#7F7F7F"
+        android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_incarico3" />
+
+    <TextView
         android:id="@+id/tv_contatto3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/contatti3"
+        android:text="@string/contact3"
         android:textColor="#000000"
-        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/line3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,35 +186,118 @@
         android:layout_marginEnd="5dp"
         android:background="#000000"
         android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/line4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line2"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
 
-    <TextView
-        android:id="@+id/tv_incarico4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Incarico4"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_contatto4"
+    <View
+        android:id="@+id/background4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/line4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line3" />
 
     <TextView
+        android:id="@+id/tv_incarico4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/job3"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
+
+    <View
+        android:id="@+id/line3.5"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FF7F7F7F"
+        android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_incarico4" />
+
+    <TextView
         android:id="@+id/tv_contatto4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/contatti4"
+        android:text="@string/contact4"
         android:textColor="#000000"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/line4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_incarico4" />
+
+    <View
+        android:id="@+id/line4"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="#000000"
+        android:minHeight="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
+
+    <View
+        android:id="@+id/background5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line4" />
+
+    <TextView
+        android:id="@+id/tv_incarico5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/job4"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
+
+    <View
+        android:id="@+id/line4.5"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="#FF7F7F7F"
+        android:minHeight="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_contatto5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_incarico5" />
+
+    <TextView
+        android:id="@+id/tv_contatto5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/contact5"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_incarico5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
