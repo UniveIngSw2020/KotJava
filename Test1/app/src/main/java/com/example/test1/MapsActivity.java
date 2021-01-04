@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -45,14 +46,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -69,7 +78,6 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -89,6 +97,7 @@ nella OnDestroy Distrugge il broadCast che tiene le connesioni con i bluetooth
  */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+   private final int REQUEST_CHECK_CODE = 999;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     private SearchView searchView;
@@ -105,16 +114,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Handler handler = new Handler();
 
     final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
-
+private LocationSettingsRequest.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         //button favourite and recent
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
         final Gson gson =new Gson();
+
+
+        LocationRequest request = new LocationRequest()
+                .setFastestInterval(500)
+                .setInterval(1000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(request);
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+                try {
+                    task.getResult(ApiException.class);
+                } catch (ApiException e) {
+                    switch (e.getStatusCode()){
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            try {
+
+                                //viene visualizzato dialogo di default per cambiare impostazioni gps
+                                ResolvableApiException resolvableApiException = (ResolvableApiException) e ;
+                                resolvableApiException.startResolutionForResult(MapsActivity.this, REQUEST_CHECK_CODE);
+
+
+                            } catch (IntentSender.SendIntentException sendIntentException) {
+
+                                sendIntentException.printStackTrace();
+
+                            } catch (ClassCastException ex){
+
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            {
+                                // caso in cui l' utente non accetta
+                            break;
+                        }
+                        case LocationSettingsStatusCodes.SUCCESS: {
+                            System.out.println("entra in SUCCESS");
+                            handler.postDelayed(runnableCode, 5000);
+                            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                            registerReceiver(mReceiver, filter);
+                            break;
+                        }
+
+                    }
+                }
+
+            }
+        });
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -136,10 +196,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (Exception e) {
             //Log.d(TAG, e.getLocalizedMessage());
         }
-
-        handler.postDelayed(runnableCode ,5000);
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
 
 //Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
@@ -370,41 +426,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         });
-    
+
         final String[] from = new String[] {"cityName"};
         final int[] to = new int[] {android.R.id.text1};
-    
+
         mAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_1,
                 null,
                 from,
                 to,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-    
+
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
-    
+
         // Getting selected (clicked) item suggestion
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionClick(int position) {
-            
+
                 List<Address> addressList = null;
                 Cursor cursor = (Cursor) mAdapter.getItem(position);
                 String location = cursor.getString(cursor.getColumnIndex("cityName"));
-            
+
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
-                    
+
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    
+
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                    
-                    
-                    
+
+
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -414,53 +470,53 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 //                searchView.setQuery(txt, true);
-            
-            
+
+
                 return true;
             }
-        
+
             @Override
             public boolean onSuggestionSelect(int position) {
                 // Your code here
                 return true;
             }
         });
-    
+
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchView.onActionViewExpanded();
             }
         });
-    
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String location) {
-            
+
                 List<Address> addressList = null;
-            
+
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    
+
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                    
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
                         Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-            
+
                 return false;
             }
             int m = 0;
             @Override
             public boolean onQueryTextChange(String location) {
-            
+
                 List<Address> addressList = null;
                 if (location != null && !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
@@ -468,17 +524,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         addressList = geocoder.getFromLocationName(location, 5);
                         final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "cityName"});
                         for (int i=0; i<addressList.size(); i++) {
-                        
+
                             c.addRow(new Object[]{i, addressList.get(i).getAddressLine(0)});
                             m++;
                             //mAdapter.changeCursor(c);
-                        
+
                             Log.e("list",addressList.get(i).getAddressLine(0));
                         }
-                    
+
                         mAdapter.changeCursor(c);
-                    
-                    
+
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -487,16 +543,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 return false;
             }
-        
-        
+
+
         });
-    
-    
+
+
 
 
 
         mapFragment.getMapAsync(this);
-        
+
     }
 
 
@@ -858,8 +914,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 closeActivity.start();
             }
-
+            if (location != null)
             SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
+
+
             ////
             // SERVE GET SENZA SEND QUI
             /////
