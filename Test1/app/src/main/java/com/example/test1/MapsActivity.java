@@ -92,6 +92,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
    private final int REQUEST_CHECK_CODE = 999;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
+    String bmac;
     private SearchView searchView;
     private SupportMapFragment mapFragment;
     private LocationManager locationManager;
@@ -106,7 +107,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Handler handler = new Handler();
 
     final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
-private LocationSettingsRequest.Builder builder;
+    private LocationSettingsRequest.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -682,8 +683,8 @@ private LocationSettingsRequest.Builder builder;
 
     String getMac() {
 
-        BluetoothAdapter m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        return m_BluetoothAdapter.getAddress();
+      
+        return bmac;
     }
     //send and from server php version:
 
@@ -827,8 +828,9 @@ private LocationSettingsRequest.Builder builder;
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // Add the name and address to an array adapter to show in a ListView
                     Log.e("list",device.getAddress());
-
+                    bluefound = 0;
                     list.add(device.getName());
+                    bmac = device.getAddress();
                     bluefound = list.size();
                     //arrayAdapter.notifyDataSetChanged();
                     Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
@@ -883,7 +885,7 @@ private LocationSettingsRequest.Builder builder;
                 }
                 if (location != null)
                 SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
-                bluefound=0;
+                //bluefound=0;
 
                 ////
                 // SERVE GET SENZA SEND QUI
