@@ -816,8 +816,9 @@ private LocationSettingsRequest.Builder builder;
             }
         }
         private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-            final ArrayList<String> list = new ArrayList<>();
+           
             public void onReceive(Context context, Intent intent) {
+                ArrayList<String> list = new ArrayList<>();
                 Log.e("quanti blue","ok");
                 String action = intent.getAction();
                 // When discovery finds a device
@@ -827,7 +828,7 @@ private LocationSettingsRequest.Builder builder;
                     // Add the name and address to an array adapter to show in a ListView
                     Log.e("list",device.getAddress());
 
-                    list.add(0,device.getName());
+                    list.add(device.getName());
                     bluefound = list.size();
                     //arrayAdapter.notifyDataSetChanged();
                     Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
@@ -882,7 +883,7 @@ private LocationSettingsRequest.Builder builder;
                 }
                 if (location != null)
                 SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
-
+                bluefound=0;
 
                 ////
                 // SERVE GET SENZA SEND QUI
