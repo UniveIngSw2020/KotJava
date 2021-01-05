@@ -9,13 +9,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -46,22 +46,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -125,60 +117,35 @@ private LocationSettingsRequest.Builder builder;
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
         final Gson gson =new Gson();
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
+            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                    buildAlertMessageNoGps(); // metodo che chiede all' utente di attivare gps
+            }
 
-        LocationRequest request = new LocationRequest()
-                .setFastestInterval(500)
-                .setInterval(1000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(request);
-        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
-        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
-            @Override
-            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
-                try {
-                    task.getResult(ApiException.class);
-                } catch (ApiException e) {
-                    switch (e.getStatusCode()){
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            try {
-
-                                //viene visualizzato dialogo di default per cambiare impostazioni gps
-                                ResolvableApiException resolvableApiException = (ResolvableApiException) e ;
-                                resolvableApiException.startResolutionForResult(MapsActivity.this, REQUEST_CHECK_CODE);
-
-
-                            } catch (IntentSender.SendIntentException sendIntentException) {
-
-                                sendIntentException.printStackTrace();
-
-                            } catch (ClassCastException ex){
-
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            {
-                                // caso in cui l' utente non accetta
-                            break;
-                        }
-                        case LocationSettingsStatusCodes.SUCCESS: {
-                            System.out.println("entra in SUCCESS");
+        if (FirstAccessActivity.checkPermission(getApplicationContext())) {
+            manager.addGpsStatusListener(new GpsStatus.Listener() {
+                @Override
+                public void onGpsStatusChanged(int event) {
+                    switch(event){
+                        case GpsStatus.GPS_EVENT_STARTED:
+                           // quando il servizio gps parte
                             handler.postDelayed(runnableCode, 5000);
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
                             break;
-                        }
-
+                        case GpsStatus.GPS_EVENT_STOPPED:
+                            // se il gps non va più, -> intent
+                            break;
+                        case GpsStatus.GPS_EVENT_FIRST_FIX:
+                            // possibilità di mettere sendlock ?
                     }
                 }
-
-            }
-        });
+            });
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar = findViewById(R.id.maps_toolbar);
@@ -722,277 +689,295 @@ private LocationSettingsRequest.Builder builder;
 
 /////////////////////////////////////////////////
 
-    void controllPermissionAndSend(String loc) {
+        void controllPermissionAndSend(String loc) {
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
-        ArrayList<String> arrayList = new ArrayList<>();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
+            ArrayList<String> arrayList = new ArrayList<>();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
 
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-            Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
-        }else {
-            Log.e("permessi","ok");
-            SendLoc(loc);
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+                arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+                Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
+            }else {
+                Log.e("permessi","ok");
+                SendLoc(loc);
+            }
+            if (!arrayList.isEmpty()) {
+                String[] permi = new String[arrayList.size()];
+                permi = arrayList.toArray(permi);
+                ActivityCompat.requestPermissions(this, permi, 0);
+            }
         }
-        if (!arrayList.isEmpty()) {
-            String[] permi = new String[arrayList.size()];
-            permi = arrayList.toArray(permi);
-            ActivityCompat.requestPermissions(this, permi, 0);
-        }
-    }
 
 
 
 
     //
-@NonNull
-    public  void  SendLoc(String loc){ //need location
-        String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
+        public  void  SendLoc(String loc){ //need location
+            String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
 
 
-        String text = "";
-        BufferedReader reader=null;
+            String text = "";
+            BufferedReader reader=null;
 
-        // Send data
-        Log.e("location","this is your location"+loc);
-        try
-        {
-
-            // Defined URL  where to send data
-            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-
-            // Send POST data request
-
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-            wr.write( data );
-            wr.flush();
-
-            // Get the server response
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            Log.e("loc","ok2 Sent"); //vedi cosa invia
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
+            // Send data
+            Log.e("location","this is your location"+loc);
             try
             {
-                reader.close();
+
+                // Defined URL  where to send data
+                URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+
+                // Send POST data request
+
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
+
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                wr.write( data );
+                wr.flush();
+
+                // Get the server response
+
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+                Log.e("loc","ok2 Sent"); //vedi cosa invia
+                // Read Server Response
+                while((line = reader.readLine()) != null)
+                {
+                    // Append server response in string
+                    sb.append(line + "\n");
+                }
+
+                //server response da usare per i marker nella get
+                text = sb.toString();
+
+            }
+            catch(Exception ex)
+            {
+
+                ex.printStackTrace();
+
+            }
+            finally
+            {
+                try
+                {
+                    reader.close();
+                }
+
+                catch(Exception ex) {ex.printStackTrace();}
+                getParsing(text);
             }
 
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
         }
 
-    }
+        void getParsing(String k){
+            // get from server and add markers , and update blueFound
 
-    void getParsing(String k){
-        // get from server and add markers , and update blueFound
+            try {
+                JSONObject jsonObject = new JSONObject(k);
 
-        try {
-            JSONObject jsonObject = new JSONObject(k);
+                JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                for (int i=0;i<jsonArray.length();i++){
+                    final JSONObject obj = jsonArray.getJSONObject(i);
 
-            for (int i=0;i<jsonArray.length();i++){
-                final JSONObject obj = jsonArray.getJSONObject(i);
+                    // Log.e("json",obj.optString("id"));
+                    final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
+                    final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
 
-                // Log.e("json",obj.optString("id"));
-                final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
-                final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
-              
 
-                mapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(lat, lon))
-                                .title(obj.optString("id")));
-                              
-                        // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-                    }
-                });
+                    mapFragment.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(lat, lon))
+                                    .title(obj.optString("id")));
+
+                            // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
+                        }
+                    });
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+        }
+        private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            final ArrayList<String> list = new ArrayList<>();
+            public void onReceive(Context context, Intent intent) {
+                Log.e("quanti blue","ok");
+                String action = intent.getAction();
+                // When discovery finds a device
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    // Get the BluetoothDevice object from the Intent
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    // Add the name and address to an array adapter to show in a ListView
+                    Log.e("list",device.getAddress());
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        final ArrayList<String> list = new ArrayList<>();
-        public void onReceive(Context context, Intent intent) {
-            Log.e("quanti blue","ok");
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                Log.e("list",device.getAddress());
-               
-                list.add(0,device.getName());
-                bluefound = list.size();
-                //arrayAdapter.notifyDataSetChanged();
-                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
-                //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
-                bluetoothAdapterr.cancelDiscovery();
+                    list.add(0,device.getName());
+                    bluefound = list.size();
+                    //arrayAdapter.notifyDataSetChanged();
+                    Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
+                    bluetoothAdapterr.cancelDiscovery();
+                }
+
+
+
             }
-           
-            
-           
-        }
-    };
-    
+        };
+
     
     
    
-    
-    private Runnable runnableCode = new Runnable() {
-        @Override
-        public void run() {
-            SharedPreferences share = getSharedPreferences("autoscan",MODE_PRIVATE);
-            autoScan = share.getBoolean("autoscan", false);
-            System.out.println("entra in 1 thread");
+
+        private Runnable runnableCode = new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences share = getSharedPreferences("autoscan",MODE_PRIVATE);
+                autoScan = share.getBoolean("autoscan", false);
+                System.out.println("entra in 1 thread");
 
 
-            if (autoScan) {
-                // attiva bluetooth se non è attivo
+                if (autoScan) {
+                    // attiva bluetooth se non è attivo
 
-                if (!bluetoothAdapterr.isEnabled()) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent,1);
-                }
-                Thread closeActivity = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //thread che serve solo per fare la Thread.sleep(1000);
-
-                        //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
-                        try {
-                            System.out.println("entra in 2 thread");
-                            bluetoothAdapterr.startDiscovery();
-                            Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-
-                            Thread.sleep(1000);
-                            bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
-                        } catch (Exception e) {
-                            e.getLocalizedMessage();
-                        }
+                    if (!bluetoothAdapterr.isEnabled()) {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent,1);
                     }
-                });
+                    Thread closeActivity = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //thread che serve solo per fare la Thread.sleep(1000);
 
-                closeActivity.start();
+                            //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
+                            try {
+                                System.out.println("entra in 2 thread");
+                                bluetoothAdapterr.startDiscovery();
+                                Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+
+                                Thread.sleep(1000);
+                                bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
+                            } catch (Exception e) {
+                                e.getLocalizedMessage();
+                            }
+                        }
+                    });
+
+                    closeActivity.start();
+                }
+                if (location != null)
+                SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
+
+
+                ////
+                // SERVE GET SENZA SEND QUI
+                /////
+                handler.postDelayed(this, 5000);
             }
-            if (location != null)
-            SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
+        };
 
 
-            ////
-            // SERVE GET SENZA SEND QUI
-            /////
-            handler.postDelayed(this, 5000);
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+            // Don't forget to unregister the ACTION_FOUND receiver.
+            unregisterReceiver(mReceiver);
         }
-    };
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Don't forget to unregister the ACTION_FOUND receiver.
-        unregisterReceiver(mReceiver);
-    }
 //////////////////////////////
 
-    public void putlocrecent(Location loc){
-        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        final ArrayList<String> arrayListrecent = new ArrayList<>();
-        final Gson gson =new Gson();
+        public void putlocrecent(Location loc){
+            final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+            final ArrayList<String> arrayListrecent = new ArrayList<>();
+            final Gson gson =new Gson();
 
-        // get Array shared preferences
-        String json = sharedPreferences.getString("recentloc","");
-        Type type =  new TypeToken<List<String>>() {
-        }.getType();
-        ArrayList<String> arrayListm = gson.fromJson(json,type);
-        String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
-        if(arrayListm == null) {
-            arrayListm = new ArrayList<>();
-            arrayListm.add(thisloc);
-            json = gson.toJson(arrayListm);
-            editor.putString("recentloc", json);
-            editor.apply();
-            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            if (!arrayListm.contains(thisloc)) {
+            // get Array shared preferences
+            String json = sharedPreferences.getString("recentloc","");
+            Type type =  new TypeToken<List<String>>() {
+            }.getType();
+            ArrayList<String> arrayListm = gson.fromJson(json,type);
+            String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+            if(arrayListm == null) {
+                arrayListm = new ArrayList<>();
                 arrayListm.add(thisloc);
                 json = gson.toJson(arrayListm);
                 editor.putString("recentloc", json);
                 editor.apply();
                 Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-
             }
-        }
-    }
-    public List<String> getNameOfLocation(List<String> locations){
-        Geocoder g = new Geocoder(MapsActivity.this);
-        ArrayList<String> namelocs = new ArrayList<>();
-        if (locations != null){
-            for (String s : locations) {
+            else{
+                if (!arrayListm.contains(thisloc)) {
+                    arrayListm.add(thisloc);
+                    json = gson.toJson(arrayListm);
+                    editor.putString("recentloc", json);
+                    editor.apply();
+                    Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
-                try {
-                    List<Address> names = g.getFromLocation(Double.parseDouble(s.split(":")[0]), Double.parseDouble(s.split(":")[1]), 1);
-                    namelocs.add(names.get(0).getAddressLine(0));
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-
             }
         }
+        public List<String> getNameOfLocation(List<String> locations){
+            Geocoder g = new Geocoder(MapsActivity.this);
+            ArrayList<String> namelocs = new ArrayList<>();
+            if (locations != null){
+                for (String s : locations) {
+
+                    try {
+                        List<Address> names = g.getFromLocation(Double.parseDouble(s.split(":")[0]), Double.parseDouble(s.split(":")[1]), 1);
+                        namelocs.add(names.get(0).getAddressLine(0));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
 
 
-        return namelocs;
+            return namelocs;
+        }
+
+        //metodo per cancellare tutti i campi in contemporaena
+        public void deleteAll(String key){
+            final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(key);
+            editor.apply();
+        }
+
+        private void buildAlertMessageNoGps() {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+        }
+
     }
-
-    //metodo per cancellare tutti i campi in contemporaena
-    public void deleteAll(String key){
-        final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(key);
-        editor.apply();
-    }
-
-
-}
