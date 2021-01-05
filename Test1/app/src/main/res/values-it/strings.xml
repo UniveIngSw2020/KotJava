@@ -6,7 +6,19 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
-    <string name="guide">testo guida</string>
+    <string name="guide">
+        Benvenuto e grazie per avere la nostra app "NomeAppxd".
+        Questo software offre servizi innovativi, legati alla connessione, sia gps che bluetooth.
+        L\'interfaccia è semplice e intuitiva. Appena verranno accettati i permessi apparirà a schermo
+        la mappa con la tua posizione, da qui potrai navigare come più preferisci,spostandoti manualmente
+        oppure utilizzando la barra di ricerca. Non appena troverai il luogo interessato, tramite i pulsanti
+        potrai ricevere le informazioni sull\'affluenza in quel luogo in quel momento.
+        Inoltre potrai salvare dei luoghi per te importanti e risalire a vecchi luoghi visitati.
+        Ti invitiamo a consultare il menu posizionato in alto a destra se ci fossero dubbi o curiosità su qualsiasi
+        aspetto dell\'applicazione, speriamo che l\'app ti sia utile.\n
+        \n
+        KotJava Team
+    </string>
     <string name="resource_request">
             L\'applicazione, per il suo corretto funzionamento,
             necessita dell\'accesso alle seguenti risorse:\n
@@ -49,22 +61,32 @@
     <!-- ToDo mettere le stringhe vere -->
     <string-array
         name="questions">
-        <item>Q1?</item>
-        <item>Q2?</item>
-        <item>Q3?</item>
-        <item>Q4?</item>
+        <item>In cosa può aiutarmi quest\'app?</item>
+        <item>A cosa servono le autorizzazioni che devo dare per utilizzare l\'app?</item>
+        <item>L\'app è nella sua versione finale?</item>
     </string-array>
 
     <string-array
         name="answers">
-        <item>A1!</item>
-        <item>A2!</item>
-        <item>A3!</item>
-        <item>A4!</item>
+        <item>
+            L\'applicazione punta ad agevolare la vita delle persone, sapere quanta gente c\'è in un luogo
+            prima di partire, può farti cambiare idea. Saltare la fila del dottore, trovare il supermercato più libero
+            negli orari di punta e molto altro, in modo facile, veloce e senza appesantire il tuo dispositivo.
+        </item>
+        <item>
+            L\'applicazione per funzionare ha bisogno di risorse: il gps, il bluetooth e un piccolo spazio in memoria.
+            I dati che riceviamo vengono utilizzati SOLO per il corretto funzionamento del software
+            e non sono in pericolo.
+        </item>
+        <item>
+            Il nostro progetto è nato per un impegno scolastico, ma non escludiamo che un giorno cresca;
+            le idee ci sono e se dovessimo ricevere un buon supporto da più punti di vista potremmo
+            fare crescere il progetto.
+        </item>
     </string-array>
 
 
-    <!--Contatti-->
+<!--Contatti-->
     <string name="job1">Software developer</string>
     <string name="job2">Graphic designer</string>
     <string name="job3">Web/Server manager</string>

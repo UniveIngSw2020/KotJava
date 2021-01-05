@@ -5,7 +5,22 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
-    <string name="guide">Guide</string>
+    <string name="guide">
+        Welcome and thank you for choosing our application.
+        This software offers innovative services, through the use of GPS and Bluetooth.
+        The user interface is simple and intuitive. After you will have accepted to grant the required permissions
+        the screen of your device will display the geographical map of you position, from there you will be able to navigate
+        manually or through the search bar above the map.
+        When you will find a place of your interest, you will be able to obtain info in real time on the number of people
+        present in that area, using the central button below the map.
+        You will also be able to memorize your favourite locations and the places you have been to with the other two buttons
+        below the map.
+        We cordially invite you to consult the upper right menu in case of any doubt or question regarding the app,
+        we hope you will find it useful.\n
+        \n
+        Kotjava Team
+
+    </string>
     <string name="resource_request">
         To work properly, the application needs access
         to the following device resources:\n
@@ -43,24 +58,31 @@
     <string name="locdescription">Local Informations</string>
     <string name="histdescription">Already Visited Places</string>
 
-
-
 <!-- FAQ -->
-    <!-- ToDo mettere le stringhe vere-->
     <string-array
         name="questions">
-        <item>Q1?</item>
-        <item>Q2?</item>
-        <item>Q3?</item>
-        <item>Q4?</item>
+        <item>What is the purpose of this application?</item>
+        <item>What is the purpose of the required authorizations?</item>
+        <item>Is this the app\'s final version?</item>
     </string-array>
 
     <string-array
         name="answers">
-        <item>A1!</item>
-        <item>A2!</item>
-        <item>A3!</item>
-        <item>A4!</item>
+        <item>
+            The application\'s purpose is to ease the life of its users by allowing them to be informed on how many people are gathered in one place,
+            so as to allow to plan ahead to avoid lines, be it when in need of medical consultation or to go shopping, in a easily and without
+            slowing their devices.
+        </item>
+        <item>
+            To work as intended the application needs access to resources of the device such as: GPS, Bluetooth
+            and some storage space in the memory.
+            The gathered data are used ONLY for the expressed purpose of the software and do NOT encompass sensitive information of any kind.
+        </item>
+        <item>
+            This application was born as a school project, but it is possible that it will be developed further in the future;
+            some ideas are already there and if the application will receive the support of the general public it could be possible
+            to expand it.
+        </item>
     </string-array>
 
 
@@ -109,7 +131,7 @@
         Metteo De Col\n
     </string>
     <string name="credits3">
-        As a project for the Software Engineering course at university Ca\'Foscari of Venice.
+        As a project for the Software Engineering course at university Ca\' Foscari of Venice.
     </string>
 
 

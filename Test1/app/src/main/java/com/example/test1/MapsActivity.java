@@ -136,10 +136,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (Exception e) {
             //Log.d(TAG, e.getLocalizedMessage());
         }
-
+/*
         handler.postDelayed(runnableCode ,5000);
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
+        registerReceiver(mReceiver, filter);*/
 
 //Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
@@ -284,8 +284,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteAll("recentloc");
-                               namelocs.clear();
-                               arrayListm.clear();
+                                namelocs.clear();
+                                arrayListm.clear();
                                 listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
 
                             }
@@ -370,41 +370,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         });
-    
+
         final String[] from = new String[] {"cityName"};
         final int[] to = new int[] {android.R.id.text1};
-    
+
         mAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_1,
                 null,
                 from,
                 to,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-    
+
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
-    
+
         // Getting selected (clicked) item suggestion
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionClick(int position) {
-            
+
                 List<Address> addressList = null;
                 Cursor cursor = (Cursor) mAdapter.getItem(position);
                 String location = cursor.getString(cursor.getColumnIndex("cityName"));
-            
+
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
-                    
+
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    
+
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                    
-                    
-                    
+
+
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -414,53 +414,53 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 //                searchView.setQuery(txt, true);
-            
-            
+
+
                 return true;
             }
-        
+
             @Override
             public boolean onSuggestionSelect(int position) {
                 // Your code here
                 return true;
             }
         });
-    
+
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchView.onActionViewExpanded();
             }
         });
-    
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String location) {
-            
+
                 List<Address> addressList = null;
-            
+
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
                         addressList = geocoder.getFromLocationName(location, 5);
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    
+
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                    
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
                         Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-            
+
                 return false;
             }
             int m = 0;
             @Override
             public boolean onQueryTextChange(String location) {
-            
+
                 List<Address> addressList = null;
                 if (location != null && !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
@@ -468,17 +468,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         addressList = geocoder.getFromLocationName(location, 5);
                         final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "cityName"});
                         for (int i=0; i<addressList.size(); i++) {
-                        
+
                             c.addRow(new Object[]{i, addressList.get(i).getAddressLine(0)});
                             m++;
                             //mAdapter.changeCursor(c);
-                        
+
                             Log.e("list",addressList.get(i).getAddressLine(0));
                         }
-                    
+
                         mAdapter.changeCursor(c);
-                    
-                    
+
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
@@ -487,11 +487,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 return false;
             }
-        
+
         });
 
         mapFragment.getMapAsync(this);
-        
+
     }
 
 
@@ -523,10 +523,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-
+/*
         //SendLoc(String.format(String.valueOf(location)));
         controllPermissionAndSend(latitude + ":" + longitude);
-        Log.e("loc","ok=");
+        Log.e("loc","ok=");*/
 
         // aggiungo a recenti la posizione
         putlocrecent(location);
@@ -556,7 +556,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, "Condividi la nostra app");
         sendIntent.setType("text/plain");
-        
+
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
     }
@@ -606,9 +606,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Aprire la pagina del playStore(?)
                 return true;
             case R.id.scansioni:
-                
+
                 return true;
             case R.id.autoscan:
+/*
                 final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedautoscan.edit();
                 Switch sw = new Switch(MapsActivity.this);
@@ -640,14 +641,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 myDialog.show();
-
-
+*/
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
+/*
     //get info of smartminchia da inviare
     String getId() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -752,7 +752,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             getParsing(text);
         }
 
-    }
+    }*/
 
     void getParsing(String k){
         // get from server and add markers , and update blueFound
@@ -768,7 +768,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Log.e("json",obj.optString("id"));
                 final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
                 final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
-              
+
 
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
@@ -777,7 +777,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         googleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lon))
                                 .title(obj.optString("id")));
-                              
+
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
                 });
@@ -798,7 +798,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 Log.e("list",device.getAddress());
-               
+
                 list.add(0,device.getName());
                 bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
@@ -806,16 +806,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
                 bluetoothAdapterr.cancelDiscovery();
             }
-           
-            
-           
+
+
+
         }
     };
-    
-    
-    
-   
-    
+
+
+
+
+/*
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
@@ -860,14 +860,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             handler.postDelayed(this, 5000);
         }
     };
-
-
+*/
+/*
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiver);
-    }
+    }*/
 //////////////////////////////
 
     public void putlocrecent(Location loc){
@@ -929,6 +929,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         editor.remove(key);
         editor.apply();
     }
-
-
 }
