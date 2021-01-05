@@ -1,9 +1,26 @@
 <resources>
+
+<!-- FisrtAccess -->
     <string name="app_name">Test1</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
-    <string name="guide">Guide</string>
+    <string name="guide">
+        Welcome and thank you for choosing our application.
+        This software offers innovative services, through the use of GPS and Bluetooth.
+        The user interface is simple and intuitive. After you will have accepted to grant the required permissions
+        the screen of your device will display the geographical map of you position, from there you will be able to navigate
+        manually or through the search bar above the map.
+        When you will find a place of your interest, you will be able to obtain info in real time on the number of people
+        present in that area, using the central button below the map.
+        You will also be able to memorize your favourite locations and the places you have been to with the other two buttons
+        below the map.
+        We cordially invite you to consult the upper right menu in case of any doubt or question regarding the app,
+        we hope you will find it useful.\n
+        \n
+        Kotjava Team
+
+    </string>
     <string name="resource_request">
         To work properly, the application needs access
         to the following device resources:\n
@@ -16,7 +33,8 @@
     <string name="accept_resreq">Accept</string>
     <string name="request_check">Check request</string>
 
-    <!-- Strings for MapsActivity menu -->
+
+<!-- MapsActivity menu -->
     <string name="helpitem">Help</string>
     <string name="guideitem">Guide</string>
     <string name="faqitem">FAQ</string>
@@ -28,10 +46,11 @@
     <string name="scanitem">Scan</string>
     <string name="autoscanitem">Activate auto-scan</string>
 
-    <!-- Strings for second MapsActivity menu -->
+
+<!-- MapsActivity bottoni -->
     <string name="favouritesitem">Favourites</string>
     <string name="statsitem">Crowd Data</string>
-    <string name="locationitem">Local Informations</string> <!--Potremmo mettere Sightsee-->
+    <string name="locationitem">Local Informations</string>
     <string name="historyitem">Visited</string>
 
     <string name="favdescription">Favourite Places</string>
@@ -39,18 +58,35 @@
     <string name="locdescription">Local Informations</string>
     <string name="histdescription">Already Visited Places</string>
 
+    <!-- FAQ -->
+    <string-array
+        name="questions">
+        <item>What is the purpose of this application?</item>
+        <item>What is the purpose of the required authorizations?</item>
+        <item>Is this the app\'s final version?</item>
+    </string-array>
 
-    <!--PLACEHOLDERS-->
-    <!--ToDo sostituire i placeholders con i contenuti corretti dei fragments-->
-    <string name="placeholder_guide">Guide</string>
-    <string name="placeholder_faq">Frequently Asked Questions</string>
-    <string name="placeholder_contacts">Contact us</string>
-    <string name="placeholder_credits">Credits</string>
+    <string-array
+        name="answers">
+        <item>
+            The application\'s purpose is to ease the life of its users by allowing them to be informed on how many people are gathered in one place,
+            so as to allow to plan ahead to avoid lines, be it when in need of medical consultation or to go shopping, in a easily and without
+            slowing their devices.
+        </item>
+        <item>
+            To work as intended the application needs access to resources of the device such as: GPS, Bluetooth
+            and some storage space in the memory.
+            The gathered data are used ONLY for the expressed purpose of the software and do NOT encompass sensitive information of any kind.
+        </item>
+        <item>
+            This application was born as a school project, but it is possible that it will be developed further in the future;
+            some ideas are already there and if the application will receive the support of the general public it could be possible
+            to expand it.
+        </item>
+    </string-array>
 
-    <string name="placeholder_favourites">Favourites</string>
-    <string name="placeholder_history">Visited</string>
 
-    <!--Contact us-->
+<!-- Contatti -->
     <string name="job1">Software developer</string>
     <string name="job2">Graphic designer</string>
     <string name="job3">Web/Server manager</string>
@@ -76,15 +112,14 @@
         Email 4\n
         Numero di telefono 4\n
     </string>
-<string name="contact5">
+    <string name="contact5">
         Matteo De Col\n
         Email 5\n
         Numero di telefono 5\n
     </string>
 
 
-
-    <!-- Credits -->
+<!-- Credits -->
     <string name="credits1">
         The app has been created thanks to:\n
     </string>
@@ -96,17 +131,32 @@
         Metteo De Col\n
     </string>
     <string name="credits3">
-        As a project for the Software Engineering course at university Ca\'Foscari of Venice.
+        As a project for the Software Engineering course at university Ca\' Foscari of Venice.
     </string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-
-    <!-- Update -->
+<!-- Aggiornamento -->
     <string name="update_version">App version %s</string>
     <string name="update_not_available">The application is up to date</string>
     <string name="update_available">A new update is available</string>
 
+
+<!-- PLACEHOLDERS -->
+    <!-- Menu -->
+    <string name="placeholder_guide">Guide</string>
+    <string name="placeholder_faq">Frequently Asked Questions</string>
+    <string name="placeholder_contacts">Contact us</string>
+    <string name="placeholder_credits">Credits</string>
+
+    <!-- Bottoni -->
+    <string name="placeholder_favourites">Favourites</string>
+    <string name="placeholder_history">Visited</string>
+
+    <!-- FAQ -->
+    <string name="placeholder_question">Question?</string>
+    <string name="placeholder_answer">Answer!</string>
+
+    <!-- Fragments -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
