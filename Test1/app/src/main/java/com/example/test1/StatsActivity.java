@@ -8,16 +8,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-public class ButtonsActivity extends AppCompatActivity {
+public class StatsActivity extends AppCompatActivity {
     //Questa activity dovrebbe fare da base per i fragment di history e favourites
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int val = getIntent().getIntExtra("val", 0 );
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_buttons);
+        setContentView(R.layout.activity_stats);
 
-        Toolbar toolbar = findViewById(R.id.bt_toolbar);
+        Toolbar toolbar = findViewById(R.id.stats_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Per mettere il back button
 
@@ -36,7 +36,7 @@ public class ButtonsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(ButtonsActivity.this, MapsActivity.class);
+        Intent intent = new Intent(StatsActivity.this, MapsActivity.class);
         startActivity(intent);
         finish();
         return true;

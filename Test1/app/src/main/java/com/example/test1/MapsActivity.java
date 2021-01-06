@@ -261,7 +261,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ImageButton bstats = findViewById(R.id.imageButtonStats);
         bstats.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent intent = new Intent( MapsActivity.this, ButtonsActivity.class );
+                Intent intent = new Intent( MapsActivity.this, StatsActivity.class );
                 intent.putExtra("val", 2 );// 2 = fragment delle statistiche
                 startActivity(intent);
                 finish();

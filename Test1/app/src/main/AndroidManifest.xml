@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ButtonsActivity"
+            android:name=".StatsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
