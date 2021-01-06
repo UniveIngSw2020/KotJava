@@ -730,6 +730,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //
     public  void  SendLoc(String loc){ //need location
+
+        //NON SO PERCHE MA I MARKER VANO CON QUESTO:
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        //
+
         //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
         String data = "id="+getId()+"&bmac="+bMac+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1"; //ricordare timestamp e`su server messo non qui
 
@@ -855,8 +861,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
                 Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
-                //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
-                //bluetoothAdapterr.cancelDiscovery();
+
             }
 
 
@@ -915,16 +920,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //closeActivity.start();
             }
             if (location != null)
-                SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                //SendLoc(String.format(String.valueOf(location)));
+                SendLoc(latitude + ":" + longitude);
+
+
 
 
             Log.e("listB","lista mac presi: "+bMac);
             Log.e("listB","blue trovati totali: " + bluefound);
 
 
-            ////
-            // SERVE GET SENZA SEND QUI
-            /////
             bluefound = 0;
             bMac = "";
             handler.postDelayed(this, 5000);
