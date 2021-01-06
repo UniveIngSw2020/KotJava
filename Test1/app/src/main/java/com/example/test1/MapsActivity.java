@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Canvas;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.GpsStatus;
@@ -21,6 +22,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
@@ -52,6 +54,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -89,7 +92,7 @@ nella OnDestroy Distrugge il broadCast che tiene le connesioni con i bluetooth
  */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-   private final int REQUEST_CHECK_CODE = 999;
+    private final int REQUEST_CHECK_CODE = 999;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     String bmac;
@@ -99,10 +102,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location location ; // Location
     double latitude; // Latitude
     double longitude; // Longitude
-    int bluefound;
+
+    public int bluefound;
+    String bMac;
+
     SimpleCursorAdapter mAdapter;
 
-    boolean autoScan;
+
+
 
     Handler handler = new Handler();
 
@@ -112,6 +119,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
+        bluefound = 1;
+        bMac = "";
+
         //button favourite and recent
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
@@ -120,9 +131,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Gson gson =new Gson();
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
-            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-                    buildAlertMessageNoGps(); // metodo che chiede all' utente di attivare gps
-            }
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps(); // metodo che chiede all' utente di attivare gps
+        }
 
         if (FirstAccessActivity.checkPermission(getApplicationContext())) {
             manager.addGpsStatusListener(new GpsStatus.Listener() {
@@ -130,10 +141,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onGpsStatusChanged(int event) {
                     switch(event){
                         case GpsStatus.GPS_EVENT_STARTED:
-                           // quando il servizio gps parte
-                            handler.postDelayed(runnableCode, 5000);
+                            // quando il servizio gps part
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
+                            handler.postDelayed(runnableCode, 5000);
                             break;
                         case GpsStatus.GPS_EVENT_STOPPED:
                             // se il gps non va più, -> intent
@@ -308,8 +319,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteAll("recentloc");
-                               namelocs.clear();
-                               arrayListm.clear();
+                                namelocs.clear();
+                                arrayListm.clear();
                                 listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
 
                             }
@@ -584,7 +595,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, "Condividi la nostra app");
         sendIntent.setType("text/plain");
-        
+
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
     }
@@ -634,7 +645,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Aprire la pagina del playStore(?)
                 return true;
             case R.id.scansioni:
-                
+
                 return true;
             case R.id.autoscan:
                 final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
@@ -658,7 +669,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             editor.putBoolean("autoscan", true);
                             editor.apply();
                             Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
-
                         }
                         else{
                             editor.putBoolean("autoscan", false);
@@ -682,186 +692,202 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     String getMac() {
-
-      
         return bmac;
     }
     //send and from server php version:
 
 /////////////////////////////////////////////////
 
-        void controllPermissionAndSend(String loc) {
+    void controllPermissionAndSend(String loc) {
 
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
-            ArrayList<String> arrayList = new ArrayList<>();
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
+        ArrayList<String> arrayList = new ArrayList<>();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
 
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-                arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-                Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
-            }else {
-                Log.e("permessi","ok");
-                SendLoc(loc);
-            }
-            if (!arrayList.isEmpty()) {
-                String[] permi = new String[arrayList.size()];
-                permi = arrayList.toArray(permi);
-                ActivityCompat.requestPermissions(this, permi, 0);
-            }
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
+        }else {
+            Log.e("permessi","ok");
+            SendLoc(loc);
         }
+        if (!arrayList.isEmpty()) {
+            String[] permi = new String[arrayList.size()];
+            permi = arrayList.toArray(permi);
+            ActivityCompat.requestPermissions(this, permi, 0);
+        }
+    }
 
 
 
 
     //
-        public  void  SendLoc(String loc){ //need location
-            String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
+    public  void  SendLoc(String loc){ //need location
+        //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
+        String data = "id="+getId()+"&bmac="+bMac+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1"; //ricordare timestamp e`su server messo non qui
 
+        String text = "";
 
-            String text = "";
-            BufferedReader reader=null;
+        BufferedReader reader=null;
 
-            // Send data
-            Log.e("location","this is your location"+loc);
+        // Send data
+        Log.e("location","this is your location"+loc);
+        try
+        {
+
+            // Defined URL  where to send data
+            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+
+            // Send POST data request
+
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+            wr.write( data );
+            wr.flush();
+
+            // Get the server response
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            Log.e("loc","ok2 Sent"); //vedi cosa invia
+            // Read Server Response
+            while((line = reader.readLine()) != null)
+            {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            //server response da usare per i marker nella get
+            text = sb.toString();
+
+        }
+        catch(Exception ex)
+        {
+
+            ex.printStackTrace();
+
+        }
+        finally
+        {
             try
             {
-
-                // Defined URL  where to send data
-                URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-
-                // Send POST data request
-
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                wr.write( data );
-                wr.flush();
-
-                // Get the server response
-
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-
-                Log.e("loc","ok2 Sent"); //vedi cosa invia
-                // Read Server Response
-                while((line = reader.readLine()) != null)
-                {
-                    // Append server response in string
-                    sb.append(line + "\n");
-                }
-
-                //server response da usare per i marker nella get
-                text = sb.toString();
-
-            }
-            catch(Exception ex)
-            {
-
-                ex.printStackTrace();
-
-            }
-            finally
-            {
-                try
-                {
-                    reader.close();
-                }
-
-                catch(Exception ex) {ex.printStackTrace();}
-                getParsing(text);
+                reader.close();
             }
 
+            catch(Exception ex) {ex.printStackTrace();}
+            getParsing(text);
         }
 
-        void getParsing(String k){
-            // get from server and add markers , and update blueFound
+    }
 
-            try {
-                JSONObject jsonObject = new JSONObject(k);
+    void getParsing(String k){
+        // get from server and add markers , and update blueFound
 
-                JSONArray jsonArray = jsonObject.getJSONArray("data");
+        try {
+            JSONObject jsonObject = new JSONObject(k);
 
-                for (int i=0;i<jsonArray.length();i++){
-                    final JSONObject obj = jsonArray.getJSONObject(i);
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-                    // Log.e("json",obj.optString("id"));
-                    final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
-                    final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
+            for (int i=0;i<jsonArray.length();i++){
+                final JSONObject obj = jsonArray.getJSONObject(i);
 
+                // Log.e("json",obj.optString("id"));
+                final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
+                final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
 
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                            googleMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(lat, lon))
-                                    .title(obj.optString("id")));
+                final Double found =  Double.parseDouble(obj.optString("blueFound"));
 
-                            // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-                        }
-                    });
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-           
-            public void onReceive(Context context, Intent intent) {
-                ArrayList<String> list = new ArrayList<>();
-                Log.e("quanti blue","ok");
-                String action = intent.getAction();
-                // When discovery finds a device
-                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    // Get the BluetoothDevice object from the Intent
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    // Add the name and address to an array adapter to show in a ListView
-                    Log.e("list",device.getAddress());
-                    bluefound = 0;
-                    list.add(device.getName());
-                    bmac = device.getAddress();
-                    bluefound = list.size();
-                    //arrayAdapter.notifyDataSetChanged();
-                    Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
-                    bluetoothAdapterr.cancelDiscovery();
-                }
+                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
 
 
 
-            }
-        };
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                        googleMap.addMarker (new MarkerOptions()
+                                //.labelContent()
+                                .position(new LatLng(lat, lon))
+                                .title(obj.optString("id")));
 
-    
-    
-   
-
-        private Runnable runnableCode = new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences share = getSharedPreferences("autoscan",MODE_PRIVATE);
-                autoScan = share.getBoolean("autoscan", false);
-                System.out.println("entra in 1 thread");
-
-
-                if (autoScan) {
-                    // attiva bluetooth se non è attivo
-
-                    if (!bluetoothAdapterr.isEnabled()) {
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent,1);
+                        // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
+                });
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        public void onReceive(Context context, Intent intent) {
+            //ArrayList<String> list = new ArrayList<>();
+            Log.e("quanti blue","ok");
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                //Log.e("list",device.getAddress());
+                //bluefound += 1;
+                bluefound = 1;
+                //list.add(device.getName());
+                bmac = device.getAddress();
+
+                bMac = bMac + String.valueOf(bmac);
+                Log.e("listA","blue: " + bluefound);
+                Log.e("listA",bMac);
+
+                //z = 1;
+                //bluefound = list.size();
+                //arrayAdapter.notifyDataSetChanged();
+                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "quanti trovati" +String.format(String.valueOf(bluefound)), Toast.LENGTH_SHORT).show();
+                //bluetoothAdapterr.cancelDiscovery();
+            }
+
+
+
+        }
+    };
+
+
+
+
+
+    public Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            SharedPreferences share = getSharedPreferences("autoscan",MODE_PRIVATE);
+            boolean autoScan = share.getBoolean("autoscan", false);
+            //System.out.println("entra in 1 thread");
+
+            //bluefound = 0;
+            //bMac = "";
+
+            int a = 1;
+            if (autoScan) {
+                // attiva bluetooth se non è attivo
+
+                if (!bluetoothAdapterr.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent,1);
+                }
+
+                    /*
                     Thread closeActivity = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -869,7 +895,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
                             try {
-                                System.out.println("entra in 2 thread");
+                                //System.out.println("entra in 2 thread");
                                 bluetoothAdapterr.startDiscovery();
                                 Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
 
@@ -879,108 +905,119 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 e.getLocalizedMessage();
                             }
                         }
-                    });
+                    });*/
 
-                    closeActivity.start();
-                }
-                if (location != null)
-                SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
-                //bluefound=0;
+                bluetoothAdapterr.startDiscovery();
 
-                ////
-                // SERVE GET SENZA SEND QUI
-                /////
-                handler.postDelayed(this, 5000);
+                SystemClock.sleep(1000);
+
+                bluetoothAdapterr.cancelDiscovery();
+                //closeActivity.start();
             }
-        };
+            if (location != null)
+                SendLoc(String.format(location.getLatitude() + ":" +location.getLongitude()));
 
 
-        @Override
-        protected void onDestroy() {
-            super.onDestroy();
-            // Don't forget to unregister the ACTION_FOUND receiver.
-            unregisterReceiver(mReceiver);
+            Log.e("listB","lista mac presi: "+bMac);
+            Log.e("listB","blue trovati totali: " + bluefound);
+
+
+            ////
+            // SERVE GET SENZA SEND QUI
+            /////
+            bluefound = 0;
+            bMac = "";
+            handler.postDelayed(this, 5000);
         }
+    };
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Don't forget to unregister the ACTION_FOUND receiver.
+        unregisterReceiver(mReceiver);
+    }
 //////////////////////////////
 
-        public void putlocrecent(Location loc){
-            final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
-            final ArrayList<String> arrayListrecent = new ArrayList<>();
-            final Gson gson =new Gson();
+    public void putlocrecent(Location loc){
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final ArrayList<String> arrayListrecent = new ArrayList<>();
+        final Gson gson =new Gson();
 
-            // get Array shared preferences
-            String json = sharedPreferences.getString("recentloc","");
-            Type type =  new TypeToken<List<String>>() {
-            }.getType();
-            ArrayList<String> arrayListm = gson.fromJson(json,type);
-            String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
-            if(arrayListm == null) {
-                arrayListm = new ArrayList<>();
+        // get Array shared preferences
+        String json = sharedPreferences.getString("recentloc","");
+        Type type =  new TypeToken<List<String>>() {
+        }.getType();
+        ArrayList<String> arrayListm = gson.fromJson(json,type);
+        String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+        if(arrayListm == null) {
+            arrayListm = new ArrayList<>();
+            arrayListm.add(thisloc);
+            json = gson.toJson(arrayListm);
+            editor.putString("recentloc", json);
+            editor.apply();
+            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            if (!arrayListm.contains(thisloc)) {
                 arrayListm.add(thisloc);
                 json = gson.toJson(arrayListm);
                 editor.putString("recentloc", json);
                 editor.apply();
                 Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                if (!arrayListm.contains(thisloc)) {
-                    arrayListm.add(thisloc);
-                    json = gson.toJson(arrayListm);
-                    editor.putString("recentloc", json);
-                    editor.apply();
-                    Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
-                }
             }
         }
-        public List<String> getNameOfLocation(List<String> locations){
-            Geocoder g = new Geocoder(MapsActivity.this);
-            ArrayList<String> namelocs = new ArrayList<>();
-            if (locations != null){
-                for (String s : locations) {
+    }
+    public List<String> getNameOfLocation(List<String> locations){
+        Geocoder g = new Geocoder(MapsActivity.this);
+        ArrayList<String> namelocs = new ArrayList<>();
+        if (locations != null){
+            for (String s : locations) {
 
-                    try {
-                        List<Address> names = g.getFromLocation(Double.parseDouble(s.split(":")[0]), Double.parseDouble(s.split(":")[1]), 1);
-                        namelocs.add(names.get(0).getAddressLine(0));
+                try {
+                    List<Address> names = g.getFromLocation(Double.parseDouble(s.split(":")[0]), Double.parseDouble(s.split(":")[1]), 1);
+                    namelocs.add(names.get(0).getAddressLine(0));
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+
+        return namelocs;
+    }
+
+    //metodo per cancellare tutti i campi in contemporaena
+    public void deleteAll(String key){
+        final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
                     }
-
-                }
-            }
-
-
-            return namelocs;
-        }
-
-        //metodo per cancellare tutti i campi in contemporaena
-        public void deleteAll(String key){
-            final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(key);
-            editor.apply();
-        }
-
-        private void buildAlertMessageNoGps() {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            dialog.cancel();
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.show();
-
-        }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
 
     }
+
+}
