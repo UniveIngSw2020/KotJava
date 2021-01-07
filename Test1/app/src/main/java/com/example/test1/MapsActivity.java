@@ -13,16 +13,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.Canvas;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
@@ -54,7 +53,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -72,7 +70,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +100,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location location ; // Location
     double latitude; // Latitude
     double longitude; // Longitude
-
+    public AlertDialog gpslost;
     public int bluefound;
     String bMac;
 
@@ -120,10 +117,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        // creazione alertdialog per perdita gps....................................................
+        final AlertDialog.Builder alertgps = new AlertDialog.Builder(MapsActivity.this);
+        alertgps.setTitle("Wait gps connection...");
+        alertgps.setCancelable(false);
 
+        alertgps.setPositiveButton("Close app", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //interrompe l' app
+                System.exit(0);
+            }
+        });
+        gpslost = alertgps.create();
+
+        // Broadcastreciever per il cambio di stato della connessione
+        Networkreciever nw = new Networkreciever();
+        registerReceiver(nw, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+
+
+///////////////////////////
         bluefound = 1;
         bMac = "";
-
+/////////////////////////////////
         //button favourite and recent
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
@@ -132,30 +149,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Gson gson =new Gson();
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
+        // controllo gps primo accesso
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps(); // metodo che chiede all' utente di attivare gps
         }
 
+
+        // listener chje controlla se il gps è attivo
         if (FirstAccessActivity.checkPermission(getApplicationContext())) {
             manager.addGpsStatusListener(new GpsStatus.Listener() {
                 @Override
                 public void onGpsStatusChanged(int event) {
                     switch(event){
                         case GpsStatus.GPS_EVENT_STARTED:
+                            // quando il servizio gps parte
+
                             // quando il servizio gps part
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
                             handler.postDelayed(runnableCode, 5000);
-                            break;
+
+                                gpslost.cancel();
+                                break;
                         case GpsStatus.GPS_EVENT_STOPPED:
                             // se il gps non va più, -> intent
-                            break;
+                            Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
+                            if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
+                                // gps stato disattivato ,
+                                buildAlertMessageNoGps();
+                            }
+                            else {
+                                // gps interrotto
+
+                                gpslost = alertgps.show();
+
+
+                                break;
+                            }
                         case GpsStatus.GPS_EVENT_FIRST_FIX:
                             // possibilità di mettere sendlock ?
                     }
                 }
             });
         }
+
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -1095,6 +1133,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         dialog.cancel();
+
                     }
                 });
         final AlertDialog alert = builder.create();
