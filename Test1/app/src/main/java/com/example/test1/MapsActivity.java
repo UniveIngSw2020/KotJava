@@ -54,7 +54,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.clustering.ClusterManager;
@@ -426,7 +425,7 @@ ClusterManager<MyItem> clusterManager;
 
 
 
-                    setUpClusterer();
+
                 }
 
                 // inserisco in memoria i preferiti
@@ -923,7 +922,8 @@ ClusterManager<MyItem> clusterManager;
             JSONObject jsonObject = new JSONObject(k);
 
             JSONArray jsonArray = jsonObject.getJSONArray("data");
-
+            if (clusterManager != null)
+                 clusterManager.clearItems();
             for (int i=0;i<jsonArray.length();i++){
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -940,14 +940,14 @@ ClusterManager<MyItem> clusterManager;
 
 
                         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        googleMap.addMarker (new MarkerOptions()
-                                //.labelContent()
-                                .position(new LatLng(lat, lon))
-                                .title(obj.optString("id")));
 
+                        MyItem item = new MyItem(lat, lon, "ciao", "id");
+                       addItems(item);
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
+
                     }
                 });
+                setUpClusterer();
             }
 
         } catch (JSONException e) {
@@ -1156,36 +1156,29 @@ ClusterManager<MyItem> clusterManager;
     private void setUpClusterer() {
         // Position the map.
 
+        map.clear();
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
-
+        //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
 
+
         // Add cluster items (markers) to the cluster manager.
-        addItems();
+       // addItems(item);
     }
 
-    private void addItems() {
+    private void addItems(MyItem offsetItem) {
 
-        // Set some lat/lng coordinates to start with.
-        double lat = 51.5145160;
-        double lng = -0.1270060;
 
-        // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < 10; i++) {
-            double offset = i / 60d;
-            lat = lat + offset;
-            lng = lng + offset;
-            MyItem offsetItem = new MyItem(lat, lng, "Title " + i, "Snippet " + i);
+
             clusterManager.addItem(offsetItem);
-        }
     }
-
-
-
-
 }
+
+
+
+
