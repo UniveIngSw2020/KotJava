@@ -72,7 +72,7 @@ public class Networkreciever extends BroadcastReceiver {
 
     }
     //restituisce se il dispositivo è online
-    public boolean isOnline(Context context) {
+    public static  boolean isOnline(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

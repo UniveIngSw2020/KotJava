@@ -57,6 +57,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.maps.android.clustering.ClusterManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,6 +104,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public AlertDialog gpslost;
     public int bluefound;
     String bMac;
+ClusterManager<MyItem> clusterManager;
 
     SimpleCursorAdapter mAdapter;
 
@@ -116,6 +118,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
+
+
+
 
         // creazione alertdialog per perdita gps....................................................
         final AlertDialog.Builder alertgps = new AlertDialog.Builder(MapsActivity.this);
@@ -416,6 +424,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(location != null)
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
 
+
+
+                    setUpClusterer();
                 }
 
                 // inserisco in memoria i preferiti
@@ -1140,5 +1151,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         alert.show();
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void setUpClusterer() {
+        // Position the map.
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        map.setOnCameraIdleListener(clusterManager);
+        map.setOnMarkerClickListener(clusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems();
+    }
+
+    private void addItems() {
+
+        // Set some lat/lng coordinates to start with.
+        double lat = 51.5145160;
+        double lng = -0.1270060;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            MyItem offsetItem = new MyItem(lat, lng, "Title " + i, "Snippet " + i);
+            clusterManager.addItem(offsetItem);
+        }
+    }
+
+
+
 
 }
