@@ -70,6 +70,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -745,15 +746,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Send data
         Log.e("location","this is your location"+loc);
+
+        URL url = null;
+        HttpURLConnection conn = null;
         try
         {
 
             // Defined URL  where to send data
-            URL url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+            url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
 
             // Send POST data request
 
-            URLConnection conn = url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
 
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -761,13 +765,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             wr.write( data );
             wr.flush();
 
-            // Get the server response
+            Log.e("loc","Sent Loc e blue"); //vedi cosa invia
 
+            // Get the server response
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line = null;
 
-            Log.e("loc","ok2 Sent"); //vedi cosa invia
+
             // Read Server Response
             while((line = reader.readLine()) != null)
             {
@@ -794,6 +799,70 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             catch(Exception ex) {ex.printStackTrace();}
             getParsing(text);
+            conn.disconnect();
+        }
+
+    }
+
+
+
+    public  void  getInfo(){ //need location
+
+        //NON SO PERCHE MA I MARKER VANO CON QUESTO:
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        //
+        String text = "";
+
+        BufferedReader reader=null;
+
+        // Send data
+        Log.e("location","getting INFOs");
+
+        URL url = null;
+        HttpURLConnection conn = null;
+
+        try
+        {
+            // Defined URL  where to send data
+            url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
+            conn = (HttpURLConnection) url.openConnection();
+
+
+            // Get the server response
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+
+            // Read Server Response
+            while((line = reader.readLine()) != null)
+            {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            //server response da usare per i marker nella get
+            text = sb.toString();
+
+        }
+        catch(Exception ex)
+        {
+
+            ex.printStackTrace();
+
+        }
+        finally
+        {
+            try
+            {
+                reader.close();
+            }
+
+            catch(Exception ex) {ex.printStackTrace();}
+            getParsing(text);
+            conn.disconnect();
         }
 
     }
@@ -892,39 +961,44 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     startActivityForResult(enableBtIntent,1);
                 }
 
-                    /*
-                    Thread closeActivity = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //thread che serve solo per fare la Thread.sleep(1000);
 
-                            //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
-                            try {
-                                //System.out.println("entra in 2 thread");
-                                bluetoothAdapterr.startDiscovery();
-                                Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+                Thread closeActivity = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //thread che serve solo per fare la Thread.sleep(1000);
 
-                                Thread.sleep(1000);
-                                bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
-                            } catch (Exception e) {
-                                e.getLocalizedMessage();
-                            }
+                        //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
+                        try {
+                            //System.out.println("entra in 2 thread");
+                            bluetoothAdapterr.startDiscovery();
+                            Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+
+                            Thread.sleep(1000);
+                            bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
+                        } catch (Exception e) {
+                            e.getLocalizedMessage();
                         }
-                    });*/
+                    }
+                });
 
-                bluetoothAdapterr.startDiscovery();
+                //bluetoothAdapterr.startDiscovery();
 
-                SystemClock.sleep(1000);
+                //SystemClock.sleep(5000);
 
-                bluetoothAdapterr.cancelDiscovery();
-                //closeActivity.start();
+                //bluetoothAdapterr.cancelDiscovery();
+                closeActivity.start();
+
+                if (location != null)
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    //SendLoc(String.format(String.valueOf(location)));
+                    SendLoc(latitude + ":" + longitude);
+
+            } else
+            {
+                getInfo();
             }
-            if (location != null)
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
 
-                //SendLoc(String.format(String.valueOf(location)));
-                SendLoc(latitude + ":" + longitude);
 
 
 
@@ -935,7 +1009,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             bluefound = 0;
             bMac = "";
-            handler.postDelayed(this, 5000);
+            handler.postDelayed(this, 10000);
         }
     };
 
