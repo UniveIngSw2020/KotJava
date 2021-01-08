@@ -117,6 +117,7 @@ ClusterManager<MyItem> clusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
 
 
 
@@ -124,19 +125,6 @@ ClusterManager<MyItem> clusterManager;
 
 
 
-        // creazione alertdialog per perdita gps....................................................
-        final AlertDialog.Builder alertgps = new AlertDialog.Builder(MapsActivity.this);
-        alertgps.setTitle("Wait gps connection...");
-        alertgps.setCancelable(false);
-
-        alertgps.setPositiveButton("Close app", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //interrompe l' app
-                System.exit(0);
-            }
-        });
-        gpslost = alertgps.create();
 
         // Broadcastreciever per il cambio di stato della connessione
         Networkreciever nw = new Networkreciever();
@@ -162,43 +150,7 @@ ClusterManager<MyItem> clusterManager;
         }
 
 
-        // listener chje controlla se il gps è attivo
-        if (FirstAccessActivity.checkPermission(getApplicationContext())) {
-            manager.addGpsStatusListener(new GpsStatus.Listener() {
-                @Override
-                public void onGpsStatusChanged(int event) {
-                    switch(event){
-                        case GpsStatus.GPS_EVENT_STARTED:
-                            // quando il servizio gps parte
 
-                            // quando il servizio gps part
-                            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                            registerReceiver(mReceiver, filter);
-                            handler.postDelayed(runnableCode, 5000);
-
-                                gpslost.cancel();
-                                break;
-                        case GpsStatus.GPS_EVENT_STOPPED:
-                            // se il gps non va più, -> intent
-                            Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
-                            if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
-                                // gps stato disattivato ,
-                                buildAlertMessageNoGps();
-                            }
-                            else {
-                                // gps interrotto
-
-                                gpslost = alertgps.show();
-
-
-                                break;
-                            }
-                        case GpsStatus.GPS_EVENT_FIRST_FIX:
-                            // possibilità di mettere sendlock ?
-                    }
-                }
-            });
-        }
 
 
 
@@ -595,12 +547,65 @@ ClusterManager<MyItem> clusterManager;
      */
     @Override
     public void onMapReady(GoogleMap map) {
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        // creazione alertdialog per perdita gps....................................................
+        final AlertDialog.Builder alertgps = new AlertDialog.Builder(MapsActivity.this);
+        alertgps.setTitle("Wait gps connection...");
+        alertgps.setCancelable(false);
+
+        alertgps.setPositiveButton("Close app", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //interrompe l' app
+                System.exit(0);
+            }
+        });
+        gpslost = alertgps.create();
         if (FirstAccessActivity.checkPermission(getApplicationContext())) {
             System.out.println("entrato");
 
             map.setMyLocationEnabled(true);
             map.setOnMyLocationButtonClickListener(this);
             map.setOnMyLocationClickListener(this);
+        }
+
+
+        // listener chje controlla se il gps è attivo
+        if (FirstAccessActivity.checkPermission(getApplicationContext())) {
+            manager.addGpsStatusListener(new GpsStatus.Listener() {
+                @Override
+                public void onGpsStatusChanged(int event) {
+                    switch(event){
+                        case GpsStatus.GPS_EVENT_STARTED:
+                            // quando il servizio gps parte
+
+                            // quando il servizio gps part
+                            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                            registerReceiver(mReceiver, filter);
+                            handler.postDelayed(runnableCode, 15000);
+
+                            gpslost.cancel();
+                            break;
+                        case GpsStatus.GPS_EVENT_STOPPED:
+                            // se il gps non va più, -> intent
+                            Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
+                            if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
+                                // gps stato disattivato ,
+                                buildAlertMessageNoGps();
+                            }
+                            else {
+                                // gps interrotto
+
+                                gpslost = alertgps.show();
+
+
+                                break;
+                            }
+                        case GpsStatus.GPS_EVENT_FIRST_FIX:
+                            // possibilità di mettere sendlock ?
+                    }
+                }
+            });
         }
     }
 
@@ -924,6 +929,8 @@ ClusterManager<MyItem> clusterManager;
             JSONArray jsonArray = jsonObject.getJSONArray("data");
             if (clusterManager != null)
                  clusterManager.clearItems();
+               map.clear();
+
             for (int i=0;i<jsonArray.length();i++){
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -1155,14 +1162,15 @@ ClusterManager<MyItem> clusterManager;
     private void setUpClusterer() {
         // Position the map.
 
-        map.clear();
+
+
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
+
         //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
-
+        map.clear();
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
 
