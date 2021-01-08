@@ -930,9 +930,8 @@ ClusterManager<MyItem> clusterManager;
                 // Log.e("json",obj.optString("id"));
                 final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
                 final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
-
-                final Double found =  Double.parseDouble(obj.optString("blueFound"));
-
+                final Integer found = Integer.parseInt(obj.optString("blueFound").split("=")[0]);
+                final String name = (obj.optString("id").split("=")[0]);
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
@@ -941,7 +940,7 @@ ClusterManager<MyItem> clusterManager;
 
                         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-                        MyItem item = new MyItem(lat, lon, "ciao", "id");
+                        MyItem item = new MyItem(lat, lon, String.format("%d", found ), name);
                        addItems(item);
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
 
@@ -1163,6 +1162,7 @@ ClusterManager<MyItem> clusterManager;
         //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
+
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
 
@@ -1177,6 +1177,7 @@ ClusterManager<MyItem> clusterManager;
 
             clusterManager.addItem(offsetItem);
     }
+
 }
 
 
