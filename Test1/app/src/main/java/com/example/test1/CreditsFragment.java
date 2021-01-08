@@ -18,8 +18,7 @@ public class CreditsFragment extends Fragment {
 
 
     public static CreditsFragment newInstance() {
-        CreditsFragment fragment = new CreditsFragment();
-        return fragment;
+        return new CreditsFragment();
     }
 
     @Override

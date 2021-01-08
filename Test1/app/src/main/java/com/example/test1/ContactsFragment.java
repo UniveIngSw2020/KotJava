@@ -20,8 +20,7 @@ public class ContactsFragment extends Fragment {
     }
 
     public static ContactsFragment newInstance() {
-        ContactsFragment fragment = new ContactsFragment();
-        return fragment;
+        return new ContactsFragment();
     }
 
     @Override

@@ -23,16 +23,12 @@ public class UpdateFragment extends Fragment {
     }
 
     public static UpdateFragment newInstance() {
-        UpdateFragment fragment = new UpdateFragment();
-        return fragment;
+        return new UpdateFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -43,7 +39,7 @@ public class UpdateFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_update, container, false);
 
         //Per la prima stringa cambiamo il testo in base alla versione attuale
-        TextView tv1 = (TextView) view.findViewById( R.id.tv_update1 );
+        TextView tv1 = view.findViewById( R.id.tv_update1 );
         tv1.setText( getString(R.string.update_version, BuildConfig.VERSION_NAME) );
 
         //Per la seconda verifichiamo la presenza di aggiornamenti e modifichiamo di conseguenza
@@ -59,7 +55,7 @@ public class UpdateFragment extends Fragment {
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                     // For a flexible update, use AppUpdateType.FLEXIBLE
                     /*&& appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)*/) {
-                    TextView tv2 = (TextView) view.findViewById( R.id.tv_update2 );
+                    TextView tv2 = view.findViewById( R.id.tv_update2 );
                     tv2.setText( getText(R.string.update_available) );
                 }
             }

@@ -6,15 +6,15 @@
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
     <string name="guide">
-        Welcome and thank you for choosing our application.
+        Welcome and thank you for choosing our application.\n
         This software offers innovative services, through the use of GPS and Bluetooth.
         The user interface is simple and intuitive. After you will have accepted to grant the required permissions
         the screen of your device will display the geographical map of you position, from there you will be able to navigate
-        manually or through the search bar above the map.
+        manually or through the search bar above the map.\n
         When you will find a place of your interest, you will be able to obtain info in real time on the number of people
-        present in that area, using the central button below the map.
+        present in that area, using the central button below the map.\n
         You will also be able to memorize your favourite locations and the places you have been to with the other two buttons
-        below the map.
+        below the map.\n
         We cordially invite you to consult the upper right menu in case of any doubt or question regarding the app,
         we hope you will find it useful.\n
         \n

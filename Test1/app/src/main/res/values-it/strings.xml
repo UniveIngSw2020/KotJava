@@ -7,13 +7,13 @@
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>
     <string name="guide">
-        Benvenuto e grazie per avere la nostra app "NomeAppxd".
-        Questo software offre servizi innovativi, legati alla connessione, sia gps che bluetooth.
+        Benvenuto e grazie per avere la nostra app "NomeAppxd".\n
+        Questo software offre servizi innovativi, legati alla connessione, sia gps che bluetooth.\n
         L\'interfaccia è semplice e intuitiva. Appena verranno accettati i permessi apparirà a schermo
         la mappa con la tua posizione, da qui potrai navigare come più preferisci,spostandoti manualmente
         oppure utilizzando la barra di ricerca. Non appena troverai il luogo interessato, tramite i pulsanti
-        potrai ricevere le informazioni sull\'affluenza in quel luogo in quel momento.
-        Inoltre potrai salvare dei luoghi per te importanti e risalire a vecchi luoghi visitati.
+        potrai ricevere le informazioni sull\'affluenza in quel luogo in quel momento.\n
+        Inoltre potrai salvare dei luoghi per te importanti e risalire a vecchi luoghi visitati.\n
         Ti invitiamo a consultare il menu posizionato in alto a destra se ci fossero dubbi o curiosità su qualsiasi
         aspetto dell\'applicazione, speriamo che l\'app ti sia utile.\n
         \n
