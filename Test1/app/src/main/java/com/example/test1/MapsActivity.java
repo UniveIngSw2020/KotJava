@@ -31,7 +31,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -44,7 +43,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -68,7 +66,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -120,7 +117,7 @@ ClusterManager<MyItem> clusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
+
 
 
 
@@ -951,10 +948,10 @@ ClusterManager<MyItem> clusterManager;
             JSONObject jsonObject = new JSONObject(k);
 
             JSONArray jsonArray = jsonObject.getJSONArray("data");
-            if (clusterManager != null)
-                 clusterManager.clearItems();
-               map.clear();
-
+            if (clusterManager != null) {
+                clusterManager.clearItems();
+                clusterManager.cluster();
+            }
             for (int i=0;i<jsonArray.length();i++){
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -973,13 +970,14 @@ ClusterManager<MyItem> clusterManager;
 
                         MyItem item = new MyItem(lat, lon, String.format("%d", found ), name);
                        addItems(item);
+                       clusterManager.cluster();
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
 
                     }
                 });
-                setUpClusterer();
-            }
 
+            }
+            setUpClusterer();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1186,7 +1184,7 @@ ClusterManager<MyItem> clusterManager;
     private void setUpClusterer() {
         // Position the map.
 
-
+        clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
@@ -1194,10 +1192,9 @@ ClusterManager<MyItem> clusterManager;
         //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
-        map.clear();
+
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
-
 
         // Add cluster items (markers) to the cluster manager.
        // addItems(item);
