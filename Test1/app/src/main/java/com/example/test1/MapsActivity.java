@@ -584,8 +584,6 @@ ClusterManager<MyItem> clusterManager;
                     switch(event){
                         case GpsStatus.GPS_EVENT_STARTED:
                             // quando il servizio gps parte
-
-                            // quando il servizio gps part
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
                             handler.postDelayed(runnableCode, 15000);
@@ -601,12 +599,11 @@ ClusterManager<MyItem> clusterManager;
                             }
                             else {
                                 // gps interrotto
-
-                                gpslost = alertgps.show();
-
-
-                                break;
+                                if( !isFinishing() ) {
+                                    gpslost = alertgps.show();
+                                }
                             }
+                            break;
                         case GpsStatus.GPS_EVENT_FIRST_FIX:
                             // possibilità di mettere sendlock ?
                     }
