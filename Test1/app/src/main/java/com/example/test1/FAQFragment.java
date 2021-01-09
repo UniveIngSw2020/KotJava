@@ -17,9 +17,10 @@ import android.view.ViewGroup;
  * Use the {@link FAQFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class FAQFragment extends Fragment {
     /*
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "qs";
     private static final String ARG_PARAM2 = "as";
      */
