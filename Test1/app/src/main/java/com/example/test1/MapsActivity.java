@@ -103,13 +103,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public AlertDialog gpslost;
     public int bluefound;
     String bMac;
-ClusterManager<MyItem> clusterManager;
+
+    ClusterManager<MyItem> clusterManager;
+
 
     SimpleCursorAdapter mAdapter;
-
-
-
-
     Handler handler = new Handler();
 
     final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
@@ -117,13 +115,13 @@ ClusterManager<MyItem> clusterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
-
-
-
-
+        //button favourite and recent
+        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
+        final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
+        final Gson gson =new Gson();
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
 
         // Broadcastreciever per il cambio di stato della connessione
@@ -136,13 +134,6 @@ ClusterManager<MyItem> clusterManager;
         bluefound = 1;
         bMac = "";
 /////////////////////////////////
-        //button favourite and recent
-        final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
-        final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
-        final Gson gson =new Gson();
-        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
         // controllo gps primo accesso
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
