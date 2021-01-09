@@ -1,20 +1,20 @@
 <resources>
 
-<!-- FisrtAccess -->
+<!-- FirstAccess -->
     <string name="app_name">Test1</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
-    <string name="request_bt">request permission</string>
+<!--    <string name="action_settings">Settings</string> -->
+<!--    <string name="request_bt">request permission</string> -->
     <string name="guide">
-        Welcome and thank you for choosing our application.
-        This software offers innovative services, through the use of GPS and Bluetooth.
+        Welcome and thank you for choosing our application.\n\n
+        This software offers innovative services, through the use of GPS and Bluetooth.\n
         The user interface is simple and intuitive. After you will have accepted to grant the required permissions
         the screen of your device will display the geographical map of you position, from there you will be able to navigate
-        manually or through the search bar above the map.
+        manually or through the search bar above the map.\n
         When you will find a place of your interest, you will be able to obtain info in real time on the number of people
-        present in that area, using the central button below the map.
+        present in that area, using the central button below the map.\n
         You will also be able to memorize your favourite locations and the places you have been to with the other two buttons
-        below the map.
+        below the map.\n
         We cordially invite you to consult the upper right menu in case of any doubt or question regarding the app,
         we hope you will find it useful.\n
         \n
@@ -31,7 +31,7 @@
         access to said resources.
     </string>
     <string name="accept_resreq">Accept</string>
-    <string name="request_check">Check request</string>
+<!--    <string name="request_check">Check request</string> -->
 
 
 <!-- MapsActivity menu -->
@@ -48,14 +48,8 @@
 
 
 <!-- MapsActivity bottoni -->
-    <string name="favouritesitem">Favourites</string>
-    <string name="statsitem">Crowd Data</string>
-    <string name="locationitem">Local Informations</string>
-    <string name="historyitem">Visited</string>
-
     <string name="favdescription">Favourite Places</string>
     <string name="statdescription">Crowd data</string>
-    <string name="locdescription">Local Informations</string>
     <string name="histdescription">Already Visited Places</string>
 
     <!-- FAQ -->
@@ -140,23 +134,7 @@
     <string name="update_not_available">The application is up to date</string>
     <string name="update_available">A new update is available</string>
 
-
-<!-- PLACEHOLDERS -->
-    <!-- Menu -->
-    <string name="placeholder_guide">Guide</string>
-    <string name="placeholder_faq">Frequently Asked Questions</string>
-    <string name="placeholder_contacts">Contact us</string>
-    <string name="placeholder_credits">Credits</string>
-
-    <!-- Bottoni -->
-    <string name="placeholder_favourites">Favourites</string>
-    <string name="placeholder_history">Visited</string>
-
-    <!-- FAQ -->
+<!-- PLACEHOLDERS FAQ -->
     <string name="placeholder_question">Question?</string>
     <string name="placeholder_answer">Answer!</string>
-
-    <!-- Fragments -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

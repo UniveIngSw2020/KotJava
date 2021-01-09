@@ -39,14 +39,15 @@ public class FAQFragment extends Fragment {
          * @param as Parameter 2. Contiene le risposte
          * @return A new instance of fragment CreditsFragment.*/
     public static FAQFragment newInstance(/* String[] qs, String[] as */) {
-        FAQFragment fragment = new FAQFragment();
         /*
+        FAQFragment fragment = new FAQFragment();
         Bundle args = new Bundle();
         args.putStringArray( ARG_PARAM1, qs );
         args.putStringArray( ARG_PARAM2, as );
         fragment.setArguments(args);
-         */
         return fragment;
+         */
+        return new FAQFragment();
     }
 
     @Override

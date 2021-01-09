@@ -3,17 +3,17 @@
 
 <!-- FisrtAccess -->
     <string name="app_name">Test1</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
-    <string name="request_bt">request permission</string>
+<!--    <string name="action_settings">Settings</string> -->
+<!--    <string name="request_bt">request permission</string> -->
     <string name="guide">
-        Benvenuto e grazie per avere la nostra app "NomeAppxd".
-        Questo software offre servizi innovativi, legati alla connessione, sia gps che bluetooth.
+        Benvenuto e grazie per avere la nostra app "NomeAppxd".\n\n
+        Questo software offre servizi innovativi, legati alla connessione, sia gps che bluetooth.\n
         L\'interfaccia è semplice e intuitiva. Appena verranno accettati i permessi apparirà a schermo
         la mappa con la tua posizione, da qui potrai navigare come più preferisci,spostandoti manualmente
         oppure utilizzando la barra di ricerca. Non appena troverai il luogo interessato, tramite i pulsanti
-        potrai ricevere le informazioni sull\'affluenza in quel luogo in quel momento.
-        Inoltre potrai salvare dei luoghi per te importanti e risalire a vecchi luoghi visitati.
+        potrai ricevere le informazioni sull\'affluenza in quel luogo in quel momento.\n
+        Inoltre potrai salvare dei luoghi per te importanti e risalire a vecchi luoghi visitati.\n
         Ti invitiamo a consultare il menu posizionato in alto a destra se ci fossero dubbi o curiosità su qualsiasi
         aspetto dell\'applicazione, speriamo che l\'app ti sia utile.\n
         \n
@@ -29,7 +29,7 @@
             l\'accesso a tali risorse.
         </string>
     <string name="accept_resreq">Accetta</string>
-    <string name="request_check">check request</string>
+<!--    <string name="request_check">check request</string> -->
 
 
 <!-- MapsActivity menu -->
@@ -46,14 +46,8 @@
 
 
 <!-- MapsActivity bottoni -->
-    <string name="favouritesitem">Preferiti</string>
-    <string name="statsitem">Informazioni affluenza</string>
-    <string name="locationitem">Informazioni luogo</string>
-    <string name="historyitem">Luoghi visitati</string>
-
     <string name="favdescription">Luoghi preferiti</string>
     <string name="statdescription">Informazioni sull\'affluenza</string>
-    <string name="locdescription">Informazioni sulla località</string>
     <string name="histdescription">Luoghi precedentemente visitati</string>
 
 
@@ -140,22 +134,7 @@
     <string name="update_available">Aggiornamento disponibile</string>
 
 
-<!--PLACEHOLDERS-->
-    <!-- menu -->
-    <string name="placeholder_guide">Guida</string>
-    <string name="placeholder_faq">Frequently Asked Questions</string>
-    <string name="placeholder_contacts">Contatti</string>
-    <string name="placeholder_credits">Credits</string>
-
-    <!-- Bottoni -->
-    <string name="placeholder_favourites">Preferiti</string>
-    <string name="placeholder_history">Visitati</string>
-
-    <!-- FAQ -->
+<!--PLACEHOLDERS FAQ -->
     <string name="placeholder_question">Domanda?</string>
     <string name="placeholder_answer">Risposta!</string>
-
-    <!-- Fragments -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

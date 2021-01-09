@@ -1,6 +1,8 @@
 package com.example.test1;
 
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -15,6 +17,7 @@ public class MyItem implements ClusterItem {
         this.snippet = snippet;
     }
 
+    @NonNull
     @Override
     public LatLng getPosition() {
         return position;

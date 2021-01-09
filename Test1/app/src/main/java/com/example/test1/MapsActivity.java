@@ -94,7 +94,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
     String bmac;
-    private SearchView searchView;
+    //private SearchView searchView;
     private SupportMapFragment mapFragment;
     private LocationManager locationManager;
     private Location location ; // Location
@@ -160,7 +160,10 @@ ClusterManager<MyItem> clusterManager;
         //Toolbar superiore con l'overflow menu
         Toolbar myToolbar = findViewById(R.id.maps_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if( getSupportActionBar() != null ){
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
 
         //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
         try{

@@ -1,6 +1,5 @@
 package com.example.test1;
 
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class QAAdapter extends RecyclerView.Adapter<QAAdapter.ViewHolder> {
-    private String[] questions, answers; //Contentgono rispettivamente le stringhe delle domande e delle risposte
+    private final String[] questions, answers; //Contentgono rispettivamente le stringhe delle domande e delle risposte
     //Si poteva, alternativamente, creare un solo array con alternate domande e risposte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -23,8 +22,8 @@ public class QAAdapter extends RecyclerView.Adapter<QAAdapter.ViewHolder> {
         public ViewHolder( View view ) {
             super(view);
             // Define click listener for the ViewHolder's View
-            tv_question = (TextView) view.findViewById(R.id.tv_question);
-            tv_answer = (TextView) view.findViewById(R.id.tv_answer);
+            tv_question = view.findViewById(R.id.tv_question);
+            tv_answer = view.findViewById(R.id.tv_answer);
         }
 
         public TextView getQuestionTV() {

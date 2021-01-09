@@ -1,5 +1,6 @@
 package com.example.test1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,7 +22,10 @@ public class MenuItemsActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.mi_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Per mettere il back button
+        if( getSupportActionBar() != null ){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Per mettere il back button
+        }
+
 
 
         if (savedInstanceState == null) {
@@ -72,7 +76,7 @@ public class MenuItemsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent = new Intent(MenuItemsActivity.this, MapsActivity.class);
         startActivity(intent);
         finish();
