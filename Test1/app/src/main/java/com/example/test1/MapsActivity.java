@@ -26,6 +26,7 @@ import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +44,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -93,6 +95,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final int REQUEST_CHECK_CODE = 999;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
+    private Toolbar myToolbar;
     String bmac;
     //private SearchView searchView;
     private SupportMapFragment mapFragment;
@@ -157,14 +160,15 @@ ClusterManager<MyItem> clusterManager;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
         //Toolbar superiore con l'overflow menu
-        Toolbar myToolbar = findViewById(R.id.maps_toolbar);
+        myToolbar = findViewById(R.id.maps_toolbar);
         setSupportActionBar(myToolbar);
         if( getSupportActionBar() != null ){
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-
+/*
         //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
         try{
             ViewConfiguration config = ViewConfiguration.get(this);
@@ -176,6 +180,8 @@ ClusterManager<MyItem> clusterManager;
         } catch (Exception e) {
             //Log.d(TAG, e.getLocalizedMessage());
         }
+*/
+
 
 //Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
@@ -644,6 +650,21 @@ ClusterManager<MyItem> clusterManager;
         inflater.inflate(R.menu.menu_maps, menu);
         return true;
     }
+
+    @Override
+    //Questo metodo dovrebbe servire a mostrare il menu di overflow anche su dispositivi con il
+      //bottone hardware
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_MENU) {
+            if(myToolbar != null && !myToolbar.isOverflowMenuShowing() ) {
+                myToolbar.showOverflowMenu();
+            }
+        return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+
     //Creazione condividi app
     private void showMsg(String msg) {
         Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
