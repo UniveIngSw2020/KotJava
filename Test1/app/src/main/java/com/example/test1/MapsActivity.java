@@ -930,7 +930,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONArray jsonArray = jsonObject.getJSONArray("data");
             if (clusterManager != null) {
                 clusterManager.clearItems();
-                
+                clusterManager.cluster();
             }
             for (int i=0;i<jsonArray.length();i++){
                 final JSONObject obj = jsonArray.getJSONObject(i);
@@ -946,6 +946,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                         MyItem item = new MyItem(lat, lon, String.format("%d", found ), name);
                         addItems(item);
+
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
                 });
@@ -1172,6 +1173,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addItems(MyItem offsetItem) {
             clusterManager.addItem(offsetItem);
+            clusterManager.cluster();
     }
 
 }
