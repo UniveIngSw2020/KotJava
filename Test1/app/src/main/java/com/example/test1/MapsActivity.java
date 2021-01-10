@@ -123,7 +123,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Gson gson =new Gson();
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
-
         // Broadcastreciever per il cambio di stato della connessione
         Networkreciever nw = new Networkreciever();
         registerReceiver(nw, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -134,13 +133,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bluefound = 1;
         bMac = "";
 /////////////////////////////////
-
         // controllo gps primo accesso
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps(); // metodo che chiede all' utente di attivare gps
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         //Toolbar superiore con l'overflow menu
         myToolbar = findViewById(R.id.maps_toolbar);
         setSupportActionBar(myToolbar);
@@ -345,9 +344,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
 
-        //Button scan = findViewById(R.id.bscan); //per lo scan per ora no
 
-        //searchView = findViewById(R.id.srclocation);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -358,6 +355,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
+
+                // imposta l' ultima posizone rilevata all' avvio del gps
                 if(FirstAccessActivity.checkPermission(getApplicationContext())) {
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -369,7 +368,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
 
-                // inserisco in memoria i preferiti
+                // inserisco in memoria i preferiti (long click)
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void onMapLongClick(LatLng latLng) {
@@ -395,7 +394,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         });
-
+        // implementazione searchbar ............................................................
         final String[] from = new String[] {"cityName"};
         final int[] to = new int[] {android.R.id.text1};
 
@@ -409,7 +408,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
 
-        // Getting selected (clicked) item suggestion
+        // listener sull' elemento suggerito
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionClick(int position) {
@@ -446,7 +445,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public boolean onSuggestionSelect(int position) {
-                // Your code here
+
                 return true;
             }
         });
@@ -457,13 +456,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 searchView.onActionViewExpanded();
             }
         });
-
+        // ricerca del posto scritto in input
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String location) {
 
                 List<Address> addressList = null;
 
+                // trasformo stringa in una location tramite geocoder + cambio posizione camera
                 if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
                     try {
@@ -483,6 +483,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return false;
             }
             int m = 0;
+            //  viene riscritta la scritta in input (cosa fare)
             @Override
             public boolean onQueryTextChange(String location) {
 
@@ -525,23 +526,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+
     @Override
     public void onMapReady(GoogleMap map) {
-        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
         // creazione alertdialog per perdita gps....................................................
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
         final AlertDialog.Builder alertgps = new AlertDialog.Builder(MapsActivity.this);
         alertgps.setTitle("Wait gps connection...");
         alertgps.setCancelable(false);
-
         alertgps.setPositiveButton("Close app", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -550,13 +543,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         gpslost = alertgps.create();
-        if (FirstAccessActivity.checkPermission(getApplicationContext())) {
-            System.out.println("entrato");
 
-            map.setMyLocationEnabled(true);
-            map.setOnMyLocationButtonClickListener(this);
-            map.setOnMyLocationClickListener(this);
-        }
+        // necessarie per mylocationbutton
+            if (FirstAccessActivity.checkPermission(getApplicationContext())) {
+                System.out.println("entrato");
+
+                map.setMyLocationEnabled(true);
+                map.setOnMyLocationButtonClickListener(this);
+                map.setOnMyLocationClickListener(this);
+            }
 
 
         // listener chje controlla se il gps è attivo
@@ -566,29 +561,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onGpsStatusChanged(int event) {
                     switch(event){
                         case GpsStatus.GPS_EVENT_STARTED:
-                            // quando il servizio gps parte
+                            // quando il servizio gps parte, si avvia il broadcastreciever con la funzione per aggiornare i dati della mappa in base a quello che c è sul server
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
-                            handler.postDelayed(runnableCode, 15000);
+                            handler.postDelayed(runnableCode, 5000);
 
+                            // chiude il dialogo (wait gps...)
                             gpslost.cancel();
                             break;
                         case GpsStatus.GPS_EVENT_STOPPED:
                             // se il gps non va più, -> intent
                             Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
-                            if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
+                           // if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
                                 // gps stato disattivato ,
-                                buildAlertMessageNoGps();
-                            }
-                            else {
+                              //  buildAlertMessageNoGps();
+
+                            //else {
                                 // gps interrotto
                                 if( !isFinishing() ) {
                                     gpslost = alertgps.show();
                                 }
-                            }
+
                             break;
-                        case GpsStatus.GPS_EVENT_FIRST_FIX:
-                            // possibilità di mettere sendlock ?
+
                     }
                 }
             });
@@ -597,8 +592,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG)
+        // quando viene premuto lo schermo sulla propria posizione viene visualizzato indirizzo linea della posizione
+        Geocoder g = new Geocoder(MapsActivity.this);
+        List<Address> s;
+        String addr = "";
+            try {
+                 s = g.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                 addr = s.get(0).getAddressLine(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        Toast.makeText(this, "Current location:\n" + addr , Toast.LENGTH_SHORT)
                 .show();
+
         //fa la send and il get per ora
 
         latitude = location.getLatitude();
@@ -614,10 +621,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT)
+        // bottone che mi riporta alla location
+
+        Toast.makeText(this, "Current location:\n"  , Toast.LENGTH_SHORT)
                 .show();
 
-        return false;
+        return true;
     }
 
     //Creazione del menu della maps activity
@@ -981,7 +990,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //z = 1;
                 //bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
-                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -1024,7 +1033,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 try {
                                     //System.out.println("entra in 2 thread");
                                     bluetoothAdapterr.startDiscovery();
-                                    Toast.makeText(MapsActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+
                         
                                     Thread.sleep(1000);
                                     bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
