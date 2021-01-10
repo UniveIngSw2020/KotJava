@@ -639,7 +639,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     //Questo metodo dovrebbe servire a mostrare il menu di overflow anche su dispositivi con il
-      //bottone hardware
+    //bottone hardware
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_MENU) {
             if(myToolbar != null && !myToolbar.isOverflowMenuShowing() ) {
@@ -649,6 +649,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return super.onKeyUp(keyCode, event);
     }
+    
 
 
     //Creazione condividi app
@@ -967,7 +968,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
+        
         public void onReceive(Context context, Intent intent) {
             //ArrayList<String> list = new ArrayList<>();
             Log.e("quanti blue","ok");
@@ -998,11 +999,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     };
-
-
-
-
-
+    
+    
+    
     public  Runnable runnableCode = new Runnable() {
         @Override
         public   void  run() {
@@ -1021,21 +1020,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBtIntent, 1);
                     }
-        
-        
-                    Thread closeActivity = new Thread(new Runnable() {
+              final     Thread closeActivity = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             synchronized (this) {
                                 //thread che serve solo per fare la Thread.sleep(1000);
-                    
                                 //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
                                 try {
                                     //System.out.println("entra in 2 thread");
                                     bluetoothAdapterr.startDiscovery();
-
-                        
-                                    Thread.sleep(1000);
+                                    Thread.sleep(5000);
                                     bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
                                 } catch (Exception e) {
                                     e.getLocalizedMessage();
@@ -1043,19 +1037,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                         }
                     });
-        
+                   
                     //bluetoothAdapterr.startDiscovery();
-        
                     //SystemClock.sleep(5000);
-        
                     //bluetoothAdapterr.cancelDiscovery();
                     closeActivity.start();
+                    try {
+                        closeActivity.join(1000);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     if (location != null)
                         latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     //SendLoc(String.format(String.valueOf(location)));
                     SendLoc(latitude + ":" + longitude);
-        
                 } else {
                     getInfo();
                 }
@@ -1066,6 +1062,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 bluefound = 0;
                 bMac = "";
                 handler.postDelayed(this, 10000);
+                
             }
         }
     };
