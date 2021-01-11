@@ -940,6 +940,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONArray jsonArray = jsonObject.getJSONArray("data");
 
             //tando per
+            /*if (clusterManager != null) {
+                clusterManager.clearItems();
+                clusterManager.cluster();
+            }*/
+
+
             try {
                 clusterManager.clearItems();
                 clusterManager.cluster();
@@ -1036,7 +1042,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MapsActivity.this, "ok cancella scan", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(MapsActivity.this, "ok cancella scan", Toast.LENGTH_SHORT).show();
                             Log.e("Discovery", "Cancella discovery");
                             bluetoothAdapterr.cancelDiscovery();
                         }
