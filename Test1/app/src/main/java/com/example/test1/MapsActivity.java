@@ -940,19 +940,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONArray jsonArray = jsonObject.getJSONArray("data");
 
             //tando per
-            /*if (clusterManager != null) {
-                clusterManager.clearItems();
-                clusterManager.cluster();
-            }*/
-
-
-            try {
-                clusterManager.clearItems();
-                clusterManager.cluster();
-            }catch(Exception e)  {
-                Log.e("Exception",String.valueOf(e));
-                Toast.makeText(MapsActivity.this, String.valueOf(e), Toast.LENGTH_SHORT).show();
+            if (clusterManager != null) {
+                try {
+                    clusterManager.clearItems();
+                    clusterManager.cluster();
+                }catch(Exception e)  {
+                    //Log.e("Exception",String.valueOf(e));
+                    //Toast.makeText(MapsActivity.this, String.valueOf(e), Toast.LENGTH_SHORT).show();
+                }
             }
+
+
+
 
 
 
@@ -995,8 +994,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 //Log.e("list",device.getAddress());
-                //bluefound += 1;
-                bluefound = 1;
+                bluefound += 1;
+                //bluefound = 1;
                 //list.add(device.getName());
                 bmac = device.getAddress();
 
