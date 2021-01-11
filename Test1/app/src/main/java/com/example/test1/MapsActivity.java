@@ -938,10 +938,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONObject jsonObject = new JSONObject(k);
 
             JSONArray jsonArray = jsonObject.getJSONArray("data");
-            if (clusterManager != null) {
+
+            //tando per
+            try {
                 clusterManager.clearItems();
                 clusterManager.cluster();
+            }catch(Exception e)  {
+                Log.e("Exception",String.valueOf(e));
+                Toast.makeText(MapsActivity.this, String.valueOf(e), Toast.LENGTH_SHORT).show();
             }
+
+
+
             for (int i=0;i<jsonArray.length();i++){
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -954,8 +962,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
                         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        MyItem item = new MyItem(lat, lon, String.format("%d", found ), name);
+                        MyItem item = new MyItem(lat, lon, String.valueOf(found), name);
                         addItems(item);
+                        //Log.e("Lista",String.valueOf(lat) +"___"+ String.valueOf(lon));
+
 
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
@@ -1020,36 +1030,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBtIntent, 1);
                     }
-              final     Thread closeActivity = new Thread(new Runnable() {
+
+                    bluetoothAdapterr.startDiscovery();
+
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            synchronized (this) {
-                                //thread che serve solo per fare la Thread.sleep(1000);
-                                //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
-                                try {
-                                    //System.out.println("entra in 2 thread");
-                                    bluetoothAdapterr.startDiscovery();
-                                    Thread.sleep(5000);
-                                    bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
-                                } catch (Exception e) {
-                                    e.getLocalizedMessage();
-                                }
-                            }
+                            Toast.makeText(MapsActivity.this, "ok cancella scan", Toast.LENGTH_SHORT).show();
+                            Log.e("Discovery", "Cancella discovery");
+                            bluetoothAdapterr.cancelDiscovery();
                         }
-                    });
-                   
+                    }, 2000);
+
+
+
+
                     //bluetoothAdapterr.startDiscovery();
                     //SystemClock.sleep(5000);
                     //bluetoothAdapterr.cancelDiscovery();
-                    closeActivity.start();
-                    try {
-                        closeActivity.join(1000);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+
                     if (location != null)
                         latitude = location.getLatitude();
-                    longitude = location.getLongitude();
+                        longitude = location.getLongitude();
                     //SendLoc(String.format(String.valueOf(location)));
                     SendLoc(latitude + ":" + longitude);
                 } else {
