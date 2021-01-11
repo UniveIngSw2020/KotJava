@@ -564,7 +564,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             // quando il servizio gps parte, si avvia il broadcastreciever con la funzione per aggiornare i dati della mappa in base a quello che c è sul server
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
-                            handler.postDelayed(runnableCode, 5000);
+                            handler.postDelayed(runnableCode, 10000);
 
                             // chiude il dialogo (wait gps...)
                             gpslost.cancel();
@@ -797,8 +797,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public  void  SendLoc(String loc){ //need location
 
         //NON SO PERCHE MA I MARKER VANO CON QUESTO:
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
         //
 
         //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
@@ -941,18 +941,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             //tando per
             if (clusterManager != null) {
-                try {
                     clusterManager.clearItems();
                     clusterManager.cluster();
-                }catch(Exception e)  {
-                    //Log.e("Exception",String.valueOf(e));
-                    //Toast.makeText(MapsActivity.this, String.valueOf(e), Toast.LENGTH_SHORT).show();
-                }
+
             }
-
-
-
-
 
 
             for (int i=0;i<jsonArray.length();i++){
@@ -975,8 +967,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
                     }
                 });
+
             setUpClusterer();
-            }
+           }
+
+
            
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1006,7 +1001,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //z = 1;
                 //bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
-               // Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -1024,52 +1019,49 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
                 boolean autoScan = share.getBoolean("autoscan", false);
                 //System.out.println("entra in 1 thread");
-    
+
                 //bluefound = 0;
                 //bMac = "";
-    
-                int a = 1;
+
+                //int a = 1;
                 if (autoScan) {
                     // attiva bluetooth se non è attivo
+
                     if (!bluetoothAdapterr.isEnabled()) {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBtIntent, 1);
-                    }
+                    } else {
 
-                    bluetoothAdapterr.startDiscovery();
+                        if (!bluetoothAdapterr.isDiscovering()) {
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            //Toast.makeText(MapsActivity.this, "ok cancella scan", Toast.LENGTH_SHORT).show();
-                            Log.e("Discovery", "Cancella discovery");
+                            bluetoothAdapterr.startDiscovery();
+
+                        } else {
+
+
                             bluetoothAdapterr.cancelDiscovery();
+                            if (location != null) {
+                                longitude = location.getLongitude();
+                                latitude = location.getLatitude();
+                            }
+
+                            //SendLoc(String.format(String.valueOf(location)));
+                            SendLoc(latitude + ":" + longitude);
+
+                            Log.e("listB", "lista mac presi: " + bMac);
+                            Log.e("listB", "blue trovati totali: " + bluefound);
+                            bluefound = 0;
+                            bMac = "";
                         }
-                    }, 2000);
 
 
-
-
-                    //bluetoothAdapterr.startDiscovery();
-                    //SystemClock.sleep(5000);
-                    //bluetoothAdapterr.cancelDiscovery();
-
-                    if (location != null)
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-                    //SendLoc(String.format(String.valueOf(location)));
-                    SendLoc(latitude + ":" + longitude);
+                    }
                 } else {
                     getInfo();
                 }
-    
-    
-                Log.e("listB", "lista mac presi: " + bMac);
-                Log.e("listB", "blue trovati totali: " + bluefound);
-                bluefound = 0;
-                bMac = "";
-                handler.postDelayed(this, 10000);
-                
+
+                handler.postDelayed(this, 5000);
+
             }
         }
     };
