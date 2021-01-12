@@ -564,7 +564,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             // quando il servizio gps parte, si avvia il broadcastreciever con la funzione per aggiornare i dati della mappa in base a quello che c è sul server
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
-                            handler.postDelayed(runnableCode, 5000);
+
+                            Thread t1 = new Thread(new Runnable() {
+                                public void run()
+                                {
+                                    handler.postDelayed(runnableCode, 5000);
+                                }});
+                            t1.start();
+                            //t1.join();
+                            //handler.postDelayed(runnableCode, 5000);
+
+                            //handler.postDelayed(runnableCode, 5000);
 
                             // chiude il dialogo (wait gps...)
                             gpslost.cancel();
@@ -1002,7 +1012,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     
     
     
-    public  Runnable runnableCode = new Thread(new Runnable() {
+    public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
         @Override
         public   void  run() {
             synchronized (this) {
@@ -1053,6 +1063,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
             }
+
+
+
     });
 
 
