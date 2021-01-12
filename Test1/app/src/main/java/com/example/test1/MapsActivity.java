@@ -1002,70 +1002,58 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     
     
     
-    public  Runnable runnableCode = new Runnable() {
+    public  Runnable runnableCode = new Thread(new Runnable() {
         @Override
         public   void  run() {
             synchronized (this) {
                 SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
                 boolean autoScan = share.getBoolean("autoscan", false);
                 //System.out.println("entra in 1 thread");
-    
+
                 //bluefound = 0;
                 //bMac = "";
-    
+
                 int a = 1;
                 if (autoScan) {
                     // attiva bluetooth se non è attivo
+
                     if (!bluetoothAdapterr.isEnabled()) {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBtIntent, 1);
-                    }
-              final     Thread closeActivity = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            synchronized (this) {
-                                //thread che serve solo per fare la Thread.sleep(1000);
-                                //non funzianava con bluescan perche non dava tempo di fare lo startDiscovery
-                                try {
-                                    //System.out.println("entra in 2 thread");
-                                    bluetoothAdapterr.startDiscovery();
-                                    Thread.sleep(5000);
-                                    bluetoothAdapterr.cancelDiscovery(); //serve il thread per fare la cancelDiscovery()
-                                } catch (Exception e) {
-                                    e.getLocalizedMessage();
-                                }
+                    } else {
+
+                        if (!bluetoothAdapterr.isDiscovering()) {
+                            Log.e("listB", "start discovery");
+                            bluetoothAdapterr.startDiscovery();
+                            handler.postDelayed(this, 5000);
+                        } else {
+
+
+                            bluetoothAdapterr.cancelDiscovery();
+                            if (location != null) {
+                                longitude = location.getLongitude();
+                                latitude = location.getLatitude();
                             }
+
+                            //SendLoc(String.format(String.valueOf(location)));
+                            SendLoc(latitude + ":" + longitude);
+
+                            Log.e("listB", "lista mac presi: " + bMac);
+                            Log.e("listB", "blue trovati totali: " + bluefound);
+                            bluefound = 0;
+                            bMac = "";
+                            handler.postDelayed(this, 5000);
                         }
-                    });
-                   
-                    //bluetoothAdapterr.startDiscovery();
-                    //SystemClock.sleep(5000);
-                    //bluetoothAdapterr.cancelDiscovery();
-                    closeActivity.start();
-                    try {
-                        closeActivity.join(1000);
-                    }catch (Exception e){
-                        e.printStackTrace();
+
+
                     }
-                    if (location != null)
-                        latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    //SendLoc(String.format(String.valueOf(location)));
-                    SendLoc(latitude + ":" + longitude);
                 } else {
                     getInfo();
+                    handler.postDelayed(this, 10000);
                 }
-    
-    
-                Log.e("listB", "lista mac presi: " + bMac);
-                Log.e("listB", "blue trovati totali: " + bluefound);
-                bluefound = 0;
-                bMac = "";
-                handler.postDelayed(this, 10000);
-                
             }
-        }
-    };
+            }
+    });
 
 
     @Override
