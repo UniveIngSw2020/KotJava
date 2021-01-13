@@ -1201,10 +1201,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-
+        MarkerClusterRender render = new MarkerClusterRender(MapsActivity.this, map, clusterManager);
         //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
+        clusterManager.setRenderer(render);
+
 
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
