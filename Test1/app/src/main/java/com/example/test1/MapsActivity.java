@@ -1025,9 +1025,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
         @Override
         public   void  run() {
+            final int[] size = new int[1];
             /*synchronized (this) {
-                SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
-                boolean autoScan = share.getBoolean("autoscan", false);
+             SharedPreferences share = context.getSharedPreferences("autoscan", MODE_PRIVATE);
+    boolean autoScan = share.getBoolean("autoscan", false);
                 //System.out.println("entra in 1 thread");
 
                 //bluefound = 0;
@@ -1037,19 +1038,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (autoScan) {
                     // attiva bluetooth se non è attivo
 
-                    if (!bluetoothAdapterr.isEnabled()) {
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, 1);
-                    } else {
 
-                        if (!bluetoothAdapterr.isDiscovering()) {
-                            Log.e("listB", "start discovery");
-                            bluetoothAdapterr.startDiscovery();
                             handler.postDelayed(this, 5000);
                         } else {
 
 */
-                            bluetoothAdapterr.cancelDiscovery();
+                           AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new OnTaskDetected() {
+                               @Override
+                               public void onTaskDetected(List<BluetoothDevice> fromscanner) {
+
+                                   size[0] = fromscanner.size();
+                                  Log.i("FINITO SCAN BLUETOOTH", "OK");
+                               }
+                           });
+                           asyncBluetooth.execute("kusku");
                             if (location != null) {
                                 longitude = location.getLongitude();
                                 latitude = location.getLatitude();
@@ -1089,30 +1091,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 asyncRecieve.execute("skusku");
                                 final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
 
-                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), 35));
+                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), size[0]));
                                 handler.postDelayed(this, 15000);
 
                             }
-/*
-                            //SendLoc(String.format(String.valueOf(location)));
 
 
-                            Log.e("listB", "lista mac presi: " + bMac);
-                            Log.e("listB", "blue trovati totali: " + bluefound);
-                            bluefound = 0;
-                            bMac = "";
-                            handler.postDelayed(this, 5000);
-                        }
-
-
-                    }
-                } else {
-                    getInfo();
-                    handler.postDelayed(this, 10000);
-                }
-            }
-
- */
         }
 
 
