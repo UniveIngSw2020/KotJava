@@ -103,7 +103,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public AlertDialog gpslost;
     public int bluefound;
     String bMac;
-
+    Handler hand = new Handler();
     ClusterManager<MyItem> clusterManager;
 
 
@@ -122,17 +122,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
         final Gson gson =new Gson();
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-
+///////////////////////////
+        bluefound = 27;
+        bMac = "";
+/////////////////////////////////
         // Broadcastreciever per il cambio di stato della connessione
         Networkreciever nw = new Networkreciever();
         registerReceiver(nw, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 
 
-///////////////////////////
-        bluefound = 1;
-        bMac = "";
-/////////////////////////////////
         // controllo gps primo accesso
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps(); // metodo che chiede all' utente di attivare gps
@@ -147,6 +146,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+
+        if(FirstAccessActivity.checkPermission(getApplicationContext())) {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location != null) {
+
+
+            }
+        }
 /*
         //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
         try{
@@ -160,6 +168,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             //Log.d(TAG, e.getLocalizedMessage());
         }
 */
+
+
+
 
 
 //Bottoni della toolbar inferiore
@@ -353,7 +364,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 MapsActivity.this.map = googleMap;
 
-                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
 
                 // imposta l' ultima posizone rilevata all' avvio del gps
@@ -362,7 +372,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if(location != null)
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
-
 
 
 
@@ -1015,7 +1024,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
         @Override
         public   void  run() {
-            synchronized (this) {
+            /*synchronized (this) {
                 SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
                 boolean autoScan = share.getBoolean("autoscan", false);
                 //System.out.println("entra in 1 thread");
@@ -1038,15 +1047,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             handler.postDelayed(this, 5000);
                         } else {
 
-
+*/
                             bluetoothAdapterr.cancelDiscovery();
                             if (location != null) {
                                 longitude = location.getLongitude();
                                 latitude = location.getLatitude();
-                            }
 
+                                final AsyncSend async = new AsyncSend(MapsActivity.this, new OnTaskCompleted() {
+                                    @Override
+                                    public void onTaskCompleted(String fromserver) {
+                                        System.out.println("arriva qua");
+                                        if (fromserver != null) {
+                                            getParsing(fromserver);
+                                            Log.i("RECIEVE", fromserver);
+                                        }
+                                    }
+                                });
+
+
+                                String result = "";
+                                async.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), 35));
+                                handler.postDelayed(this, 10000);
+
+                            }
+/*
                             //SendLoc(String.format(String.valueOf(location)));
-                            SendLoc(latitude + ":" + longitude);
+
 
                             Log.e("listB", "lista mac presi: " + bMac);
                             Log.e("listB", "blue trovati totali: " + bluefound);
@@ -1062,7 +1088,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     handler.postDelayed(this, 10000);
                 }
             }
-            }
+
+ */
+        }
 
 
 
@@ -1181,6 +1209,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void addItems(MyItem offsetItem) {
             clusterManager.addItem(offsetItem);
             clusterManager.cluster();
+    }
+
+
+
+    //String data = "id="+getId()+"&bmac="+bMac+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1"; //ricordare timestamp e`su server messo non qui
+    public String[] inputSend(String id, String bmac, String loc, int devices){
+        String [] input = {id,bmac,loc,Integer.toString(devices)};
+        return input;
     }
 
 }
