@@ -115,6 +115,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         //button favourite and recent
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences sharedPreferencesfav = getSharedPreferences("favloc",MODE_PRIVATE);
@@ -1052,22 +1053,44 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if (location != null) {
                                 longitude = location.getLongitude();
                                 latitude = location.getLatitude();
-
-                                final AsyncSend async = new AsyncSend(MapsActivity.this, new OnTaskCompleted() {
+                                final AsyncRecieve asyncRecieve = new AsyncRecieve(MapsActivity.this, new OnTaskCompleted() {
                                     @Override
-                                    public void onTaskCompleted(String fromserver) {
-                                        System.out.println("arriva qua");
-                                        if (fromserver != null) {
-                                            getParsing(fromserver);
-                                            Log.i("RECIEVE", fromserver);
-                                        }
+                                    public void onTaskCompleted(List<ReciveItem> fromserver) {
+                                        ArrayList<ReciveItem> array;
+                                        Log.i("RECIEVE FINISHED", "ok");
+                                        if (fromserver != null){
+                                            array = new ArrayList<>(fromserver);
+                                            if (clusterManager != null){
+                                                clusterManager.clearItems();
+                                                clusterManager.cluster();
+                                            }
+
+                                             for (ReciveItem s : array) {
+                                                 final  ReciveItem r = s;
+                                                 // add marker
+                                                 mapFragment.getMapAsync(new OnMapReadyCallback() {
+                                                     @Override
+                                                     public void onMapReady(GoogleMap googleMap) {
+                                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
+                                                         addItems(item);
+                                                         Log.i("RECIEVE", item.toString());
+                                                     }
+                                                 });
+
+
+                                             }
+                                             setUpClusterer();
+                                     }else{
+                                         Log.i("SERVER VUOTO", "aggiungere posizioni");
+                                     }
                                     }
                                 });
+                                //contollare
+                                asyncRecieve.execute("skusku");
+                                final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
 
-
-                                String result = "";
-                                async.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), 35));
-                                handler.postDelayed(this, 10000);
+                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), 35));
+                                handler.postDelayed(this, 15000);
 
                             }
 /*

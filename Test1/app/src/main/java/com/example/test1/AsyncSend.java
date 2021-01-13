@@ -6,30 +6,30 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class AsyncSend extends AsyncTask<String,Void,String> {
+    private static final int INPUT_DIM = 4;
     private final Context context;
-    private OnTaskCompleted listener;
 
-    public AsyncSend(Context context, OnTaskCompleted listener) {
+
+    public AsyncSend(Context context) {
         this.context = context;
-        this.listener = listener;
+
     }
 
     @Override
     protected String doInBackground(String... voids) {
-        System.out.println("dentro if");
 
+        if(voids.length == INPUT_DIM) {
             System.out.println("dentro if");
             final String id = voids[0];
             final String bMac = voids[1];
             final String loc = voids[2];
             final String bluefound = String.valueOf(voids[3]);
-            System.out.println(id+bMac+loc+bluefound);
+            System.out.println(id + bMac + loc + bluefound);
             //NON SO PERCHE MA I MARKER VANO CON QUESTO:
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -64,44 +64,28 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
 
                 Log.e("loc", "Sent Loc e blue"); //vedi cosa invia
 
-                // Get the server response
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-
-
-                // Read Server Response
-                while ((line = reader.readLine()) != null) {
-                    // Append server response in string
-                    sb.append(line + "\n");
-                }
-
-                //server response da usare per i marker nella get
-                text = sb.toString();
 
             } catch (Exception ex) {
 
                 ex.printStackTrace();
 
             } finally {
-                try {
-                    reader.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+
 
                 conn.disconnect();
 
             }
 
-        return text;
+            return "";// true se fa tutto giusto
+        }
+        return ""; // else se errore
     }
 
 
     @Override
     protected void onPostExecute(String result) {
-        System.out.println("Onpost\n");
-        listener.onTaskCompleted(result);
+
+        Log.i("SEND", "send is finished");
     }
 
 
