@@ -110,8 +110,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     SimpleCursorAdapter mAdapter;
     Handler handler = new Handler();
 
+    Handler mHandler = new Handler();
+
     final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
     private LocationSettingsRequest.Builder builder;
+
+    String k = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -564,7 +568,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             // quando il servizio gps parte, si avvia il broadcastreciever con la funzione per aggiornare i dati della mappa in base a quello che c è sul server
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
-                            handler.postDelayed(runnableCode, 10000);
+
+                            Thread t1 = new Thread(new Runnable() {
+                                public void run()
+                                {
+                                    Log.e("listW", Thread.currentThread().getName() );
+                                    //handler.postDelayed(runnableCode, 5000);
+                                }});
+                            t1.start();
+
+                            handler.postDelayed(runnableCode, 5000);
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run () {
+                                    // Perform long-running task here
+                                    // (like audio buffering).
+                                    // You may want to update a progress
+                                    // bar every second, so use a handler:com
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run () {
+                                            Log.e("listc", Thread.currentThread().getName() );
+                                            // make operation on the UI - for example
+                                            // on a progress bar.
+                                        }
+                                    });
+                                }
+                            }).start();
+
+
+
+
+                            //Thread thread = new Thread(runnableCode);
+                            //thread.start();
+
+                            //t1.join();
+                            //handler.postDelayed(runnableCode, 5000);
+
+                            //handler.postDelayed(runnableCode, 5000);
 
                             // chiude il dialogo (wait gps...)
                             gpslost.cancel();
@@ -781,7 +823,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
         }else {
             Log.e("permessi","ok");
-            SendLoc(loc);
+            SendLoc();
         }
         if (!arrayList.isEmpty()) {
             String[] permi = new String[arrayList.size()];
@@ -794,11 +836,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     //
-    public  void  SendLoc(String loc){ //need location
+    public  void  SendLoc(){ //need location
 
         //NON SO PERCHE MA I MARKER VANO CON QUESTO:
-        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        if (location != null) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
+        String loc = longitude + ":" + latitude;
         //
 
         //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
@@ -813,6 +861,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         URL url = null;
         HttpURLConnection conn = null;
+
+        Log.e("listCCCC", Thread.currentThread().getName() );
+
         try
         {
 
@@ -862,7 +913,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
+            final SharedPreferences sharedmarker = getSharedPreferences("marker",MODE_PRIVATE);
+            final SharedPreferences.Editor editor = sharedmarker.edit();
+
+            editor.putString("marker", text);
+            editor.apply();
+
             conn.disconnect();
         }
 
@@ -925,28 +981,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
+
+
+
+            //k = text;
+
+            final SharedPreferences sharedmarker = getSharedPreferences("marker",MODE_PRIVATE);
+            final SharedPreferences.Editor editor = sharedmarker.edit();
+
+            editor.putString("marker", text);
+            editor.apply();
+
+            //getParsing(text);
+            //getParsingg();
+            Log.e("listB", Thread.currentThread().getName() );
             conn.disconnect();
         }
 
     }
 
     void getParsing(String k){
+
+
         // get from server and add markers , and update blueFound
 
         try {
+
+
             JSONObject jsonObject = new JSONObject(k);
 
             JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-            //tando per
+
             if (clusterManager != null) {
-                    clusterManager.clearItems();
-                    clusterManager.cluster();
-
+                clusterManager.clearItems();
+                clusterManager.cluster();
             }
-
-
             for (int i=0;i<jsonArray.length();i++){
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -955,28 +1025,77 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
                 final Integer found = Integer.parseInt(obj.optString("blueFound").split("=")[0]);
                 final String name = (obj.optString("id").split("=")[0]);
-                mapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        MyItem item = new MyItem(lat, lon, String.valueOf(found), name);
-                        addItems(item);
-                        //Log.e("Lista",String.valueOf(lat) +"___"+ String.valueOf(lon));
 
 
-                        // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-                    }
-                });
 
+
+
+                MyItem item = new MyItem(lat, lon, String.format("%d", found), name);
+                addItems(item);
+
+            }
             setUpClusterer();
-           }
 
-
-           
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
+
     }
+
+    void getParsingg(){
+
+        SharedPreferences share = getSharedPreferences("marker", MODE_PRIVATE);
+        String kk = share.getString("marker", "");
+
+
+
+        // get from server and add markers , and update blueFound
+        if (kk != ""){
+        try {
+            JSONObject jsonObject = new JSONObject(kk);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+            clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
+
+            if (clusterManager != null) {
+                clusterManager.clearItems();
+                clusterManager.cluster();
+            }
+            for (int i=0;i<jsonArray.length();i++){
+                final JSONObject obj = jsonArray.getJSONObject(i);
+
+                // Log.e("json",obj.optString("id"));
+                final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
+                final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
+                final Integer found = Integer.parseInt(obj.optString("blueFound").split("=")[0]);
+                final String name = (obj.optString("id").split("=")[0]);
+
+                        mapFragment.getMapAsync(new OnMapReadyCallback() {
+                            @Override
+                            public void onMapReady(GoogleMap googleMap) {
+                                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                                MyItem item = new MyItem(lat, lon, String.format("%d", found ), name);
+                                addItems(item);
+
+                                // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
+                            }
+                        });
+
+
+
+
+            }
+
+            setUpClusterer();
+            //clusterManager.cluster();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }}
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
         
         public void onReceive(Context context, Intent intent) {
@@ -989,8 +1108,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 //Log.e("list",device.getAddress());
-                bluefound += 1;
-                //bluefound = 1;
+                //bluefound += 1;
+                bluefound = 1;
                 //list.add(device.getName());
                 bmac = device.getAddress();
 
@@ -1001,7 +1120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //z = 1;
                 //bluefound = list.size();
                 //arrayAdapter.notifyDataSetChanged();
-                Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -1009,62 +1128,80 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     };
+
+
+
+
     
-    
-    
-    public  Runnable runnableCode = new Runnable() {
+    public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
+
         @Override
         public   void  run() {
-            synchronized (this) {
-                SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
-                boolean autoScan = share.getBoolean("autoscan", false);
-                //System.out.println("entra in 1 thread");
 
-                //bluefound = 0;
-                //bMac = "";
+            getParsingg();
 
-                //int a = 1;
-                if (autoScan) {
-                    // attiva bluetooth se non è attivo
+            Thread t = new Thread ( new Runnable() {
+                @Override
+                public void run() {
 
-                    if (!bluetoothAdapterr.isEnabled()) {
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, 1);
-                    } else {
+                    SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
+                    boolean autoScan = share.getBoolean("autoscan", false);
+                    //System.out.println("entra in 1 thread");
 
-                        if (!bluetoothAdapterr.isDiscovering()) {
+                    //bluefound = 0;
+                    //bMac = "";
+                    Log.e("listB", Thread.currentThread().getName() );
+                    int a = 1;
+                    if (autoScan) {
+                        // attiva bluetooth se non è attivo
 
-                            bluetoothAdapterr.startDiscovery();
-
+                        if (!bluetoothAdapterr.isEnabled()) {
+                            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            startActivityForResult(enableBtIntent, 1);
                         } else {
 
+                            if (!bluetoothAdapterr.isDiscovering()) {
+                                Log.e("listB", "start discovery");
+                                bluetoothAdapterr.startDiscovery();
 
-                            bluetoothAdapterr.cancelDiscovery();
-                            if (location != null) {
-                                longitude = location.getLongitude();
-                                latitude = location.getLatitude();
+                            } else {
+
+
+                                bluetoothAdapterr.cancelDiscovery();
+
+                                SendLoc(); //latitude + ":" + longitude);
+
+                                Log.e("listB", "lista mac presi: " + bMac);
+                                Log.e("listB", "blue trovati totali: " + bluefound);
+                                bluefound = 0;
+                                bMac = "";
                             }
 
-                            //SendLoc(String.format(String.valueOf(location)));
-                            SendLoc(latitude + ":" + longitude);
 
-                            Log.e("listB", "lista mac presi: " + bMac);
-                            Log.e("listB", "blue trovati totali: " + bluefound);
-                            bluefound = 0;
-                            bMac = "";
                         }
+                    } else {
+                        getInfo();;
+                        };
 
 
-                    }
-                } else {
-                    getInfo();
+                    Thread.currentThread().interrupt();
+
                 }
+            });
+            t.start();
 
-                handler.postDelayed(this, 5000);
+            //getParsingg();
+
+            handler.postDelayed(this, 20000);
+
 
             }
-        }
-    };
+
+
+
+
+
+    });
 
 
     @Override
@@ -1158,31 +1295,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void setUpClusterer() {
-        // Position the map.
 
-        clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
 
-        // Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
+            Log.e("listZZZ", Thread.currentThread().getName() );
+            clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
 
-        //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
 
-        map.setOnCameraIdleListener(clusterManager);
-        map.setOnMarkerClickListener(clusterManager);
+            // Initialize the manager with the context and the map.
+            // (Activity extends context, so we can pass 'this' in the constructor.)
+
+            //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
+            // Point the map's listeners at the listeners implemented by the cluster
+            // manager.
+
+
+
+            map.setOnCameraIdleListener(clusterManager);
+            map.setOnMarkerClickListener(clusterManager);
+
+
 
         // Add cluster items (markers) to the cluster manager.
        // addItems(item);
     }
 
     private void addItems(MyItem offsetItem) {
+            Log.e("listZZZ", Thread.currentThread().getName() );
+
+
             clusterManager.addItem(offsetItem);
             clusterManager.cluster();
     }
 
 }
-
-
 
 
