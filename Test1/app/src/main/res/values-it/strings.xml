@@ -2,12 +2,12 @@
 <resources>
 
 <!-- FisrtAccess -->
-    <string name="app_name">Test1</string>
+    <string name="app_name">CountOnYou</string>
     <string name="title_activity_maps">Map</string>
 <!--    <string name="action_settings">Settings</string> -->
 <!--    <string name="request_bt">request permission</string> -->
     <string name="guide">
-        Benvenuto e grazie per avere la nostra app "NomeAppxd".\n\n
+        Benvenuto e grazie per avere la nostra app "CountOnYou".\n\n
         Questo software offre servizi innovativi, legati alla connessione, sia gps che bluetooth.\n
         L\'interfaccia è semplice e intuitiva. Appena verranno accettati i permessi apparirà a schermo
         la mappa con la tua posizione, da qui potrai navigare come più preferisci,spostandoti manualmente

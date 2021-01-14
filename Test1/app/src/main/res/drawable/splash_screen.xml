@@ -10,6 +10,6 @@
 
     <item
         android:gravity="center"
-        android:drawable="" />
+        android:drawable="@mipmap/logo_foreground" />
 
 </layer-list>
