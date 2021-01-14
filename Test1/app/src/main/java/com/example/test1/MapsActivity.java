@@ -106,6 +106,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Handler hand = new Handler();
     ClusterManager<MyItem> clusterManager;
 
+    List<BluetoothDevice> devices  = new ArrayList<>();
+
 
     SimpleCursorAdapter mAdapter;
     Handler handler = new Handler();
@@ -155,7 +157,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             }
+
+
         }
+
+
 /*
         //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
         try{
@@ -801,7 +807,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
         }else {
             Log.e("permessi","ok");
-            SendLoc(loc);
+            //SendLoc(loc);
         }
         if (!arrayList.isEmpty()) {
             String[] permi = new String[arrayList.size()];
@@ -951,6 +957,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+
+
     void getParsing(String k){
         // get from server and add markers , and update blueFound
 
@@ -987,8 +995,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
     }
-    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        
+
+    //BroadcastReceiver mReceiver =
+
+    public BluetoothReceiver mReceiver = new BluetoothReceiver(); //new BroadcastReceiver() {
+       /*
         public void onReceive(Context context, Intent intent) {
             //ArrayList<String> list = new ArrayList<>();
             Log.e("quanti blue","ok");
@@ -1018,7 +1029,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         }
-    };
+    };*/
     
     
     
@@ -1027,8 +1038,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         public   void  run() {
             final int[] size = new int[1];
             /*synchronized (this) {
-             SharedPreferences share = context.getSharedPreferences("autoscan", MODE_PRIVATE);
-    boolean autoScan = share.getBoolean("autoscan", false);
+
                 //System.out.println("entra in 1 thread");
 
                 //bluefound = 0;
@@ -1042,6 +1052,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             handler.postDelayed(this, 5000);
                         } else {
 
+
 */
                            AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new OnTaskDetected() {
                                @Override
@@ -1051,7 +1062,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                   Log.i("FINITO SCAN BLUETOOTH", "OK");
                                }
                            });
+
+
+
+
+
                            asyncBluetooth.execute("kusku");
+
+
+
+                            //Log.e("--", mReceiver.a);
+
+
+
                             if (location != null) {
                                 longitude = location.getLongitude();
                                 latitude = location.getLatitude();
@@ -1066,6 +1089,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 clusterManager.clearItems();
                                                 clusterManager.cluster();
                                             }
+
 
                                              for (ReciveItem s : array) {
                                                  final  ReciveItem r = s;
@@ -1091,7 +1115,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 asyncRecieve.execute("skusku");
                                 final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
 
-                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), size[0]));
+
+
+                                Log.e("quanti blue00000",String.valueOf(mReceiver.getDevices().size())); //mReceiver.getDevices().size();
+
+                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), mReceiver.getDevices().size()));
+
+                                mReceiver.getDevic();
                                 handler.postDelayed(this, 15000);
 
                             }

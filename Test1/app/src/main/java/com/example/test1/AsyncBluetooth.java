@@ -17,30 +17,7 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
     private Context context;
     final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     List<BluetoothDevice> devices  = new ArrayList<>();
-    public BroadcastReceiver mReceiver   = new BroadcastReceiver() {
 
-        public void onReceive(Context context, Intent intent) {
-            //ArrayList<String> list = new ArrayList<>();
-            Log.e("DEVICES DETECTED","ok");
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                //Log.e("list",device.getAddress());
-                //bluefound += 1;
-               devices.add(device);
-                //list.add(device.getName());
-
-                //z = 1;
-                //bluefound = list.size();
-                //arrayAdapter.notifyDataSetChanged();
-                // Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    };;
     OnTaskDetected liestener;
 
 
@@ -53,8 +30,8 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
     protected List<BluetoothDevice> doInBackground(String... voids) {
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            context.registerReceiver(mReceiver,filter);
+            //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            //context.registerReceiver(mReceiver,filter);
             ((Activity) context).startActivityForResult(enableBtIntent, 1);
         } else {
 

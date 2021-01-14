@@ -28,22 +28,26 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
             final String id = voids[0];
             final String bMac = voids[1];
             final String loc = voids[2];
-            final String bluefound = String.valueOf(voids[3]);
-            System.out.println(id + bMac + loc + bluefound);
+            final String bluefoundd = String.valueOf(voids[3]);
+            Log.e("quanti blue","ok -- -- - - --- - - - - - - - -- - - " + bluefoundd + " ------------");
+
+            System.out.println(id + bMac + loc + bluefoundd);
             //NON SO PERCHE MA I MARKER VANO CON QUESTO:
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-            //
+
 
             //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
-            String data = "id=" + id + "&bmac=" + bMac + "&loc=" + loc + "&blueFound=" + bluefound + "&timeStamp=1"; //ricordare timestamp e`su server messo non qui
+            String data = "id=" + id + "&bmac=" + bMac + "&loc=" + loc + "&blueFound=" + bluefoundd + "&timeStamp=1"; //ricordare timestamp e`su server messo non qui
 
             String text = "";
 
             BufferedReader reader = null;
 
             // Send data
-            Log.e("location", "this is your location" + loc);
+            //Log.e("location", "this is your location" + loc);
+
+            Log.e("location", "ASYNSEND LOG" + loc);
 
             URL url = null;
             HttpURLConnection conn = null;
