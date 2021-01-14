@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:drawable="@color/colorPrimary"/>
+    <item>
+        <shape
+            android:shape="rectangle">
+            <solid android:color="#ffffff"/>
+        </shape>
+    </item>
 
     <item
         android:gravity="center"
-        android:drawable="@drawable/ic_launcher_foreground"/>
+        android:drawable="" />
 
 </layer-list>
