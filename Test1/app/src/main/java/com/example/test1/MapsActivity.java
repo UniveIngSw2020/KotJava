@@ -1011,37 +1011,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     };*/
-    
-    
-    
-    public  Runnable runnableCode = (new Runnable() {
-        //manca start join ecc. bo
-        SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
-        boolean autoScan = share.getBoolean("autoscan", false);
 
+
+
+    public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
         @Override
         public   void  run() {
 
-
-            if (autoScan) {
-                AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new onTaskComplatedBluetooth() {
-                    @Override
-                    public void onTaskComplatedBluetooth(List<BluetoothDevice> fromscanner) {
-                        Log.i("FINITO SCAN BLUETOOTH", "OK");
-                    }
-                });
-                asyncBluetooth.execute("kusku");
-
-            }
-
-
-
+            SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
+            boolean autoScan = share.getBoolean("autoscan", false);
 
 
             if (location != null) {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
-                final AsyncRecieve asyncRecieve = new AsyncRecieve(MapsActivity.this, new OnTaskCompleted() {
+                AsyncRecieve asyncRecieve = new AsyncRecieve(MapsActivity.this, new OnTaskCompleted() {
                     @Override
                     public void onTaskCompleted(List<ReciveItem> fromserver) {
                         ArrayList<ReciveItem> array;
@@ -1054,58 +1038,68 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
 
 
-                             for (ReciveItem s : array) {
-                                 final  ReciveItem r = s;
-                                 // add marker
-                                 mapFragment.getMapAsync(new OnMapReadyCallback() {
-                                     @Override
-                                     public void onMapReady(GoogleMap googleMap) {
-                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
-                                         addItems(item);
-                                         Log.i("RECIEVE", item.toString());
-                                     }
-                                 });
+                            for (ReciveItem s : array) {
+                                final  ReciveItem r = s;
+                                // add marker
+                                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                                    @Override
+                                    public void onMapReady(GoogleMap googleMap) {
+                                        MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
+                                        addItems(item);
+                                        Log.i("RECIEVE", item.toString());
+                                    }
+                                });
 
 
-                             }
-                             setUpClusterer();
-                     }else{
-                         Log.i("SERVER VUOTO", "aggiungere posizioni");
-                     }
+                            }
+                            setUpClusterer();
+                        }else{
+                            Log.i("SERVER VUOTO", "aggiungere posizioni");
+                        }
                     }
                 });
                 //contollare
                 asyncRecieve.execute("skusku");
-                final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
 
-                List<BluetoothDevice>  b = mReceiver.getDevices();
-                int bluefoundd = b.size();
-                String  s = "";
-                String bmac = bMac;
+                if (autoScan){
 
 
-                for (int z = 0; z < bluefoundd; z++) {
-                    if (b.get(z) != null){
-                        s =  s +"," +   String.valueOf(b.get(z).getName());
+                    AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new onTaskComplatedBluetooth() {
+                        @Override
+                        public void onTaskComplatedBluetooth(List<BluetoothDevice> fromscanner) {
+                            Log.i("FINITO SCAN BLUETOOTH", "OK");
+                        }
+                    });
+
+
+
+                    asyncBluetooth.execute("kusku");
+
+                    final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
+
+                    List<BluetoothDevice>  b = mReceiver.getDevices();
+                    int bluefoundd = b.size();
+                    String  s = "";
+                    String bmac = bMac;
+
+
+                    for (int z = 0; z < bluefoundd; z++) {
+                        if (b.get(z) != null){
+                            s =  s +"," +   String.valueOf(b.get(z).getName());
+                        }
                     }
-                }
-
-                for (int z = 0; z < bluefoundd; z++) {
-                    if (b.get(z) != null){
-                        bmac =  bmac +":" + String.valueOf(b.get(z).getAddress());
+                    for (int z = 0; z < bluefoundd; z++) {
+                        if (b.get(z) != null){
+                            bmac =  bmac +":" + String.valueOf(b.get(z).getAddress());
+                        }
                     }
+                    asyncsend.execute(inputSend(getId(), bmac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefoundd));
+
+
+                    Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
+
+                    mReceiver.getDevic();
                 }
-
-
-
-                asyncsend.execute(inputSend(getId(), bmac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefoundd));
-
-                //Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
-
-                mReceiver.getDevic();
-
-
-
 
             }
 
