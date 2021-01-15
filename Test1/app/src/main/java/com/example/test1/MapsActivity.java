@@ -18,6 +18,7 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -661,6 +662,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
+    void GoToURL(String url){
+        Uri uri = Uri.parse(url);
+        Intent intent= new Intent(Intent.ACTION_VIEW,uri);
+        startActivity(intent);
+    }
+
 
     //Creazione condividi app
     private void showMsg(String msg) {
@@ -717,40 +724,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
-                //Aprire la pagina del playStore(?)
-                return true;            case R.id.autoscan:
-                final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
-                final SharedPreferences.Editor editor = sharedautoscan.edit();
-                Switch sw = new Switch(MapsActivity.this);
-                boolean checked;
-                sw.setTextOn("on");
-                sw.setTextOff("off");
-                sw.setGravity(Gravity.CENTER);
-
-                final AlertDialog.Builder myDialog = new AlertDialog.Builder(MapsActivity.this);
-                myDialog.setTitle("Auto Scan");
-                myDialog.setMessage("TURN ON the autoscan to find other devices automatically ");
-                myDialog.setView(sw);
-                sw.setChecked(sharedautoscan.getBoolean("autoscan",false));
-                sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked){
-                            //scanBlue();
-                            editor.putBoolean("autoscan", true);
-                            editor.apply();
-                            Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            editor.putBoolean("autoscan", false);
-                            editor.apply();
-                            Toast.makeText(myDialog.getContext(), "Autoscan mode OFF", Toast.LENGTH_SHORT).show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                GoToURL("https://play.google.com/store/apps/details?id=countinyou");
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
                         }
                     }
-                });
-                myDialog.show();
-
-
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setMessage("VORRESTI AIUTARCI ? VALUTA LA NOSTRA APP").setPositiveButton("Si", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+                //Aprire la pagina del playStore(?)
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1102,6 +1092,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
             }
+
+            putlocrecent(location);
 
             handler.postDelayed(this, 15000);
 
