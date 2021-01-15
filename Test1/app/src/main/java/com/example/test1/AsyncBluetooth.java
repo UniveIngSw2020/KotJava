@@ -18,10 +18,10 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
     final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     List<BluetoothDevice> devices  = new ArrayList<>();
 
-    OnTaskDetected liestener;
+    onTaskComplatedBluetooth liestener;
 
 
-    public AsyncBluetooth(Context context, OnTaskDetected liestener) {
+    public AsyncBluetooth(Context context, onTaskComplatedBluetooth liestener) {
         this.context = context;
         this.liestener = liestener;
     }
@@ -55,7 +55,7 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
     @Override
     protected void onPostExecute(List<BluetoothDevice> s) {
 
-        liestener.onTaskDetected(s);
+        liestener.onTaskComplatedBluetooth(s);
 
     }
 

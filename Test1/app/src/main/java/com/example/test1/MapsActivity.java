@@ -1036,112 +1036,95 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
         @Override
         public   void  run() {
-            final int[] size = new int[1];
-            /*synchronized (this) {
-
-                //System.out.println("entra in 1 thread");
-
-                //bluefound = 0;
-                //bMac = "";
-
-                int a = 1;
-                if (autoScan) {
-                    // attiva bluetooth se non è attivo
 
 
-                            handler.postDelayed(this, 5000);
-                        } else {
 
 
-*/
-                           AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new OnTaskDetected() {
-                               @Override
-                               public void onTaskDetected(List<BluetoothDevice> fromscanner) {
+           AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new onTaskComplatedBluetooth() {
+               @Override
+               public void onTaskComplatedBluetooth(List<BluetoothDevice> fromscanner) {
+                  Log.i("FINITO SCAN BLUETOOTH", "OK");
+               }
+           });
 
-                                   size[0] = fromscanner.size();
-                                  Log.i("FINITO SCAN BLUETOOTH", "OK");
-                               }
-                           });
+
+
+           asyncBluetooth.execute("kusku");
 
 
 
 
 
-                           asyncBluetooth.execute("kusku");
-
-
-
-                            //Log.e("--", mReceiver.a);
-
-
-
-                            if (location != null) {
-                                longitude = location.getLongitude();
-                                latitude = location.getLatitude();
-                                final AsyncRecieve asyncRecieve = new AsyncRecieve(MapsActivity.this, new OnTaskCompleted() {
-                                    @Override
-                                    public void onTaskCompleted(List<ReciveItem> fromserver) {
-                                        ArrayList<ReciveItem> array;
-                                        Log.i("RECIEVE FINISHED", "ok");
-                                        if (fromserver != null){
-                                            array = new ArrayList<>(fromserver);
-                                            if (clusterManager != null){
-                                                clusterManager.clearItems();
-                                                clusterManager.cluster();
-                                            }
-
-
-                                             for (ReciveItem s : array) {
-                                                 final  ReciveItem r = s;
-                                                 // add marker
-                                                 mapFragment.getMapAsync(new OnMapReadyCallback() {
-                                                     @Override
-                                                     public void onMapReady(GoogleMap googleMap) {
-                                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
-                                                         addItems(item);
-                                                         Log.i("RECIEVE", item.toString());
-                                                     }
-                                                 });
-
-
-                                             }
-                                             setUpClusterer();
-                                     }else{
-                                         Log.i("SERVER VUOTO", "aggiungere posizioni");
-                                     }
-                                    }
-                                });
-                                //contollare
-                                asyncRecieve.execute("skusku");
-                                final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
-
-                                List<BluetoothDevice>  b = mReceiver.getDevices();
-                                int bluefoundd = b.size();
-                                String s = "";
-
-
-                                for (int z = 0; z < bluefoundd; z++) {
-                                    if (b.get(z) != null){
-                                        s =  s +"---" +   String.valueOf(b.get(z).getName());
-                                    }
-                                }
-
-                                Log.e("quanti blue","before send scan number" + bluefoundd + " ------------");
-
-
-
-                                Log.e("quanti blue00000",String.valueOf(mReceiver.getDevices().size())); //mReceiver.getDevices().size();
-
-                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefoundd));
-
-                                Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
-
-                                mReceiver.getDevic();
-
-
-
-
+            if (location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                final AsyncRecieve asyncRecieve = new AsyncRecieve(MapsActivity.this, new OnTaskCompleted() {
+                    @Override
+                    public void onTaskCompleted(List<ReciveItem> fromserver) {
+                        ArrayList<ReciveItem> array;
+                        Log.i("RECIEVE FINISHED", "ok");
+                        if (fromserver != null){
+                            array = new ArrayList<>(fromserver);
+                            if (clusterManager != null){
+                                clusterManager.clearItems();
+                                clusterManager.cluster();
                             }
+
+
+                             for (ReciveItem s : array) {
+                                 final  ReciveItem r = s;
+                                 // add marker
+                                 mapFragment.getMapAsync(new OnMapReadyCallback() {
+                                     @Override
+                                     public void onMapReady(GoogleMap googleMap) {
+                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
+                                         addItems(item);
+                                         Log.i("RECIEVE", item.toString());
+                                     }
+                                 });
+
+
+                             }
+                             setUpClusterer();
+                     }else{
+                         Log.i("SERVER VUOTO", "aggiungere posizioni");
+                     }
+                    }
+                });
+                //contollare
+                asyncRecieve.execute("skusku");
+                final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
+
+                List<BluetoothDevice>  b = mReceiver.getDevices();
+                int bluefoundd = b.size();
+                String  s = "";
+                String bmac = bMac;
+
+
+                for (int z = 0; z < bluefoundd; z++) {
+                    if (b.get(z) != null){
+                        s =  s +"," +   String.valueOf(b.get(z).getName());
+                    }
+                }
+
+                for (int z = 0; z < bluefoundd; z++) {
+                    if (b.get(z) != null){
+                        bmac =  bmac +":" + String.valueOf(b.get(z).getAddress());
+                    }
+                }
+
+
+
+                asyncsend.execute(inputSend(getId(), bmac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefoundd));
+
+                //Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
+
+                mReceiver.getDevic();
+
+
+
+
+            }
 
             handler.postDelayed(this, 15000);
 
