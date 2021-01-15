@@ -136,4 +136,8 @@
 <!-- PLACEHOLDERS FAQ -->
     <string name="placeholder_question">Question?</string>
     <string name="placeholder_answer">Answer!</string>
+
+<!-- PLACEHOLDERS STATS -->
+    <string name="placeholder_id">0</string>
+    <string name="placeholder_number">666</string>
 </resources>

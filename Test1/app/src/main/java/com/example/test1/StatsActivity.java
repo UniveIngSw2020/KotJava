@@ -3,6 +3,8 @@ package com.example.test1;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +24,13 @@ public class StatsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Per mettere il back button
             getSupportActionBar().setTitle("Informazioni sull'affluenza");
         }
+
+        //Lista degli id dei dispositivi trovati e del numero di dispositivi trovati da essi
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager( new LinearLayoutManager( this ) );
+
+        StatsAdapter statsAdapter = new StatsAdapter(/*"Array degli id", "Array dei numeri di dispositivi"*/);
+        recyclerView.setAdapter(statsAdapter);
     }
 
     @Override

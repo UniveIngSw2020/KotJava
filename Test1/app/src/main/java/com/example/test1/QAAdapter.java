@@ -10,45 +10,41 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class QAAdapter extends RecyclerView.Adapter<QAAdapter.ViewHolder> {
     private final String[] questions, answers; //Contengono rispettivamente le stringhe delle domande e delle risposte
-    //Si poteva, alternativamente, creare un solo array con alternate domande e risposte
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_question, tv_answer;
 
-        /**
-         * Provide a reference to the type of views that you are using
-         * (custom ViewHolder).
-         */
+        //Assegna ai campi il valore dell'id delle rispettive TextView
         public ViewHolder( View view ) {
             super(view);
-            // Define click listener for the ViewHolder's View
             tv_question = view.findViewById(R.id.tv_question);
             tv_answer = view.findViewById(R.id.tv_answer);
         }
 
+        //Ritorna la TextView delle domande
         public TextView getQuestionTV() {
             return tv_question;
         }
 
+        //Ritorna la TextView delle risposte
         public TextView getAnswerTV() {
             return tv_answer;
         }
     }
 
     /**
-     * Initialize the dataset of the Adapter.
+     * Inizializza i dati necessari all'Adapterù
      * @param dataSetQ per le stringhe rappresentanti le domande
      * @param dataSetA per le risposte
-     * String[] containing the data to populate views to be used
-     * by RecyclerView.
      */
     public QAAdapter(String[] dataSetQ, String[] dataSetA) {
         questions = dataSetQ;
         answers = dataSetA;
     }
 
-
-    // Create new views (invoked by the layout manager)
+    
+    //Crea le nuove views (usato dal layout managet)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
