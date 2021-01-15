@@ -29,8 +29,8 @@ public class StatsActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager( new LinearLayoutManager( this ) );
 
-        StatsAdapter statsAdapter = new StatsAdapter(/*"Array degli id", "Array dei numeri di dispositivi"*/);
-        recyclerView.setAdapter(statsAdapter);
+        //StatsAdapter statsAdapter = new StatsAdapter(/*"Array degli id", "Array dei numeri di dispositivi"*/);
+        //recyclerView.setAdapter(statsAdapter);
     }
 
     @Override

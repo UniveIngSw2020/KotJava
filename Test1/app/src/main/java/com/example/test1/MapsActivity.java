@@ -65,24 +65,26 @@ import java.util.List;
 
 /*
 
-public  void  SendLoc(String loc)
-prende una stringa di longitine + lat ed invia al server, la risposta dal server e` quello che vediamo per aggiornare
+Maps activity class: classe principale che viene eseguita sempre per prima tranner al primo avvio dell'applicazione in cui
+ viene eseguita per seconda dopo la first access Activity
 
-private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-gestiste la scansione fatta da scandiscovery
-se ce un dispositivo va su OnReceive()
+Funzionamento metodi principali:
 
-private Runnable runnableCode = new Runnable() {
-questo gestisce cio che viene fatto ogni tot sencondi, viene chimato da dentro onCrreate poi si chiama ricorsivamente
+onCreate (r. 105): vengono iniziallizate le varie variabili e i bottoni prensenti nella classe
 
-nella OnDestroy Distrugge il broadCast che tiene le connesioni con i bluetooth
+onMapReady (r. 481): gestisce metodi e variabili che servono per la gestione della mappa nel momento in qui la mappa diventa "ready"
+
+onOptionsItemSelected (r. 618): Gestione del click sulle varie voci del menu
+
+
+
  */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
-    private final int REQUEST_CHECK_CODE = 999;
-    private FusedLocationProviderClient fusedLocationClient;
+
+    //variabili globali della classe
     private GoogleMap map;
-    String bmac;
+
     //private SearchView searchView;
     private SupportMapFragment mapFragment;
     private LocationManager locationManager;
@@ -90,19 +92,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     double latitude; // Latitude
     double longitude; // Longitude
     public AlertDialog gpslost;
-    public int bluefound;
-    String bMac;
-    Handler hand = new Handler();
+
+
     ClusterManager<MyItem> clusterManager;
-
-    List<BluetoothDevice> devices  = new ArrayList<>();
-
-
+    public BluetoothReceiver mReceiver = new BluetoothReceiver();
     SimpleCursorAdapter mAdapter;
     Handler handler = new Handler();
 
-    final BluetoothAdapter bluetoothAdapterr = BluetoothAdapter.getDefaultAdapter();
-    private LocationSettingsRequest.Builder builder;
+    //List<ReciveItem> listItem;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,9 +112,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final SharedPreferences.Editor editorfav = sharedPreferencesfav.edit();
         final Gson gson =new Gson();
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-///////////////////////////
-        bluefound = 27;
-        bMac = "";
+
+
 /////////////////////////////////
         // Broadcastreciever per il cambio di stato della connessione
         Networkreciever nw = new Networkreciever();
@@ -138,38 +135,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-
-        if(FirstAccessActivity.checkPermission(getApplicationContext())) {
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(location != null) {
-
-
-            }
-
-
-        }
-
-
-/*
-        //Dovrebbe forzare la presenza dell'overflow menu anche su dispositivi con il tasto dedicato
-        try{
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if( menuKeyField != null ){
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception e) {
-            //Log.d(TAG, e.getLocalizedMessage());
-        }
-*/
-
-
-
-
-
-//Bottoni della toolbar inferiore
+        //Bottoni della toolbar inferiore
         ImageButton bfav = findViewById(R.id.imageButtonFavourites);
         bfav.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
@@ -255,16 +221,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bstats.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 Intent intent = new Intent( MapsActivity.this, StatsActivity.class );
-                intent.putExtra("val", 2 );// 2 = fragment delle statistiche
+                //intent.putExtra("vaal", listaID );// 2 = fragment delle statistiche
+                //intent.putExtra("vaal", listaNumeriBluetooth );
                 startActivity(intent);
 
             }
         });
 
+        //bottone recenti
         ImageButton bhist = findViewById(R.id.imageButtonHistory);
         bhist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                //cose
                 String json = sharedPreferences.getString("recentloc","");
                 Type type =  new TypeToken<List<String>>(){
                 }.getType();
@@ -328,8 +295,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return true;
                     }
                 });
-
-
                 listView.setAdapter(new ArrayAdapter<>(alert.getContext(),android.R.layout.simple_list_item_1,namelocs));
                 alert.setTitle("Recent location visited");
                 alert.setCancelable(true);
@@ -342,14 +307,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 alert.show();
-
-
             }
 
         });
 
-
-        final SearchView searchView = findViewById(R.id.srclocation); //da cambiare con nome del search]
+        //
+        // Implementazione searchbar ..........................................................................................................................................
+        //
+        final SearchView searchView = findViewById(R.id.srclocation);
 
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -360,17 +325,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 MapsActivity.this.map = googleMap;
 
-
-
                 // imposta l' ultima posizone rilevata all' avvio del gps
                 if(FirstAccessActivity.checkPermission(getApplicationContext())) {
                     locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if(location != null)
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 20));
-
-
-
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( location.getLatitude(),location.getLongitude()), 15));
                 }
 
                 // inserisco in memoria i preferiti (long click)
@@ -388,18 +348,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         json = gson.toJson(arrayList);
                         editorfav.putString("favloc",json);
                         editorfav.apply();
-
                         Toast.makeText(MapsActivity.this, "Favourite location added", Toast.LENGTH_SHORT).show();
-
                     }
                 });
-
             }
 
-
-
         });
-        // implementazione searchbar ............................................................
         final String[] from = new String[] {"cityName"};
         final int[] to = new int[] {android.R.id.text1};
 
@@ -412,6 +366,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(false);
+
 
         // listener sull' elemento suggerito
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
@@ -432,18 +387,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
 
-
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }catch (Exception e){
                         Toast.makeText(MapsActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-
-
-//                searchView.setQuery(txt, true);
-
 
                 return true;
             }
@@ -461,7 +410,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 searchView.onActionViewExpanded();
             }
         });
+
+        //
         // ricerca del posto scritto in input
+        //
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String location) {
@@ -518,13 +470,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 return false;
             }
-
-
         });
-
-
-
-
 
         mapFragment.getMapAsync(this);
 
@@ -570,25 +516,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             registerReceiver(mReceiver, filter);
 
-                            Thread t1 = new Thread(new Runnable() {
-                                public void run()
-                                {
-                                    handler.postDelayed(runnableCode, 5000);
-                                }});
-                            t1.start();
-                            //t1.join();
-                            //handler.postDelayed(runnableCode, 5000);
+                            handler.postDelayed(runnableCode, 5000);
 
-                            //handler.postDelayed(runnableCode, 5000);
-
-                            // chiude il dialogo (wait gps...)
                             gpslost.cancel();
                             break;
                         case GpsStatus.GPS_EVENT_STOPPED:
                             // se il gps non va più, -> intent
                             Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
                             if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )) {
-                                // gps stato disattivato ,
+                                // gps stato disattivato dall'utente
                                 buildAlertMessageNoGps();
                             }
                             else {
@@ -596,7 +532,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 if (!isFinishing()) {
                                     gpslost = alertgps.show();
                                 }
-
                                 break;
                             }
                     }
@@ -618,25 +553,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
 
-        Toast.makeText(this, "Current location:\n" + addr , Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(this, "Current location:\n" + addr , Toast.LENGTH_SHORT).show();
 
-        //fa la send and il get per ora
-
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-        //SendLoc(String.format(String.valueOf(location)));
-        controllPermissionAndSend(latitude + ":" + longitude);
-        Log.e("loc","ok=");
-
-        // aggiungo a recenti la posizione
-        putlocrecent(location);
     }
 
     @Override
     public boolean onMyLocationButtonClick() {
         // bottone che mi riporta alla location
+
+        Geocoder g = new Geocoder(MapsActivity.this);
+        List<Address> s;
+        String addr = "";
+        try {
+            s = g.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            addr = s.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Toast.makeText(this, "Current location:\n"  , Toast.LENGTH_SHORT)
                 .show();
@@ -644,18 +577,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
+
+
+
+
+
     //Creazione del menu della maps activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_maps, menu);
         return true;
-    }
-
-    void GoToURL(String url){
-        Uri uri = Uri.parse(url);
-        Intent intent= new Intent(Intent.ACTION_VIEW,uri);
-        startActivity(intent);
     }
 
 
@@ -672,6 +604,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(shareIntent);
     }
 
+    //permette di rimandare alla pagine del playstore
+    void GoToURL(String url){
+        Uri uri = Uri.parse(url);
+        Intent intent= new Intent(Intent.ACTION_VIEW,uri);
+        startActivity(intent);
+    }
+
     //Gestione del click sulle varie voci del menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -684,36 +623,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Rimandare alla pagina con la guida/mostrare popup della guida
                 intent.putExtra("val", 1 );// 1 = fragment della guida
                 startActivity(intent);
-                //finish();
                 return true;
             case R.id.faq:
                 intent.putExtra("val", 2 );// 2 = fragment delle FAQ
                 startActivity(intent);
-                //finish();
+
                 return true;
             case R.id.contatti:
                 //Rimandare alla pagina dei contatti/mostrare popup dei contatti
                 intent.putExtra("val", 3 );// 3 = fragment dei contatti
                 startActivity(intent);
-                //finish();
                 return true;
             case R.id.credits:
                 //Rimandare alla pagina dei credits/mostrare popup dei credits
                 intent.putExtra("val", 4 );// 4 = fragment dei credits
                 startActivity(intent);
-                //finish();
                 return true;
             case R.id.aggiornamento:
                 //Rimandare alla pagina di aggiornamento
                 intent.putExtra("val", 5 );// 5 = fragment di aggiornamento
                 startActivity(intent);
-                //finish();
                 return true;
             case R.id.condividi:
                 showMsg("Condivisione app..");
                 //Copiare il link per la condivisione
                 return true;
             case R.id.valuta:
+                //Dialog per rimandare al playstore per la valutazione dell'app
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -733,6 +669,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Aprire la pagina del playStore(?)
                 return true;
             case R.id.autoscan:
+                //abilita autoscan del bluetooth e l'invio della location
                 final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedautoscan.edit();
                 Switch sw = new Switch(MapsActivity.this);
@@ -771,7 +708,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //get info of smartminchia da inviare
+    //prende info id e mac  del dispositivo
     String getId() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
@@ -780,53 +717,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         BluetoothAdapter m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return m_BluetoothAdapter.getAddress();
     }
-    //send and from server php version:
+
 
 /////////////////////////////////////////////////
 
-    void controllPermissionAndSend(String loc) {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        ArrayList<String> arrayList = new ArrayList<>();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            arrayList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-            Toast.makeText(this, "location fine", Toast.LENGTH_SHORT).show();
-        }else {
-            Log.e("permessi","ok");
-            //SendLoc(loc);
-        }
-        if (!arrayList.isEmpty()) {
-            String[] permi = new String[arrayList.size()];
-            permi = arrayList.toArray(permi);
-            ActivityCompat.requestPermissions(this, permi, 0);
-        }
-    }
 
 
-
-
-
-
-
-
-    public BluetoothReceiver mReceiver = new BluetoothReceiver();
-
-
-
-
+    //Runnable che permette di eseguire la scansione del bluetooth, ricezione e invio dei dati dal server
     public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
         @Override
         public   void  run() {
-
 
             if(FirstAccessActivity.checkPermission(getApplicationContext())) {
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -838,13 +738,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             if (location != null) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                AsyncReceieve asyncReceieve = new AsyncReceieve(MapsActivity.this, new OnTaskCompleted() {
+                AsyncReceive asyncReceive = new AsyncReceive(MapsActivity.this, new OnTaskCompleted() {
                     @Override
                     public void onTaskCompleted(List<ReceiveItem> fromserver) {
                         ArrayList<ReceiveItem> array;
-                        Log.i("RECIEVE FINISHED", "ok 2");
+
                         if (fromserver != null){
                             array = new ArrayList<>(fromserver);
                             if (clusterManager != null){
@@ -852,53 +750,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 clusterManager.cluster();
                             }
                             for (ReceiveItem s : array) {
-                                final ReceiveItem r = s;
+                                final  ReceiveItem r = s;
                                 // add marker
                                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                                     @Override
                                     public void onMapReady(GoogleMap googleMap) {
                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
                                         addItems(item);
-                                        //Log.i("Add marker", item.toString());
+
                                         Log.i("markerPosition", String.valueOf(r.getLat()) + ":" +  String.valueOf(r.getLng()) );
                                     }
                                 });
                             }
                             setUpClusterer();
-                        }else{
-                            Log.i("SERVER VUOTO", "aggiungere posizioni");
                         }
                     }
                 });
-                //contollare
-                asyncReceieve.execute("skusku");
+                asyncReceive.execute();
+
 
                 if (autoScan){
                     AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this);
-                    asyncBluetooth.execute("kusku");
+                    asyncBluetooth.execute();
 
                     final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
 
                     List<BluetoothDevice>  b = mReceiver.getDevices();
-                    int bluefoundd = b.size();
+                    int bluefound = b.size();
                     String  s = "";
-                    String bmac = bMac;
+                    String bmac = getMac();
 
 
-                    for (int z = 0; z < bluefoundd; z++) {
+                    for (int z = 0; z < bluefound; z++) {
                         if (b.get(z) != null){
                             s =  s +"," +   String.valueOf(b.get(z).getName());
                         }
                     }
-                    for (int z = 0; z < bluefoundd; z++) {
+                    for (int z = 0; z < bluefound; z++) {
                         if (b.get(z) != null){
                             bmac =  bmac +":" + String.valueOf(b.get(z).getAddress());
                         }
                     }
-                    asyncsend.execute(inputSend(getId(), bmac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefoundd));
+                    asyncsend.execute(inputSend(getId(), bmac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefound));
 
-
-                    Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
+                    if (s != "")
+                        Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show(); //toast che mosta bluetooth scannerizati
 
                     mReceiver.resetDevices();
                 }
@@ -907,54 +803,57 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             putlocrecent(location);
             Log.i("hadler", "hadler");
-            handler.postDelayed(this, 15000);
-
+            handler.postDelayed(this, 30000);
         }
 
-
-
     });
+    //restituisce input per la asyncSend
+    public String[] inputSend(String id, String bmac, String loc, int devices){
+        String [] input = {id,bmac,loc,Integer.toString(devices)};
+        return input;
+    }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiver);
     }
 //////////////////////////////
-
+    //
+    // metodo che mette aggiunge la locazione recente all array
+    //
     public void putlocrecent(Location loc){
         final SharedPreferences sharedPreferences = getSharedPreferences("recentloc",MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
-        final ArrayList<String> arrayListrecent = new ArrayList<>();
         final Gson gson =new Gson();
         if (loc != null) {
-                // get Array shared preferences
-                String json = sharedPreferences.getString("recentloc", "");
-                Type type = new TypeToken<List<String>>() {
-                }.getType();
-                ArrayList<String> arrayListm = gson.fromJson(json, type);
-                String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
-                if (arrayListm == null) {
-                    arrayListm = new ArrayList<>();
+            // get Array shared preferences
+            String json = sharedPreferences.getString("recentloc", "");
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
+            ArrayList<String> arrayListm = gson.fromJson(json, type);
+            String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+            if (arrayListm == null) {
+                arrayListm = new ArrayList<>();
+                arrayListm.add(thisloc);
+                json = gson.toJson(arrayListm);
+                editor.putString("recentloc", json);
+                editor.apply();
+                Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+            } else {
+                if (!arrayListm.contains(thisloc)) {
                     arrayListm.add(thisloc);
                     json = gson.toJson(arrayListm);
                     editor.putString("recentloc", json);
                     editor.apply();
                     Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (!arrayListm.contains(thisloc)) {
-                        arrayListm.add(thisloc);
-                        json = gson.toJson(arrayListm);
-                        editor.putString("recentloc", json);
-                        editor.apply();
-                        Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
-                    }
                 }
+            }
         }
     }
+    //metodo che ritorna una lista di AddressLine da lista di location
     public List<String> getNameOfLocation(List<String> locations){
         Geocoder g = new Geocoder(MapsActivity.this);
         ArrayList<String> namelocs = new ArrayList<>();
@@ -971,12 +870,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         }
-
-
         return namelocs;
     }
 
-    //metodo per cancellare tutti i campi in contemporaena
+    //metodo per cancellare tutti i campi in contemporaena salvati in locale (preferiti o recenti)
     public void deleteAll(String key){
         final SharedPreferences sharedPreferences = getSharedPreferences(key,MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -984,6 +881,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         editor.apply();
     }
 
+    //metodo che notifica quando il gps e`spento e chiedi di attivarlo
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
@@ -1006,39 +904,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //metodo che aggiorna il cluster clusterManager
     private void setUpClusterer() {
-        // Position the map.
+
 
         clusterManager = new ClusterManager<MyItem>(MapsActivity.this, map);
 
-        // Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
         MarkerClusterRender render = new MarkerClusterRender(MapsActivity.this, map, clusterManager);
-        //clusterManager.setAlgorithm(new GridBasedAlgorithm<MyItem>());
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        clusterManager.setRenderer(render);
-
+        clusterManager.setRenderer(render); //impostazione del render custom
 
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
 
-        // Add cluster items (markers) to the cluster manager.
-       // addItems(item);
     }
-
-    private void addItems(MyItem offsetItem) {
-            clusterManager.addItem(offsetItem);
+    //aggiunge item a clusterManger
+    private void addItems(MyItem item) {
+            clusterManager.addItem(item);
             clusterManager.cluster();
     }
 
 
-
-    //String data = "id="+getId()+"&bmac="+bMac+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1"; //ricordare timestamp e`su server messo non qui
-    public String[] inputSend(String id, String bmac, String loc, int devices){
-        String [] input = {id,bmac,loc,Integer.toString(devices)};
-        return input;
-    }
 
 }
 

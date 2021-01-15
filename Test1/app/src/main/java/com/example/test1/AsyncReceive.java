@@ -18,13 +18,13 @@ import java.util.List;
 classe che permette di ricevere dati  dal server in background
  */
 
-public class AsyncReceieve extends AsyncTask<String,String,String> {
+public class AsyncReceive extends AsyncTask<String,String,String> {
         Context context;
     private OnTaskCompleted listener;
 
 
 
-public AsyncReceieve(Context context, OnTaskCompleted listener) { //costruttore classe
+public AsyncReceive(Context context, OnTaskCompleted listener) { //costruttore classe
         this.context = context;
         this.listener = listener;
         }
@@ -38,7 +38,7 @@ protected String doInBackground(String... voids) {
     BufferedReader reader=null; //contiene le stringhe dal server e si aggiorna in riga per riga
 
     // Send data
-    Log.e("location","getting INFOs");
+    Log.i("asynReceive","getting INFOs");
 
     URL url = null;
     HttpURLConnection conn = null;
