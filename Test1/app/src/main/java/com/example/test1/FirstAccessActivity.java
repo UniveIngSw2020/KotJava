@@ -36,7 +36,7 @@ public class FirstAccessActivity extends AppCompatActivity  {
         Toolbar myToolbar = findViewById(R.id.fa_toolbar);
         setSupportActionBar(myToolbar);
         if( getSupportActionBar() != null ){
-            getSupportActionBar().setTitle("Kotjava");
+            getSupportActionBar().setTitle("CountOnYou");
         }
 
         TextView textView = findViewById(R.id.tv_guide_fa);

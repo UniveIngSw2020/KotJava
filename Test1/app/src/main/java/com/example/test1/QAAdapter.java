@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class QAAdapter extends RecyclerView.Adapter<QAAdapter.ViewHolder> {
-    private final String[] questions, answers; //Contentgono rispettivamente le stringhe delle domande e delle risposte
+    private final String[] questions, answers; //Contengono rispettivamente le stringhe delle domande e delle risposte
     //Si poteva, alternativamente, creare un solo array con alternate domande e risposte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

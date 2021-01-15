@@ -82,7 +82,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final int REQUEST_CHECK_CODE = 999;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
-    private Toolbar myToolbar;
     String bmac;
     //private SearchView searchView;
     private SupportMapFragment mapFragment;
@@ -133,7 +132,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
 
         //Toolbar superiore con l'overflow menu
-        myToolbar = findViewById(R.id.maps_toolbar);
+        Toolbar myToolbar = findViewById(R.id.maps_toolbar);
         setSupportActionBar(myToolbar);
         if( getSupportActionBar() != null ){
             getSupportActionBar().setDisplayShowTitleEnabled(false);
