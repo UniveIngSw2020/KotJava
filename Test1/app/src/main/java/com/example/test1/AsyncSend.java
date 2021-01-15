@@ -50,7 +50,7 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
 
             Log.e("location", "ASYNSEND LOG" + loc);
 
-            URL url = null;
+            URL url ;
             HttpURLConnection conn = null;
             try {
 

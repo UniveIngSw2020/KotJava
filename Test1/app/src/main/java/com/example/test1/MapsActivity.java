@@ -57,17 +57,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.clustering.ClusterManager;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -742,6 +733,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .setNegativeButton("No", dialogClickListener).show();
                 //Aprire la pagina del playStore(?)
                 return true;
+            case R.id.autoscan:
+                final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
+                final SharedPreferences.Editor editor = sharedautoscan.edit();
+                Switch sw = new Switch(MapsActivity.this);
+                boolean checked;
+                sw.setTextOn("on");
+                sw.setTextOff("off");
+                sw.setGravity(Gravity.CENTER);
+
+                final AlertDialog.Builder myDialog = new AlertDialog.Builder(MapsActivity.this);
+                myDialog.setTitle("Auto Scan");
+                myDialog.setMessage("TURN ON the autoscan to find other devices automatically ");
+                myDialog.setView(sw);
+                sw.setChecked(sharedautoscan.getBoolean("autoscan",false));
+                sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked){
+                            //scanBlue();
+                            editor.putBoolean("autoscan", true);
+                            editor.apply();
+                            Toast.makeText(myDialog.getContext(), "Autoscan mode ON", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            editor.putBoolean("autoscan", false);
+                            editor.apply();
+                            Toast.makeText(myDialog.getContext(), "Autoscan mode OFF", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                myDialog.show();
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }
