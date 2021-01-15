@@ -28,10 +28,12 @@
         android:elegantTextHeight="true"
         android:text="@string/guide"
         android:textColor="#000000"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/tv_request"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fa_toolbar" />
+
 
     <TextView
         android:id="@+id/tv_request"
