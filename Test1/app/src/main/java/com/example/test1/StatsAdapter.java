@@ -58,7 +58,7 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
 
         try {
             viewHolder.getDeviceIdTV().setText(ids.getJSONObject(position).optString("id"));
-            viewHolder.getScanNumberTV().setText(ids.getJSONObject(position).optString("bluefound"));
+            viewHolder.getScanNumberTV().setText(ids.getJSONObject(position).optString("blueFound"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
