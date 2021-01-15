@@ -598,7 +598,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
                            // if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
                                 // gps stato disattivato ,
-                              //  buildAlertMessageNoGps();
+                               buildAlertMessageNoGps();
 
                             //else {
                                 // gps interrotto
@@ -1014,23 +1014,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     
     
     
-    public  Runnable runnableCode = (new Runnable() { //manca start join ecc. bo
+    public  Runnable runnableCode = (new Runnable() {
+        //manca start join ecc. bo
+        SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
+        boolean autoScan = share.getBoolean("autoscan", false);
+
         @Override
         public   void  run() {
 
 
+            if (autoScan) {
+                AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new onTaskComplatedBluetooth() {
+                    @Override
+                    public void onTaskComplatedBluetooth(List<BluetoothDevice> fromscanner) {
+                        Log.i("FINITO SCAN BLUETOOTH", "OK");
+                    }
+                });
+                asyncBluetooth.execute("kusku");
 
-
-           AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new onTaskComplatedBluetooth() {
-               @Override
-               public void onTaskComplatedBluetooth(List<BluetoothDevice> fromscanner) {
-                  Log.i("FINITO SCAN BLUETOOTH", "OK");
-               }
-           });
-
-
-
-           asyncBluetooth.execute("kusku");
+            }
 
 
 
