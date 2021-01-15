@@ -1,7 +1,7 @@
 <resources>
 
 <!-- FisrtAccess -->
-    <string name="app_name">Test1</string>
+    <string name="app_name">CountOnYou</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="request_bt">request permission</string>

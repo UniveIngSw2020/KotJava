@@ -6,39 +6,88 @@
     android:layout_height="match_parent"
     tools:context=".CreditsFragment">
 
+    <View
+        android:id="@+id/credits_lineH1"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/credits_lineH2"
+        app:layout_constraintEnd_toEndOf="@+id/credits_lineH2"
+        app:layout_constraintStart_toStartOf="@+id/credits_lineH2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/credits_lineH2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/constrain_credits"
+        app:layout_constraintEnd_toEndOf="@+id/constrain_credits"
+        app:layout_constraintStart_toStartOf="@+id/constrain_credits"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constrain_credits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/credits_lineH3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/credits_lineH2">
 
         <TextView
             android:id="@+id/tv_credits1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/credits1"
-            android:textAlignment="viewStart"
+            android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_credits2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/credits_lineV1"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="#000000"
+            app:layout_constraintHorizontal_bias="0.3"
+            app:layout_constraintBottom_toTopOf="@+id/tv_credits3"
+            app:layout_constraintEnd_toStartOf="@+id/tv_credits2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_credits1" />
 
         <TextView
             android:id="@+id/tv_credits2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:text="@string/credits2"
-            android:textAlignment="viewStart"
+            android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_credits3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_credits1" />
+
+        <View
+            android:id="@+id/credits_lineV2"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="#000000"
+            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintBottom_toTopOf="@+id/tv_credits3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_credits2"
             app:layout_constraintTop_toBottomOf="@+id/tv_credits1" />
 
         <TextView
@@ -46,7 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/credits3"
-            android:textAlignment="textStart"
+            android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -55,4 +104,29 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_credits2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <View
+        android:id="@+id/credits_lineH3"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/credits_lineH4"
+        app:layout_constraintEnd_toEndOf="@+id/constrain_credits"
+        app:layout_constraintStart_toStartOf="@+id/constrain_credits"
+        app:layout_constraintTop_toBottomOf="@id/constrain_credits" />
+
+    <View
+        android:id="@+id/credits_lineH4"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/credits_lineH3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
