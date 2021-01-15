@@ -25,7 +25,6 @@ import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -651,7 +650,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toast.makeText(this, "Current location:\n"  , Toast.LENGTH_SHORT)
                 .show();
 
-        return true;
+        return false;
     }
 
     //Creazione del menu della maps activity
