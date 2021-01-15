@@ -48,7 +48,7 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
             // Send data
             //Log.e("location", "this is your location" + loc);
 
-            Log.e("location", "ASYNSEND LOG" + loc);
+            Log.e("location", "ASYNSEND LOG " + loc);
 
             URL url ;
             HttpURLConnection conn = null;

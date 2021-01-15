@@ -685,30 +685,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Rimandare alla pagina con la guida/mostrare popup della guida
                 intent.putExtra("val", 1 );// 1 = fragment della guida
                 startActivity(intent);
-                finish();
+                //finish();
                 return true;
             case R.id.faq:
                 intent.putExtra("val", 2 );// 2 = fragment delle FAQ
                 startActivity(intent);
-                finish();
+                //finish();
                 return true;
             case R.id.contatti:
                 //Rimandare alla pagina dei contatti/mostrare popup dei contatti
                 intent.putExtra("val", 3 );// 3 = fragment dei contatti
                 startActivity(intent);
-                finish();
+                //finish();
                 return true;
             case R.id.credits:
                 //Rimandare alla pagina dei credits/mostrare popup dei credits
                 intent.putExtra("val", 4 );// 4 = fragment dei credits
                 startActivity(intent);
-                finish();
+                //finish();
                 return true;
             case R.id.aggiornamento:
                 //Rimandare alla pagina di aggiornamento
                 intent.putExtra("val", 5 );// 5 = fragment di aggiornamento
                 startActivity(intent);
-                finish();
+                //finish();
                 return true;
             case R.id.condividi:
                 showMsg("Condivisione app..");
@@ -764,6 +764,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 myDialog.show();
+                return true;
 
 
             default:
@@ -827,6 +828,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public   void  run() {
 
+
+            if(FirstAccessActivity.checkPermission(getApplicationContext())) {
+                locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
+
             SharedPreferences share = getSharedPreferences("autoscan", MODE_PRIVATE);
             boolean autoScan = share.getBoolean("autoscan", false);
 
@@ -853,7 +860,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     public void onMapReady(GoogleMap googleMap) {
                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
                                         addItems(item);
-                                        Log.i("Add marker", item.toString());
+                                        //Log.i("Add marker", item.toString());
+                                        Log.i("markerPosition", String.valueOf(r.getLat()) + ":" +  String.valueOf(r.getLng()) );
                                     }
                                 });
                             }
