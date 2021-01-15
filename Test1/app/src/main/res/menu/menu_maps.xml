@@ -34,10 +34,6 @@
         android:title="@string/rateitem"
         app:showAsAction="never" />
     <item
-        android:id="@+id/scansioni"
-        android:title="@string/scanitem"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/autoscan"
         android:title="@string/autoscanitem"
         app:showAsAction="never" />

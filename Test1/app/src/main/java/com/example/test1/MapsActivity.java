@@ -662,20 +662,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-    @Override
-    //Questo metodo dovrebbe servire a mostrare il menu di overflow anche su dispositivi con il
-    //bottone hardware
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_MENU) {
-            if(myToolbar != null && !myToolbar.isOverflowMenuShowing() ) {
-                myToolbar.showOverflowMenu();
-            }
-        return true;
-        }
-        return super.onKeyUp(keyCode, event);
-    }
-    
-
 
     //Creazione condividi app
     private void showMsg(String msg) {
@@ -733,11 +719,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             case R.id.valuta:
                 //Aprire la pagina del playStore(?)
-                return true;
-            case R.id.scansioni:
-
-                return true;
-            case R.id.autoscan:
+                return true;            case R.id.autoscan:
                 final SharedPreferences sharedautoscan = getSharedPreferences("autoscan",MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedautoscan.edit();
                 Switch sw = new Switch(MapsActivity.this);
