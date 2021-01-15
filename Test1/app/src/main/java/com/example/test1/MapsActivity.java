@@ -790,217 +790,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    //
-    public  void  SendLoc(String loc){ //need location
-
-        //NON SO PERCHE MA I MARKER VANO CON QUESTO:
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        //
-
-        //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
-        String data = "id="+getId()+"&bmac="+bMac+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1"; //ricordare timestamp e`su server messo non qui
-
-        String text = "";
-
-        BufferedReader reader=null;
-
-        // Send data
-        Log.e("location","this is your location"+loc);
-
-        URL url = null;
-        HttpURLConnection conn = null;
-        try
-        {
-
-            // Defined URL  where to send data
-            url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-
-            // Send POST data request
-
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-            wr.write( data );
-            wr.flush();
-
-            Log.e("loc","Sent Loc e blue"); //vedi cosa invia
-
-            // Get the server response
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
-            try
-            {
-                reader.close();
-            }
-
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
-            conn.disconnect();
-        }
-
-    }
 
 
 
-    public  void  getInfo(){ //need location
 
-        //NON SO PERCHE MA I MARKER VANO CON QUESTO:
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        //
-        String text = "";
+    public BluetoothReceiver mReceiver = new BluetoothReceiver();
 
-        BufferedReader reader=null;
-
-        // Send data
-        Log.e("location","getting INFOs");
-
-        URL url = null;
-        HttpURLConnection conn = null;
-
-        try
-        {
-            // Defined URL  where to send data
-            url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
-            conn = (HttpURLConnection) url.openConnection();
-
-
-            // Get the server response
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-            //server response da usare per i marker nella get
-            text = sb.toString();
-
-        }
-        catch(Exception ex)
-        {
-
-            ex.printStackTrace();
-
-        }
-        finally
-        {
-            try
-            {
-                reader.close();
-            }
-
-            catch(Exception ex) {ex.printStackTrace();}
-            getParsing(text);
-            conn.disconnect();
-        }
-
-    }
-
-
-
-    void getParsing(String k){
-        // get from server and add markers , and update blueFound
-
-        try {
-            JSONObject jsonObject = new JSONObject(k);
-
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
-            if (clusterManager != null) {
-                clusterManager.clearItems();
-                clusterManager.cluster();
-            }
-            for (int i=0;i<jsonArray.length();i++){
-                final JSONObject obj = jsonArray.getJSONObject(i);
-
-                // Log.e("json",obj.optString("id"));
-                final Double lat= Double.parseDouble(obj.optString("loc").split(":")[0]);
-                final Double lon= Double.parseDouble(obj.optString("loc").split(":")[1]);
-                final Integer found = Integer.parseInt(obj.optString("blueFound").split("=")[0]);
-                final String name = (obj.optString("id").split("=")[0]);
-                mapFragment.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        MyItem item = new MyItem(lat, lon, String.format("%d", found ), name);
-                        addItems(item);
-
-                        // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-                    }
-                });
-            setUpClusterer();
-            }
-           
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //BroadcastReceiver mReceiver =
-
-    public BluetoothReceiver mReceiver = new BluetoothReceiver(); //new BroadcastReceiver() {
-       /*
-        public void onReceive(Context context, Intent intent) {
-            //ArrayList<String> list = new ArrayList<>();
-            Log.e("quanti blue","ok");
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                //Log.e("list",device.getAddress());
-                //bluefound += 1;
-                bluefound = 1;
-                //list.add(device.getName());
-                bmac = device.getAddress();
-
-                bMac = bMac + String.valueOf(bmac);
-                Log.e("listA","blue: " + bluefound);
-                Log.e("listA",bMac);
-
-                //z = 1;
-                //bluefound = list.size();
-                //arrayAdapter.notifyDataSetChanged();
-               // Toast.makeText(MapsActivity.this, "trovato almeno un dispositivo", Toast.LENGTH_SHORT).show();
-
-            }
-
-
-
-        }
-    };*/
 
 
 
@@ -1019,15 +814,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onTaskCompleted(List<ReciveItem> fromserver) {
                         ArrayList<ReciveItem> array;
-                        Log.i("RECIEVE FINISHED", "ok");
+                        Log.i("RECIEVE FINISHED", "ok 2");
                         if (fromserver != null){
                             array = new ArrayList<>(fromserver);
                             if (clusterManager != null){
                                 clusterManager.clearItems();
                                 clusterManager.cluster();
                             }
-
-
                             for (ReciveItem s : array) {
                                 final  ReciveItem r = s;
                                 // add marker
@@ -1036,11 +829,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     public void onMapReady(GoogleMap googleMap) {
                                         MyItem item = new MyItem(r.getLat(), r.getLng(), String.format(Integer.toString(r.getDevices())), r.getName());
                                         addItems(item);
-                                        Log.i("RECIEVE", item.toString());
+                                        Log.i("Add marker", item.toString());
                                     }
                                 });
-
-
                             }
                             setUpClusterer();
                         }else{
@@ -1094,7 +885,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             putlocrecent(location);
-
+            Log.i("hadler", "hadler");
             handler.postDelayed(this, 15000);
 
         }
