@@ -18,13 +18,13 @@ import java.util.List;
 classe che permette di ricevere dati  dal server in background
  */
 
-public class AsyncRecieve extends AsyncTask<String,String,String> {
+public class AsyncReceieve extends AsyncTask<String,String,String> {
         Context context;
     private OnTaskCompleted listener;
 
 
 
-public AsyncRecieve(Context context, OnTaskCompleted listener) { //costruttore classe
+public AsyncReceieve(Context context, OnTaskCompleted listener) { //costruttore classe
         this.context = context;
         this.listener = listener;
         }
@@ -95,7 +95,7 @@ protected void onPostExecute(String s) {  //metodo che viene chiamato una volta 
                                             // riceve la Stringa dal server con tutti i dati dei device, la parsa e passa un
                                             // array con i device
     
-    List<ReciveItem> getFromServer = new ArrayList<>();
+    List<ReceiveItem> getFromServer = new ArrayList<>();
     if (s != null && !s.equals("")) {
         try {
 
@@ -111,8 +111,8 @@ protected void onPostExecute(String s) {  //metodo che viene chiamato una volta 
                 final Double lon = Double.parseDouble(obj.optString("loc").split(":")[1]);
                 final Integer found = Integer.parseInt(obj.optString("blueFound").split("=")[0]);
                 final String name = (obj.optString("id").split("=")[0]);
-                ReciveItem reciveItem = new ReciveItem(lat, lon, found, name);
-                getFromServer.add(reciveItem);
+                ReceiveItem receiveItem = new ReceiveItem(lat, lon, found, name);
+                getFromServer.add(receiveItem);
 
 
 

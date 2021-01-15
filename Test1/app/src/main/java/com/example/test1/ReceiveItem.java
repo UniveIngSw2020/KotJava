@@ -1,11 +1,11 @@
 package com.example.test1;
 
-public class ReciveItem {
+public class ReceiveItem {
     private final Double lat;
     private final Double lng;
     private final String name;
     private final int devices;
-    public ReciveItem(Double lat, Double lng, int devices, String name ){
+    public ReceiveItem(Double lat, Double lng, int devices, String name ){
         this.lat = lat;
         this.lng = lng;
         this.devices = devices;

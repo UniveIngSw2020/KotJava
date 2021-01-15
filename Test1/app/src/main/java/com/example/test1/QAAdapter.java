@@ -54,17 +54,14 @@ public class QAAdapter extends RecyclerView.Adapter<QAAdapter.ViewHolder> {
     }
 
 
-    // Replace the contents of a view (invoked by the layout manager)
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position ) {
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
         viewHolder.getQuestionTV().setText(questions[position]);
         viewHolder.getAnswerTV().setText(answers[position]);
     }
 
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         //Si suppone che ad ogni domanda corrisponda una risposta e che quindi siano in ugual numero

@@ -840,10 +840,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (location != null) {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
-                AsyncRecieve asyncRecieve = new AsyncRecieve(MapsActivity.this, new OnTaskCompleted() {
+                AsyncReceieve asyncReceieve = new AsyncReceieve(MapsActivity.this, new OnTaskCompleted() {
                     @Override
-                    public void onTaskCompleted(List<ReciveItem> fromserver) {
-                        ArrayList<ReciveItem> array;
+                    public void onTaskCompleted(List<ReceiveItem> fromserver) {
+                        ArrayList<ReceiveItem> array;
                         Log.i("RECIEVE FINISHED", "ok 2");
                         if (fromserver != null){
                             array = new ArrayList<>(fromserver);
@@ -851,8 +851,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 clusterManager.clearItems();
                                 clusterManager.cluster();
                             }
-                            for (ReciveItem s : array) {
-                                final  ReciveItem r = s;
+                            for (ReceiveItem s : array) {
+                                final ReceiveItem r = s;
                                 // add marker
                                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                                     @Override
@@ -871,20 +871,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 //contollare
-                asyncRecieve.execute("skusku");
+                asyncReceieve.execute("skusku");
 
                 if (autoScan){
-
-
-                    AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this, new onTaskComplatedBluetooth() {
-                        @Override
-                        public void onTaskComplatedBluetooth(List<BluetoothDevice> fromscanner) {
-                            Log.i("FINITO SCAN BLUETOOTH", "OK");
-                        }
-                    });
-
-
-
+                    AsyncBluetooth asyncBluetooth = new AsyncBluetooth(MapsActivity.this);
                     asyncBluetooth.execute("kusku");
 
                     final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);

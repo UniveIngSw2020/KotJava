@@ -13,35 +13,19 @@ import android.widget.Toast;
 public class Networkreciever extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        /*
-        Intent restart = new Intent(context, MapsActivity.class);
 
-         */
+        if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
 
-            if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-                Toast.makeText(context, "Boot completed", Toast.LENGTH_SHORT).show();
+            if(isOnline(context)){
+                // ONLINE
             }
-            if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-                Toast.makeText(context, "Connectivity changed", Toast.LENGTH_SHORT).show();
-                if(isOnline(context)){
-                    /*
-                    if (hastorestart)
-                    context.startActivity(restart);
-                    hastorestart = false;
-
-                     */
-                }
-                else{
-                    buildAlertMessageInternet(context);
-
-                    //hastorestart = true;
-
-                }
-
-
+            else{
+                Toast.makeText(context, "YOU ARE OFFLINE", Toast.LENGTH_SHORT).show();
+                buildAlertMessageInternet(context);
             }
+        }
     }
-    // attivazione da parte dell' utente dei dati(wifi o mobili)
+    // attivazione da parte dell' utente dei dati(wifi o mobili)--> alertdialog
     private void buildAlertMessageInternet(Context context) {
         final Context cont = context;
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);

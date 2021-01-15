@@ -1,6 +1,12 @@
 package com.example.test1;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -8,13 +14,6 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.OnSuccessListener;
 import com.google.android.play.core.tasks.Task;
-
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class UpdateFragment extends Fragment {
 
@@ -53,8 +52,7 @@ public class UpdateFragment extends Fragment {
             appUpdateInfoTask.addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
                 @Override
                 public void onSuccess(AppUpdateInfo appUpdateInfo) {
-                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                        /*&& appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)*/) {
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
                         TextView tv2 = view.findViewById( R.id.tv_update2 );
                         tv2.setText( getText(R.string.update_available) );
                     }
