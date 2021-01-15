@@ -1,4 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+<data>
+    <variable
+        name="job"
+        type="java.lang.String" />
+    <variable
+        name="contact"
+        type="java.lang.String" />
+</data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00BCD4"
+    tools:context=".ContactsFragment">
+
+    <include layout="@layout/contact"
+        android:id="@+id/contact1"
+        app:job="@{@string/job1}"
+        app:contact="@{@string/contact1}"
+        app:layout_constraintBottom_toTopOf="@id/contact2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"/>
+
+    <include layout="@layout/contact"
+        android:id="@+id/contact2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        app:job="@{@string/job1}"
+        app:contact="@{@string/contact2}"
+        app:layout_constraintBottom_toTopOf="@id/contact3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact1" />
+
+    <include layout="@layout/contact"
+        android:id="@+id/contact3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        app:job="@{@string/job2}"
+        app:contact="@{@string/contact3}"
+        app:layout_constraintBottom_toTopOf="@id/contact4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact2" />
+
+    <include layout="@layout/contact"
+        android:id="@+id/contact4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        app:job="@{@string/job3}"
+        app:contact="@{@string/contact4}"
+        app:layout_constraintBottom_toTopOf="@id/contact5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact3"
+        />
+
+    <include layout="@layout/contact"
+        android:id="@+id/contact5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        app:job="@{@string/job4}"
+        app:contact="@{@string/contact5}"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact4" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+<!--
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -241,5 +337,5 @@
         app:layout_constraintStart_toStartOf="@id/background5"
         app:layout_constraintTop_toBottomOf="@+id/line5" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+-->
