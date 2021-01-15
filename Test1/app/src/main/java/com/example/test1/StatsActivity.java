@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 public class StatsActivity extends AppCompatActivity {
+
     //Questa activity dovrebbe servire per le statistiche sull'affluenza
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +27,14 @@ public class StatsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Informazioni sull'affluenza");
         }
 
+
         //Lista degli id dei dispositivi trovati e del numero di dispositivi trovati da essi
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager( new LinearLayoutManager( this ) );
+        StatsAdapter statsAdapter = new StatsAdapter(AsyncReceive.jsonArray); //kjo merr 2 array 1 me array string njera me integer duhet te kaloj po list
+        //duhet te kaloj listem mga maps activity me put extra
+        recyclerView.setAdapter(statsAdapter);
 
-        //StatsAdapter statsAdapter = new StatsAdapter(/*"Array degli id", "Array dei numeri di dispositivi"*/);
-        //recyclerView.setAdapter(statsAdapter);
     }
 
     @Override

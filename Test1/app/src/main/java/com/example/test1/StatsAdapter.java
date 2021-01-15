@@ -8,9 +8,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> {
-    private final String[] ids;
-    private final int[] scan_numbers;
+    private  JSONArray ids=null;
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_id, tv_number;
@@ -31,9 +37,9 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
         }
     }
 
-    public StatsAdapter(String[] dataSetId, int[] dataSetNum) {
+    public StatsAdapter(JSONArray dataSetId) {
         ids = dataSetId;
-        scan_numbers = dataSetNum;
+
     }
 
     @NonNull
@@ -46,17 +52,22 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull com.example.test1.StatsAdapter.ViewHolder viewHolder, final int position ) {
+    public void onBindViewHolder(@NonNull com.example.test1.StatsAdapter.ViewHolder viewHolder,  int position ) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getDeviceIdTV().setText(ids[position]);
-        viewHolder.getScanNumberTV().setText(scan_numbers[position]);
+
+        try {
+            viewHolder.getDeviceIdTV().setText(ids.getJSONObject(position).optString("id"));
+            viewHolder.getScanNumberTV().setText(ids.getJSONObject(position).optString("bluefound"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return ids.length;
+        return ids.length();
     }
 }
