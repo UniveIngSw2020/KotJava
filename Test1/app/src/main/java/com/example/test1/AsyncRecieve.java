@@ -15,6 +15,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+/*
+classe che permette di ricevere dati  dal server in background
+ */
 
 public class AsyncRecieve extends AsyncTask<String,String,String> {
         Context context;
@@ -22,19 +25,18 @@ public class AsyncRecieve extends AsyncTask<String,String,String> {
 
 
 
-public AsyncRecieve(Context context, OnTaskCompleted listener) {
+public AsyncRecieve(Context context, OnTaskCompleted listener) { //costruttore classe
         this.context = context;
         this.listener = listener;
         }
 
 @Override
 protected String doInBackground(String... voids) {
-    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-    StrictMode.setThreadPolicy(policy);
-    //
-    String text = "";
 
-    BufferedReader reader=null;
+    
+    String text = ""; //stringa  che contera` i dati ricevuti dal server sottoforma di stringa
+
+    BufferedReader reader=null; //contiene le stringhe dal server e si aggiorna in riga per riga
 
     // Send data
     Log.e("location","getting INFOs");
@@ -44,26 +46,26 @@ protected String doInBackground(String... voids) {
 
     try
     {
-        // Defined URL  where to send data
+        // definisce url del server
         url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
         conn = (HttpURLConnection) url.openConnection();
 
 
-        // Get the server response
+        // prede dal server
 
         reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder sb = new StringBuilder();
         String line = null;
 
 
-        // Read Server Response
+        // legge dal server
         while((line = reader.readLine()) != null)
         {
-            // Append server response in string
+            // aggiunge alla stringa sb le line dal buffer
             sb.append(line + "\n");
         }
 
-        //server response da usare per i marker nella get
+        //da sb a string
         text = sb.toString();
 
     }
@@ -88,19 +90,19 @@ protected String doInBackground(String... voids) {
 return text;
 }
 @Override
-protected void onPostExecute(String s) {
+protected void onPostExecute(String s) {  //metodo che viene chiamato una volta completata la doinBackground
+    
     List<ReciveItem> getFromServer = new ArrayList<>();
     if (s != null && !s.equals("")) {
         try {
 
             JSONObject jsonObject = new JSONObject(s);
-
             JSONArray jsonArray = jsonObject.getJSONArray("data");
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
-                // Log.e("json",obj.optString("id"));
+
                 final Double lat = Double.parseDouble(obj.optString("loc").split(":")[0]);
                 final Double lon = Double.parseDouble(obj.optString("loc").split(":")[1]);
                 final Integer found = Integer.parseInt(obj.optString("blueFound").split("=")[0]);
@@ -109,7 +111,7 @@ protected void onPostExecute(String s) {
                 getFromServer.add(reciveItem);
 
 
-                // googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
+
 
 
             }

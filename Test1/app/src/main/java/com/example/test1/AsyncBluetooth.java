@@ -13,6 +13,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Classe che gestisce lo start della scansione bluetooth in background e ritorna un log alla fine
+
+ */
 public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>> {
     private Context context;
     final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -22,6 +26,7 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
 
 
     public AsyncBluetooth(Context context, onTaskComplatedBluetooth liestener) {
+        //costruttore classe
         this.context = context;
         this.liestener = liestener;
     }
@@ -29,11 +34,12 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
     @Override
     protected List<BluetoothDevice> doInBackground(String... voids) {
         if (!bluetoothAdapter.isEnabled()) {
+            //controllo se il bluetooth e`attivo
+            //altrimenti notifica tramite dialog
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            //context.registerReceiver(mReceiver,filter);
             ((Activity) context).startActivityForResult(enableBtIntent, 1);
         } else {
+
 
             if (!bluetoothAdapter.isDiscovering()) {
                 Log.e("DISCOVERING", "start discovery");
@@ -41,7 +47,7 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
                 try {
                     bluetoothAdapter.startDiscovery();
 
-                    Thread.sleep(5000);
+                    Thread.sleep(5000); //sleep che da tempo al BroadcastReceiver del bluetooth  di scansionare i bluetooth vicini attivi
 
                     bluetoothAdapter.cancelDiscovery();
                 } catch (InterruptedException e) {
@@ -53,8 +59,7 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
         return devices ;
     }
     @Override
-    protected void onPostExecute(List<BluetoothDevice> s) {
-
+    protected void onPostExecute(List<BluetoothDevice> s) { //metodo che viene chiamato una volta completata la doinBackground
         liestener.onTaskComplatedBluetooth(s);
 
     }

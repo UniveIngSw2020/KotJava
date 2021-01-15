@@ -257,7 +257,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = new Intent( MapsActivity.this, StatsActivity.class );
                 intent.putExtra("val", 2 );// 2 = fragment delle statistiche
                 startActivity(intent);
-                finish();
+
             }
         });
 
