@@ -11,38 +11,33 @@ import java.util.List;
 
 public class BluetoothReceiver extends BroadcastReceiver {
 
-
+    // Estende il broadcast reciever per visualizzare i dispositivi Bluetooth
     List<BluetoothDevice> devices  = new ArrayList<>();
 
     public int a = 1;
 
 
-
+    // Ritorna la lista di dispositivi
     public List<BluetoothDevice>  getDevices(){
         return devices;
     }
-
-    public void  getDevic(){
+    // Resetta la lista dei dispositivi
+    public void  resetDevices(){
         devices = new ArrayList<>();
     }
 
-
+    // metodo overraidato della superclasse
+    @Override
     public void onReceive(Context context, Intent intent) {
 
 
         String action = intent.getAction();
-        // When discovery finds a device
+        // Quando trova dispositivi Bluetooth
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-            // Get the BluetoothDevice object from the Intent
+            // Prende il Bluetooth device dall' intent
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-
-            Log.i("blue trovato","trovato");
-
+            Log.i("BLUERECEIVER","trovato");
             devices.add(device);
-
-
-
         }
 
     }

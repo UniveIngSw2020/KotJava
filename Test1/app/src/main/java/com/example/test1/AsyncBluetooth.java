@@ -3,10 +3,8 @@ package com.example.test1;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -58,6 +56,7 @@ public class AsyncBluetooth  extends AsyncTask<String,Void,List<BluetoothDevice>
        // context.unregisterReceiver(mReceiver);
         return devices ;
     }
+
     @Override
     protected void onPostExecute(List<BluetoothDevice> s) { //metodo che viene chiamato una volta completata la doinBackground
         liestener.onTaskComplatedBluetooth(s);

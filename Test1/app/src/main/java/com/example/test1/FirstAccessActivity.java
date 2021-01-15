@@ -1,10 +1,5 @@
 package com.example.test1;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,11 +11,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 public class FirstAccessActivity extends AppCompatActivity  {
+
     public  static final int REQUEST_CODE = 123;
-    //private Button btaccess;
+
 
 
     @Override
@@ -43,13 +44,13 @@ public class FirstAccessActivity extends AppCompatActivity  {
         textView.setMovementMethod(new ScrollingMovementMethod());
 
 
-        /*guardo se ho il permesso per il gps, se ce l ho salto direttamente alla maps activity*/
+        /*se c' è il permesso per l' utilizzo del gps, passo alla MapsActivity, mentre se manca eseguo questa classe*/
         if (checkPermission(getApplicationContext())){
             startActivity(activitymaps);
             finish();
         }
         else{
-            // Dangerous permission
+           // Permessi pericolosi gestiti in runtime
             btaccess.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -65,9 +66,6 @@ public class FirstAccessActivity extends AppCompatActivity  {
     /*metodo che gestisce il controllo e l' accettazione dei permessi*/
     public void checkRequestpermission() {
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
-        /*da togliere il primo if, rindondante ----> faccio gia il controllo nella ONcreate*/
-
-
            if(!checkPermission(FirstAccessActivity.this)) {
                 // when permission are not granted
                 if (ActivityCompat.shouldShowRequestPermissionRationale(FirstAccessActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -103,21 +101,20 @@ public class FirstAccessActivity extends AppCompatActivity  {
                             REQUEST_CODE);
                 }
                 } else {
-                    // when permission are already granted
+                    // permessi sono già garantiti
                     Toast.makeText(getApplicationContext(), "permission already granted", Toast.LENGTH_SHORT).show();
-
-
+                    // passa alla Mapsactivity
                 startActivity(activitymaps);
             }
     }
 
 
 
-/* metodo per controllare i permessi*/
-public static boolean checkPermission(Context context){
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                + ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-}
+    /* metodo per controllare i permessi*/
+    public static boolean checkPermission(Context context){
+            return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                    + ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
 
 
     /**Dangerous permission**/
@@ -125,14 +122,14 @@ public static boolean checkPermission(Context context){
         Intent activitymaps = new Intent(FirstAccessActivity.this,MapsActivity.class);
         if(requestCode == REQUEST_CODE){
             if( grantResults.length > 0 && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)){
-                //permission are granted
+                //permessi accettati
                 Toast.makeText(getApplicationContext(),"Permission Granted",Toast.LENGTH_SHORT).show();
 
 
                 startActivity(activitymaps);
             }
             else{
-                // permission are denied
+                // permessi rifiutati
                 Toast.makeText(getApplicationContext(),"Permission are denied",Toast.LENGTH_SHORT).show();
             }
         }

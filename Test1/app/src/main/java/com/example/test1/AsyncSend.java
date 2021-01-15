@@ -2,7 +2,6 @@ package com.example.test1;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -15,49 +14,45 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
     private static final int INPUT_DIM = 4;
     private final Context context;
 
-
+    // costruttore
     public AsyncSend(Context context) {
         this.context = context;
 
     }
-
+// invia : ID, BMAC , POSIZIONE  del device dove è eseguita l' app e il NUMERO DI DEVICE  scannerizzati dal bluetooth
     @Override
     protected String doInBackground(String... voids) {
-
+        // Al var args passo un array di dim 4 con le informazioni da inviare al server
         if(voids.length == INPUT_DIM) {
+
             System.out.println("dentro if");
             final String id = voids[0];
             final String bMac = voids[1];
             final String loc = voids[2];
             final String bluefoundd = String.valueOf(voids[3]);
-            Log.e("quanti blue","ok -- -- - - --- - - - - - - - -- - - " + bluefoundd + " ------------");
-
-            System.out.println(id + bMac + loc + bluefoundd);
-            //NON SO PERCHE MA I MARKER VANO CON QUESTO:
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+            Log.e("NUMERO BLUETOOTH", bluefoundd );
 
 
-            //String data = "id="+getId()+"&bmac="+getMac()+"&loc="+loc+"&blueFound="+bluefound+"&timeStamp=1";
+
+
+            // STRINGA costruita che viene passata al server
             String data = "id=" + id + "&bmac=" + bMac + "&loc=" + loc + "&blueFound=" + bluefoundd + "&timeStamp=1"; //ricordare timestamp e`su server messo non qui
 
             String text = "";
-
             BufferedReader reader = null;
 
-            // Send data
-            //Log.e("location", "this is your location" + loc);
 
-            Log.e("location", "ASYNSEND LOG " + loc);
+            // Log di controllo
+            Log.e("ASYNC SEND", "LOCAZIONE " + loc);
 
             URL url ;
             HttpURLConnection conn = null;
             try {
 
-                // Defined URL  where to send data
+                // Definisce l' URL dove inviare i dati
                 url = new URL("https://circumflex-hub.000webhostapp.com/posti.php");
 
-                // Send POST data request
+                // INVIO richiesta connessione
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setDoOutput(true);
@@ -97,7 +92,7 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
                 }
 
                 catch(Exception ex) {ex.printStackTrace();}
-
+                // Disconnessione
                 conn.disconnect();
             }
 
@@ -108,7 +103,7 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
 
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(String result) {//metodo che viene chiamato una volta completata la doinBackground
 
         Log.i("SEND", "send is finished");
     }

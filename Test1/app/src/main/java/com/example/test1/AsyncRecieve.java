@@ -2,7 +2,6 @@ package com.example.test1;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.StrictMode;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -82,7 +81,9 @@ protected String doInBackground(String... voids) {
             reader.close();
         }
 
-        catch(Exception ex) {ex.printStackTrace();}
+        catch(Exception ex) {ex.printStackTrace();
+        }
+        //Disconnessione dal server
         conn.disconnect();
     }
 
@@ -91,6 +92,8 @@ return text;
 }
 @Override
 protected void onPostExecute(String s) {  //metodo che viene chiamato una volta completata la doinBackground
+                                            // riceve la Stringa dal server con tutti i dati dei device, la parsa e passa un
+                                            // array con i device
     
     List<ReciveItem> getFromServer = new ArrayList<>();
     if (s != null && !s.equals("")) {
@@ -99,6 +102,7 @@ protected void onPostExecute(String s) {  //metodo che viene chiamato una volta 
             JSONObject jsonObject = new JSONObject(s);
             JSONArray jsonArray = jsonObject.getJSONArray("data");
 
+            // Parsing per ogni device
             for (int i = 0; i < jsonArray.length(); i++) {
                 final JSONObject obj = jsonArray.getJSONObject(i);
 
@@ -119,6 +123,7 @@ protected void onPostExecute(String s) {  //metodo che viene chiamato una volta 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        // quando la onPostExecute viene eseguita questo metodo riporta il risultato della parsing del server nella maps activity
         listener.onTaskCompleted(getFromServer);
     }
     listener.onTaskCompleted(null);

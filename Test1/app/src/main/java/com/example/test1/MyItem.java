@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
-
+// classe che mi rappresenta l' oggetto da passare al clustermanager
 public class MyItem implements ClusterItem {
     private final LatLng position;
     private final String title;

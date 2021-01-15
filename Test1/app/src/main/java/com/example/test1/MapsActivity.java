@@ -587,18 +587,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         case GpsStatus.GPS_EVENT_STOPPED:
                             // se il gps non va più, -> intent
                             Toast.makeText(MapsActivity.this, " Gps has STOPPED", Toast.LENGTH_LONG);
-                           // if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )){
+                            if(( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )) {
                                 // gps stato disattivato ,
-                               buildAlertMessageNoGps();
-
-                            //else {
+                                buildAlertMessageNoGps();
+                            }
+                            else {
                                 // gps interrotto
-                                if( !isFinishing() ) {
+                                if (!isFinishing()) {
                                     gpslost = alertgps.show();
                                 }
 
-                            break;
-
+                                break;
+                            }
                     }
                 }
             });
@@ -910,7 +910,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
 
-                    mReceiver.getDevic();
+                    mReceiver.resetDevices();
                 }
 
             }
@@ -939,30 +939,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         final ArrayList<String> arrayListrecent = new ArrayList<>();
         final Gson gson =new Gson();
+        if (loc != null) {
+                // get Array shared preferences
+                String json = sharedPreferences.getString("recentloc", "");
+                Type type = new TypeToken<List<String>>() {
+                }.getType();
+                ArrayList<String> arrayListm = gson.fromJson(json, type);
+                String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
+                if (arrayListm == null) {
+                    arrayListm = new ArrayList<>();
+                    arrayListm.add(thisloc);
+                    json = gson.toJson(arrayListm);
+                    editor.putString("recentloc", json);
+                    editor.apply();
+                    Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (!arrayListm.contains(thisloc)) {
+                        arrayListm.add(thisloc);
+                        json = gson.toJson(arrayListm);
+                        editor.putString("recentloc", json);
+                        editor.apply();
+                        Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
 
-        // get Array shared preferences
-        String json = sharedPreferences.getString("recentloc","");
-        Type type =  new TypeToken<List<String>>() {
-        }.getType();
-        ArrayList<String> arrayListm = gson.fromJson(json,type);
-        String thisloc = String.format(loc.getLatitude() + ":" + loc.getLongitude());
-        if(arrayListm == null) {
-            arrayListm = new ArrayList<>();
-            arrayListm.add(thisloc);
-            json = gson.toJson(arrayListm);
-            editor.putString("recentloc", json);
-            editor.apply();
-            Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            if (!arrayListm.contains(thisloc)) {
-                arrayListm.add(thisloc);
-                json = gson.toJson(arrayListm);
-                editor.putString("recentloc", json);
-                editor.apply();
-                Toast.makeText(MapsActivity.this, "Recent location added", Toast.LENGTH_SHORT).show();
-
-            }
+                    }
+                }
         }
     }
     public List<String> getNameOfLocation(List<String> locations){
