@@ -6,6 +6,7 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -66,18 +67,38 @@ public class AsyncSend extends AsyncTask<String,Void,String> {
                 wr.write(data);
                 wr.flush();
 
-                Log.e("loc", "Sent Loc e blue"); //vedi cosa invia
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
 
 
-            } catch (Exception ex) {
+                // Read Server Response
+                while((line = reader.readLine()) != null)
+                {
+                    // Append server response in string
+                    sb.append(line + "\n");
+                }
+
+                //server response da usare per i marker nella get
+                text = sb.toString();
+
+            }
+            catch(Exception ex)
+            {
 
                 ex.printStackTrace();
 
-            } finally {
+            }
+            finally
+            {
+                try
+                {
+                    reader.close();
+                }
 
+                catch(Exception ex) {ex.printStackTrace();}
 
                 conn.disconnect();
-
             }
 
             return "";// true se fa tutto giusto

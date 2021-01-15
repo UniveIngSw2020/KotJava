@@ -1115,17 +1115,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 asyncRecieve.execute("skusku");
                                 final AsyncSend asyncsend = new AsyncSend(MapsActivity.this);
 
+                                List<BluetoothDevice>  b = mReceiver.getDevices();
+                                int bluefoundd = b.size();
+                                String s = "";
+
+
+                                for (int z = 0; z < bluefoundd; z++) {
+                                    if (b.get(z) != null){
+                                        s =  s +"---" +   String.valueOf(b.get(z).getName());
+                                    }
+                                }
+
+                                Log.e("quanti blue","before send scan number" + bluefoundd + " ------------");
+
 
 
                                 Log.e("quanti blue00000",String.valueOf(mReceiver.getDevices().size())); //mReceiver.getDevices().size();
 
-                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), mReceiver.getDevices().size()));
+                                asyncsend.execute(inputSend(getId(), bMac, String.format(location.getLatitude() + ":" + location.getLongitude()), bluefoundd));
+
+                                Toast.makeText(MapsActivity.this, s, Toast.LENGTH_SHORT).show();
 
                                 mReceiver.getDevic();
-                                handler.postDelayed(this, 15000);
+
+
+
 
                             }
 
+            handler.postDelayed(this, 15000);
 
         }
 
