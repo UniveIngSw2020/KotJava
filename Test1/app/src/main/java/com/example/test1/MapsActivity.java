@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -783,7 +782,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     String getMac() {
-        return bmac;
+        BluetoothAdapter m_BluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return m_BluetoothAdapter.getAddress();
     }
     //send and from server php version:
 
