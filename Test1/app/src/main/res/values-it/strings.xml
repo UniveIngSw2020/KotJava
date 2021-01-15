@@ -96,8 +96,8 @@
     </string>
     <string name="contact3">
         Davide Favaro\n
-        874161@stud.unive.it 3\n
-        3392699235 3\n
+        874161@stud.unive.it\n
+        3392699235\n
     </string>
     <string name="contact4">
         Diolen Hysenaj\n
@@ -123,7 +123,7 @@
         Metteo De Col\n
     </string>
     <string name="credits3">
-            Nell\'ambito di un progetto portato avanti per il corso di Ingegneria del Software presso l\'università Ca\'Foscari di Venezia.
+            \nNell\'ambito di un progetto portato avanti per il corso di Ingegneria del Software presso l\'università Ca\'Foscari di Venezia.
         </string>
 
 

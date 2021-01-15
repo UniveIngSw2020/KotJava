@@ -97,8 +97,8 @@
     </string>
     <string name="contact3">
         Davide Favaro\n
-        874161@stud.unive.it 3\n
-        3392699235 3\n
+        874161@stud.unive.it\n
+        3392699235\n
     </string>
     <string name="contact4">
         Diolen Hysenaj\n
@@ -124,7 +124,7 @@
         Metteo De Col\n
     </string>
     <string name="credits3">
-        As a project for the Software Engineering course at university Ca\' Foscari of Venice.
+        \nAs a project for the Software Engineering course at university Ca\' Foscari of Venice.
     </string>
 
 
